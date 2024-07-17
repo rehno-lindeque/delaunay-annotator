@@ -3,6 +3,12 @@ class Point {
     this.x = x;
     this.y = y;
   }
+  containsPoint(point) {
+    const dx = point.x - this.circumcircle.center.x;
+    const dy = point.y - this.circumcircle.center.y;
+    const distanceSquared = dx * dx + dy * dy;
+    return distanceSquared <= this.circumcircle.radius * this.circumcircle.radius;
+  }
 }
 
 class Triangle {
@@ -12,9 +18,6 @@ class Triangle {
     this.p3 = p3;
   }
 
-  containsPoint(point) {
-    return [this.p1, this.p2, this.p3].some(vertex => vertex.x === point.x && vertex.y === point.y);
-  }
 }
 
 class Circle {
@@ -48,10 +51,10 @@ class DelaunayTriangle {
 }
 
 const filterTrianglesOutsidePoint = (point, triangles) =>
-  triangles.filter(triangle => !triangle.triangle.containsPoint(point));
+  triangles.filter(triangle => !triangle.containsPoint(point));
 
 const filterTrianglesContainingPoint = (point, triangles) =>
-  triangles.filter(triangle => triangle.triangle.containsPoint(point));
+  triangles.filter(triangle => triangle.containsPoint(point));
 
 class DelaunayEditor extends HTMLElement {
   constructor() {
