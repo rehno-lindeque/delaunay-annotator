@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delaunay Editor</title>
+    <style>
+        svg {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+  <delaunay-editor></delaunay-triangulation>
+
+  <script>
+    class DelaunayEditor extends HTMLElement {
+      constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        this.points = [];
+        this.triangles = [];
+        this.render();
+      }
+
+      connectedCallback() {
+        this.shadowRoot.querySelector('#color-input').addEventListener('input', (e) => this.updateColor(e));
+        this.shadowRoot.querySelector('#svg').addEventListener('click', (e) => this.handleSvgClick(e));
+      }
+
+      render() {
+        this.shadowRoot.innerHTML = `
+          <div>
+            <input id="color-input" type="color" value="${this.newColor}">
+            <button id="render-upload">Render and Upload</button>
+          </div>
+          <svg id="svg" width="800" height="600" viewBox="0 0 800 600"></svg>
+        `;
+        this.updateSvg();
+      }
+
+      updateColor(event) {
+        this.newColor = event.target.value;
+      }
+
+      handleSvgClick(event) {
+        const svg = this.shadowRoot.querySelector('#svg');
+        const rect = svg.getBoundingClientRect();
+        const point = {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top
+        };
+        this.addPoint(point);
+      }
+
+      addPoint(point) {
+        this.points.push(point);
+        // TODO: modify triangulation based on bowyer watson
+        this.updateSvg();
+      }
+
+      updateSvg() {
+        const svg = this.shadowRoot.querySelector('#svg');
+        svg.innerHTML = this.points.map(point => `
+          <circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>
+        `).join('') + this.triangles.map(triangle => `
+          <polygon points="${triangle.map(p => `${p.x},${p.y}`).join(' ')}" fill="${this.newColor}" stroke="black"></polygon>
+        `).join('');
+      }
+    }
+
+    customElements.define('delaunay-editor', DelaunayEditor);
+  </script>
+</body>
+</html>
+
