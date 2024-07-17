@@ -18,15 +18,6 @@ class Point {
       new Edge(p3, p1)
     ];
   }
-
-  edges() {
-    const { p1, p2, p3 } = this.triangle;
-    return [
-      new Edge(p1, p2),
-      new Edge(p2, p3),
-      new Edge(p3, p1)
-    ];
-  }
 }
 
 class Edge {
