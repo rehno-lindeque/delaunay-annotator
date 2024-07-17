@@ -9,6 +9,14 @@ class Point {
     const distanceSquared = dx * dx + dy * dy;
     return distanceSquared <= this.circumcircle.radius * this.circumcircle.radius;
   }
+
+  edges() {
+    const { p1, p2, p3 } = this.triangle;
+    return [
+      new Edge(p1, p2),
+      new Edge(p2, p3),
+      new Edge(p3, p1)
+    ];
   }
 
   edges() {
