@@ -74,3 +74,4 @@ class DelaunayEditor extends HTMLElement {
     `).join('');
   }
 };
+customElements.define('delaunay-editor', DelaunayEditor);
