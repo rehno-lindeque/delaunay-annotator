@@ -4,6 +4,9 @@ const containsPoint = (triangle, point) =>
 const filterTriangles = (point, triangles) =>
   triangles.filter(triangle => !containsPoint(triangle, point));
 
+const getTrianglesContainingPoint = (point, triangles) =>
+  triangles.filter(triangle => containsPoint(triangle, point));
+
 class DelaunayEditor extends HTMLElement {
   constructor() {
     super();
