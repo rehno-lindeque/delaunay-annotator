@@ -74,11 +74,20 @@ const connect = (edge, point) => {
 const fillHole = (edges, point) =>
   edges.map(edge => connect(edge, point));
 
-const filterTrianglesOutsidePoint = (point, triangles) =>
-  triangles.filter(triangle => !triangle.containsPoint(point));
+const partitionTriangles = (point, triangles) => {
+  const goodTriangles = [];
+  const badTriangles = [];
 
-const filterTrianglesContainingPoint = (point, triangles) =>
-  triangles.filter(triangle => triangle.containsPoint(point));
+  triangles.forEach(triangle => {
+    if (triangle.containsPoint(point)) {
+      badTriangles.push(triangle);
+    } else {
+      goodTriangles.push(triangle);
+    }
+  });
+
+  return { goodTriangles, badTriangles };
+};
 
 class DelaunayEditor extends HTMLElement {
   constructor() {
