@@ -1,10 +1,11 @@
 const containsPoint = (triangle, point) =>
   triangle.some(vertex => vertex.x === point.x && vertex.y === point.y);
 
-const filterTriangles = (point, triangles) =>
+const filterTrianglesOutsidePoint = (point, triangles) =>
   triangles.filter(triangle => !containsPoint(triangle, point));
 
-const getTrianglesContainingPoint = (point, triangles) =>
+const filterTrianglesContainingPoint = (point, triangles) =>
+  // So-called "bad" triangles in the Bowyer-Watson algorithm
   triangles.filter(triangle => containsPoint(triangle, point));
 
 class DelaunayEditor extends HTMLElement {
