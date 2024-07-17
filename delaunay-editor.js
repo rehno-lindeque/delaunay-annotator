@@ -12,6 +12,23 @@ class DelaunayEditor extends HTMLElement {
     this.render();
   }
 
+  static get observedAttributes() {
+    return ['width', 'height'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue !== newValue) {
+      this.points = [
+        { x: 0, y: 0 },
+        { x: 800, y: 0 },
+        { x: 800, y: 600 },
+        { x: 0, y: 600 }
+      ];
+      this.triangles = [];
+      this.render();
+    }
+  }
+
   connectedCallback() {
     this.shadowRoot.querySelector('#svg').addEventListener('click', (e) => this.handleSvgClick(e));
   }
@@ -19,10 +36,14 @@ class DelaunayEditor extends HTMLElement {
   render() {
     const width = this.getAttribute('width') || 800;
     const height = this.getAttribute('height') || 600;
-    this.shadowRoot.innerHTML = `
-      <svg id="svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"></svg>
-    `;
-    this.updateSvg();
+    if (width && height) {
+      this.shadowRoot.innerHTML = `
+        <svg id="svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"></svg>
+      `;
+      this.updateSvg();
+    } else {
+      this.shadowRoot.innerHTML = '';
+    }
   }
 
   handleSvgClick(event) {
