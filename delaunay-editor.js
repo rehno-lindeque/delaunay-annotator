@@ -1,22 +1,51 @@
-const containsPoint = (triangle, point) =>
-  triangle.some(vertex => vertex.x === point.x && vertex.y === point.y);
+class Point {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class Triangle {
+  constructor(p1, p2, p3) {
+    this.p1 = p1;
+    this.p2 = p2;
+    this.p3 = p3;
+  }
+
+  containsPoint(point) {
+    return [this.p1, this.p2, this.p3].some(vertex => vertex.x === point.x && vertex.y === point.y);
+  }
+}
+
+class Circle {
+  constructor(center, radius) {
+    this.center = center;
+    this.radius = radius;
+  }
+}
+
+class DelaunayTriangle {
+  constructor(triangle, circumcircle) {
+    this.triangle = triangle;
+    this.circumcircle = circumcircle;
+  }
+}
 
 const filterTrianglesOutsidePoint = (point, triangles) =>
-  triangles.filter(triangle => !containsPoint(triangle, point));
+  triangles.filter(triangle => !triangle.triangle.containsPoint(point));
 
 const filterTrianglesContainingPoint = (point, triangles) =>
-  // So-called "bad" triangles in the Bowyer-Watson algorithm
-  triangles.filter(triangle => containsPoint(triangle, point));
+  triangles.filter(triangle => triangle.triangle.containsPoint(point));
 
 class DelaunayEditor extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     this.points = [
-      { x: 0, y: 0 },
-      { x: 800, y: 0 },
-      { x: 800, y: 600 },
-      { x: 0, y: 600 }
+      new Point(0, 0),
+      new Point(800, 0),
+      new Point(800, 600),
+      new Point(0, 600)
     ];
     this.triangles = [];
     this.render();
@@ -29,10 +58,10 @@ class DelaunayEditor extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue !== newValue) {
       this.points = [
-        { x: 0, y: 0 },
-        { x: 800, y: 0 },
-        { x: 800, y: 600 },
-        { x: 0, y: 600 }
+        new Point(0, 0),
+        new Point(800, 0),
+        new Point(800, 600),
+        new Point(0, 600)
       ];
       this.triangles = [];
       this.render();
@@ -59,10 +88,7 @@ class DelaunayEditor extends HTMLElement {
   handleSvgClick(event) {
     const svg = this.shadowRoot.querySelector('#svg');
     const rect = svg.getBoundingClientRect();
-    const point = {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
-    };
+    const point = new Point(event.clientX - rect.left, event.clientY - rect.top);
     this.addPoint(point);
   }
 
@@ -73,9 +99,9 @@ class DelaunayEditor extends HTMLElement {
 
   updateSvg() {
     const svg = this.shadowRoot.querySelector('#svg');
-    svg.innerHTML = this.points.map(point => `
-      <circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>
-    `).join('');
+    svg.innerHTML = this.points.map(point => 
+      `<circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>`
+    ).join('');
   }
 };
 customElements.define('delaunay-editor', DelaunayEditor);
