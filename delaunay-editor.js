@@ -25,9 +25,25 @@ class Circle {
 }
 
 class DelaunayTriangle {
-  constructor(triangle, circumcircle) {
+  constructor(triangle) {
     this.triangle = triangle;
-    this.circumcircle = circumcircle;
+    this.circumcircle = this.computeCircumcircle();
+  }
+
+  computeCircumcircle() {
+    const { p1, p2, p3 } = this.triangle;
+    const dA = p1.x * p1.x + p1.y * p1.y;
+    const dB = p2.x * p2.x + p2.y * p2.y;
+    const dC = p3.x * p3.x + p3.y * p3.y;
+
+    const aux1 = (dA * (p3.y - p2.y) + dB * (p1.y - p3.y) + dC * (p2.y - p1.y));
+    const aux2 = -(dA * (p3.x - p2.x) + dB * (p1.x - p3.x) + dC * (p2.x - p1.x));
+    const div = (2 * (p1.x * (p3.y - p2.y) + p2.x * (p1.y - p3.y) + p3.x * (p2.y - p1.y)));
+
+    const center = new Point(aux1 / div, aux2 / div);
+    const radius = Math.sqrt((center.x - p1.x) ** 2 + (center.y - p1.y) ** 2);
+
+    return new Circle(center, radius);
   }
 }
 
