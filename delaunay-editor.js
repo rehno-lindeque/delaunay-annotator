@@ -62,6 +62,10 @@ const connect = (edge, point) => {
   return new DelaunayTriangle(triangle);
 };
 
+const fillHole = (edges, point) => {
+  return edges.map(edge => connect(edge, point));
+};
+
 const filterTrianglesOutsidePoint = (point, triangles) =>
   triangles.filter(triangle => !triangle.containsPoint(point));
 
