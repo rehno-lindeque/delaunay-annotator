@@ -11,10 +11,11 @@
     </style>
 </head>
 <body>
-  <delaunay-editor></delaunay-triangulation>
+  <segmentation-editor></segmentation-editor>
+  <script src="delaunay-editor.js"></script>
 
   <script>
-    class DelaunayEditor extends HTMLElement {
+    class SegmentationEditor extends HTMLElement {
       constructor() {
         super();
         this.attachShadow({ mode: 'open' });
@@ -25,54 +26,22 @@
           { x: 0, y: 600 }
         ];
         this.triangles = [];
-        console.log(this.points);
         this.render();
-      }
-
-      connectedCallback() {
-        this.shadowRoot.querySelector('#color-input').addEventListener('input', (e) => this.updateColor(e));
-        this.shadowRoot.querySelector('#svg').addEventListener('click', (e) => this.handleSvgClick(e));
       }
 
       render() {
         this.shadowRoot.innerHTML = `
           <div>
             <input id="color-input" type="color" value="${this.newColor}">
+            <input id="image-url-input" type="url" placeholder="Enter image URL" pattern="https://.*">
             <button id="render-upload">Render and Upload</button>
           </div>
-          <svg id="svg" width="800" height="600" viewBox="0 0 800 600"></svg>
+          <delaunay-editor></delaunay-editor>
         `;
-        this.updateSvg();
-      }
-
-      updateColor(event) {
-        this.newColor = event.target.value;
-      }
-
-      handleSvgClick(event) {
-        const svg = this.shadowRoot.querySelector('#svg');
-        const rect = svg.getBoundingClientRect();
-        const point = {
-          x: event.clientX - rect.left,
-          y: event.clientY - rect.top
-        };
-        this.addPoint(point);
-      }
-
-      addPoint(point) {
-        this.points.push(point);
-        this.updateSvg();
-      }
-
-      updateSvg() {
-        const svg = this.shadowRoot.querySelector('#svg');
-        svg.innerHTML = this.points.map(point => `
-          <circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>
-        `).join('');
       }
     }
 
-    customElements.define('delaunay-editor', DelaunayEditor);
+    customElements.define('segmentation-editor', SegmentationEditor);
   </script>
 </body>
 </html>
