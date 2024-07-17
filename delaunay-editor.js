@@ -57,6 +57,11 @@ class DelaunayTriangle {
   }
 }
 
+const connect = (edge, point) => {
+  const triangle = new Triangle(edge.p1, edge.p2, point);
+  return new DelaunayTriangle(triangle);
+};
+
 const filterTrianglesOutsidePoint = (point, triangles) =>
   triangles.filter(triangle => !triangle.containsPoint(point));
 
