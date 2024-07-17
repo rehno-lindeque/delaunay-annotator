@@ -57,7 +57,7 @@
           imageContainer.appendChild(loadedImage);
           delaunayEditor.setAttribute('width', width);
           delaunayEditor.setAttribute('height', height);
-          this.shadowRoot.appendChild(delaunayEditor);
+          imageContainer.appendChild(delaunayEditor);
         };
         img.src = imageUrl;
       }
