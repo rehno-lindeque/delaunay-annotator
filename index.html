@@ -40,7 +40,21 @@
         img.onload = () => {
           const width = img.width;
           const height = img.height;
+          const imageContainer = this.shadowRoot.querySelector('#image-container');
+          const loadedImage = this.shadowRoot.querySelector('#loaded-image');
+          loadedImage.src = imageUrl;
+          loadedImage.width = width;
+          loadedImage.height = height;
+
           const delaunayEditor = document.createElement('delaunay-editor');
+          delaunayEditor.setAttribute('width', width);
+          delaunayEditor.setAttribute('height', height);
+          delaunayEditor.style.position = 'absolute';
+          delaunayEditor.style.top = '0';
+          delaunayEditor.style.left = '0';
+          delaunayEditor.style.zIndex = '1';
+
+          imageContainer.appendChild(loadedImage);
           delaunayEditor.setAttribute('width', width);
           delaunayEditor.setAttribute('height', height);
           this.shadowRoot.appendChild(delaunayEditor);
@@ -50,11 +64,14 @@
 
       render() {
         this.shadowRoot.innerHTML = `
-          <div>
-            <input id="color-input" type="color" value="${this.newColor}">
-            <input id="image-url-input" type="url" placeholder="Enter image URL" pattern="https://.*">
-            <button id="render-upload">Render and Upload</button>
-          </div>
+        <div>
+          <input id="color-input" type="color" value="${this.newColor}">
+          <input id="image-url-input" type="url" placeholder="Enter image URL" pattern="https://.*">
+          <button id="render-upload">Render and Upload</button>
+        </div>
+        <div id="image-container" style="position: relative;">
+          <img id="loaded-image" style="position: absolute; top: 0; left: 0; z-index: 0;">
+        </div>
         `;
       }
     }
