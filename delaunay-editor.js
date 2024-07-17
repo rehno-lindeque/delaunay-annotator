@@ -17,8 +17,10 @@ class DelaunayEditor extends HTMLElement {
   }
 
   render() {
+    const width = this.getAttribute('width') || 800;
+    const height = this.getAttribute('height') || 600;
     this.shadowRoot.innerHTML = `
-      <svg id="svg" width="800" height="600" viewBox="0 0 800 600"></svg>
+      <svg id="svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"></svg>
     `;
     this.updateSvg();
   }
