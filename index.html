@@ -18,8 +18,14 @@
       constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        this.points = [];
+        this.points = [
+          { x: 0, y: 0 },
+          { x: 800, y: 0 },
+          { x: 800, y: 600 },
+          { x: 0, y: 600 }
+        ];
         this.triangles = [];
+        console.log(this.points);
         this.render();
       }
 
@@ -55,7 +61,6 @@
 
       addPoint(point) {
         this.points.push(point);
-        // TODO: modify triangulation based on bowyer watson
         this.updateSvg();
       }
 
@@ -63,8 +68,6 @@
         const svg = this.shadowRoot.querySelector('#svg');
         svg.innerHTML = this.points.map(point => `
           <circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>
-        `).join('') + this.triangles.map(triangle => `
-          <polygon points="${triangle.map(p => `${p.x},${p.y}`).join(' ')}" fill="${this.newColor}" stroke="black"></polygon>
         `).join('');
       }
     }
