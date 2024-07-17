@@ -1,3 +1,9 @@
+const containsPoint = (triangle, point) =>
+  triangle.some(vertex => vertex.x === point.x && vertex.y === point.y);
+
+const filterTriangles = (point, triangles) =>
+  triangles.filter(triangle => !containsPoint(triangle, point));
+
 class DelaunayEditor extends HTMLElement {
   constructor() {
     super();
@@ -67,6 +73,4 @@ class DelaunayEditor extends HTMLElement {
       <circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>
     `).join('');
   }
-}
-
-customElements.define('delaunay-editor', DelaunayEditor);
+};

@@ -19,12 +19,6 @@
       constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        this.points = [
-          { x: 0, y: 0 },
-          { x: 800, y: 0 },
-          { x: 800, y: 600 },
-          { x: 0, y: 600 }
-        ];
         this.triangles = [];
         this.render();
         this.shadowRoot.querySelector('#image-url-input').addEventListener('keypress', (e) => {
