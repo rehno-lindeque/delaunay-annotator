@@ -1,10 +1,3 @@
-function edgesMatch(edge1, edge2) {
-  return (
-    (edge1.p1.x === edge2.p1.x && edge1.p1.y === edge2.p1.y && edge1.p2.x === edge2.p2.x && edge1.p2.y === edge2.p2.y) ||
-    (edge1.p1.x === edge2.p2.x && edge1.p1.y === edge2.p2.y && edge1.p2.x === edge2.p1.x && edge1.p2.y === edge2.p1.y)
-  );
-}
-
 class Point {
   constructor(x, y) {
     this.x = x;
@@ -71,6 +64,23 @@ class DelaunayTriangle {
 
     return new Circle(center, radius);
   }
+}
+
+const edgesMatch(edge1, edge2) => (
+    (edge1.p1.x === edge2.p1.x && edge1.p1.y === edge2.p1.y && edge1.p2.x === edge2.p2.x && edge1.p2.y === edge2.p2.y) ||
+    (edge1.p1.x === edge2.p2.x && edge1.p1.y === edge2.p2.y && edge1.p2.x === edge2.p1.x && edge1.p2.y === edge2.p1.y)
+  );
+
+const uniqueEdges(edges) => {
+  var filteredEdges = [];
+
+  edges.forEach(e1 => {
+    if (!filteredEdges.some(e2 => edgesMatch(e1, e2))) {
+      filteredEdges.push(e1);
+    }
+  });
+
+  return filteredEdges;
 }
 
 const connect = (edge, point) => {
@@ -163,16 +173,5 @@ class DelaunayEditor extends HTMLElement {
     ).join('');
   }
 };
-function getUniqueEdges(edges) {
-  const uniqueEdges = [];
-
-  edges.forEach(edge => {
-    if (!uniqueEdges.some(uniqueEdge => edgesMatch(uniqueEdge, edge))) {
-      uniqueEdges.push(edge);
-    }
-  });
-
-  return uniqueEdges;
-}
 
 customElements.define('delaunay-editor', DelaunayEditor);
