@@ -174,4 +174,24 @@ class DelaunayEditor extends HTMLElement {
   }
 };
 
+function addPoint(point, triangles) {
+  // Step 1: Partition triangles into good and bad sets
+  const { goodTriangles, badTriangles } = partitionTriangles(point, triangles);
+
+  // Step 2: Extract the boundary edges of the bad triangles
+  let boundaryEdges = [];
+  badTriangles.forEach(triangle => {
+    boundaryEdges = boundaryEdges.concat(triangle.edges());
+  });
+
+  // Step 3: Remove duplicate edges to get a polygonal hole
+  boundaryEdges = getUniqueEdges(boundaryEdges);
+
+  // Step 4: Create new triangles by connecting the boundary edges to the new point
+  const newTriangles = fillHole(boundaryEdges, point);
+
+  // Step 5: Return the updated list of triangles
+  return goodTriangles.concat(newTriangles);
+}
+
 customElements.define('delaunay-editor', DelaunayEditor);
