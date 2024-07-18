@@ -128,7 +128,10 @@ class DelaunayEditor extends HTMLElement {
       new Point(width, height),
       new Point(0, height)
     ];
-    this.triangles = [];
+    this.triangles = [
+      new DelaunayTriangle(new Triangle(this.points[0], this.points[1], this.points[2])),
+      new DelaunayTriangle(new Triangle(this.points[0], this.points[2], this.points[3]))
+    ];
     this.render();
   }
 
@@ -146,7 +149,10 @@ class DelaunayEditor extends HTMLElement {
         new Point(width, height),
         new Point(0, height)
       ];
-      this.triangles = [];
+      this.triangles = [
+        new DelaunayTriangle(new Triangle(this.points[0], this.points[1], this.points[2])),
+        new DelaunayTriangle(new Triangle(this.points[0], this.points[2], this.points[3]))
+      ];
       this.render();
     }
   }
