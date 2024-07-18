@@ -163,4 +163,16 @@ class DelaunayEditor extends HTMLElement {
     ).join('');
   }
 };
+function getUniqueEdges(edges) {
+  const uniqueEdges = [];
+
+  edges.forEach(edge => {
+    if (!uniqueEdges.some(uniqueEdge => edgesMatch(uniqueEdge, edge))) {
+      uniqueEdges.push(edge);
+    }
+  });
+
+  return uniqueEdges;
+}
+
 customElements.define('delaunay-editor', DelaunayEditor);
