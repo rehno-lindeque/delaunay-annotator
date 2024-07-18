@@ -146,9 +146,9 @@ class DelaunayEditor extends HTMLElement {
       const height = this.getAttribute('height') || 600;
       this.points = [
         new Point(0, 0),
-        new Point(width, 0),
-        new Point(width, height),
-        new Point(0, height)
+        new Point(parseInt(width), 0),
+        new Point(parseInt(width), parseInt(height)),
+        new Point(0, parseInt(height))
       ];
       this.triangles = [
         new DelaunayTriangle(new Triangle(this.points[0], this.points[1], this.points[2])),
