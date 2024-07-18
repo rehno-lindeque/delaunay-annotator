@@ -66,12 +66,12 @@ class DelaunayTriangle {
   }
 }
 
-const edgesMatch(edge1, edge2) => (
+const edgesMatch = (edge1, edge2) => (
     (edge1.p1.x === edge2.p1.x && edge1.p1.y === edge2.p1.y && edge1.p2.x === edge2.p2.x && edge1.p2.y === edge2.p2.y) ||
     (edge1.p1.x === edge2.p2.x && edge1.p1.y === edge2.p2.y && edge1.p2.x === edge2.p1.x && edge1.p2.y === edge2.p1.y)
   );
 
-const uniqueEdges(edges) => {
+const uniqueEdges = (edges) => {
   var filteredEdges = [];
 
   edges.forEach(e1 => {
@@ -86,7 +86,7 @@ const uniqueEdges(edges) => {
 const connect = (edge, point) => {
   const triangle = new Triangle(edge.p1, edge.p2, point);
   return new DelaunayTriangle(triangle);
-};
+}
 
 const fillHole = (edges, point) =>
   edges.map(edge => connect(edge, point));
@@ -104,7 +104,17 @@ const partitionTriangles = (point, triangles) => {
   });
 
   return { goodTriangles, badTriangles };
-};
+}
+
+const addDelaunayPoint = (point, triangles) => {
+  const { goodTriangles, badTriangles } = partitionTriangles(point, triangles);
+
+  let hole = uniqueEdges(badTriangles.flatMap(triangle => triangle.edges()));
+
+  const newTriangles = fillHole(hole, point);
+
+  return goodTriangles.concat(newTriangles);
+}
 
 class DelaunayEditor extends HTMLElement {
   constructor() {
@@ -163,6 +173,7 @@ class DelaunayEditor extends HTMLElement {
 
   addPoint(point) {
     this.points.push(point);
+    this.triangles = addDelaunayPoint(point, this.triangles);
     this.updateSvg();
   }
 
@@ -173,25 +184,5 @@ class DelaunayEditor extends HTMLElement {
     ).join('');
   }
 };
-
-function addPoint(point, triangles) {
-  // Step 1: Partition triangles into good and bad sets
-  const { goodTriangles, badTriangles } = partitionTriangles(point, triangles);
-
-  // Step 2: Extract the boundary edges of the bad triangles
-  let boundaryEdges = [];
-  badTriangles.forEach(triangle => {
-    boundaryEdges = boundaryEdges.concat(triangle.edges());
-  });
-
-  // Step 3: Remove duplicate edges to get a polygonal hole
-  boundaryEdges = getUniqueEdges(boundaryEdges);
-
-  // Step 4: Create new triangles by connecting the boundary edges to the new point
-  const newTriangles = fillHole(boundaryEdges, point);
-
-  // Step 5: Return the updated list of triangles
-  return goodTriangles.concat(newTriangles);
-}
 
 customElements.define('delaunay-editor', DelaunayEditor);
