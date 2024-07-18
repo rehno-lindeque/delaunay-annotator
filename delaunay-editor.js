@@ -189,7 +189,9 @@ class DelaunayEditor extends HTMLElement {
 
   updateSvg() {
     const svg = this.shadowRoot.querySelector('#svg');
-    svg.innerHTML = this.points.map(point => 
+    svg.innerHTML = this.triangles.map(triangle => 
+      `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" fill="none" stroke="black"/>`
+    ).join('') + this.points.map(point => 
       `<circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>`
     ).join('');
   }
