@@ -73,15 +73,21 @@ const edgesMatch = (edge1, edge2) => (
   );
 
 const uniqueEdges = (edges) => {
-  var filteredEdges = [];
+  const edgeCount = new Map();
 
-  edges.forEach(e1 => {
-    if (!filteredEdges.some(e2 => edgesMatch(e1, e2))) {
-      filteredEdges.push(e1);
+  edges.forEach(edge => {
+    const key = `${Math.min(edge.p1.x, edge.p2.x)},${Math.min(edge.p1.y, edge.p2.y)}-${Math.max(edge.p1.x, edge.p2.x)},${Math.max(edge.p1.y, edge.p2.y)}`;
+    if (edgeCount.has(key)) {
+      edgeCount.set(key, edgeCount.get(key) + 1);
+    } else {
+      edgeCount.set(key, 1);
     }
   });
 
-  return filteredEdges;
+  return edges.filter(edge => {
+    const key = `${Math.min(edge.p1.x, edge.p2.x)},${Math.min(edge.p1.y, edge.p2.y)}-${Math.max(edge.p1.x, edge.p2.x)},${Math.max(edge.p1.y, edge.p2.y)}`;
+    return edgeCount.get(key) === 1;
+  });
 }
 
 const connect = (edge, point) => {
