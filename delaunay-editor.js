@@ -120,11 +120,13 @@ class DelaunayEditor extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    const width = this.getAttribute('width') || 800;
+    const height = this.getAttribute('height') || 600;
     this.points = [
       new Point(0, 0),
-      new Point(800, 0),
-      new Point(800, 600),
-      new Point(0, 600)
+      new Point(width, 0),
+      new Point(width, height),
+      new Point(0, height)
     ];
     this.triangles = [];
     this.render();
@@ -136,11 +138,13 @@ class DelaunayEditor extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue !== newValue) {
+      const width = this.getAttribute('width') || 800;
+      const height = this.getAttribute('height') || 600;
       this.points = [
         new Point(0, 0),
-        new Point(800, 0),
-        new Point(800, 600),
-        new Point(0, 600)
+        new Point(width, 0),
+        new Point(width, height),
+        new Point(0, height)
       ];
       this.triangles = [];
       this.render();
