@@ -3,21 +3,6 @@ class Point {
     this.x = x;
     this.y = y;
   }
-  containsPoint(point) {
-    const dx = point.x - this.circumcircle.center.x;
-    const dy = point.y - this.circumcircle.center.y;
-    const distanceSquared = dx * dx + dy * dy;
-    return distanceSquared <= this.circumcircle.radius * this.circumcircle.radius;
-  }
-
-  edges() {
-    const { p1, p2, p3 } = this.triangle;
-    return [
-      new Edge(p1, p2),
-      new Edge(p2, p3),
-      new Edge(p3, p1)
-    ];
-  }
 }
 
 class Edge {
@@ -47,6 +32,22 @@ class DelaunayTriangle {
   constructor(triangle) {
     this.triangle = triangle;
     this.circumcircle = this.computeCircumcircle();
+  }
+
+  containsPoint(point) {
+    const dx = point.x - this.circumcircle.center.x;
+    const dy = point.y - this.circumcircle.center.y;
+    const distanceSquared = dx * dx + dy * dy;
+    return distanceSquared <= this.circumcircle.radius * this.circumcircle.radius;
+  }
+
+  edges() {
+    const { p1, p2, p3 } = this.triangle;
+    return [
+      new Edge(p1, p2),
+      new Edge(p2, p3),
+      new Edge(p3, p1)
+    ];
   }
 
   computeCircumcircle() {
