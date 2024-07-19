@@ -291,7 +291,7 @@ class DelaunayEditor extends HTMLElement {
         </style>
       `;
       const svgData = new XMLSerializer().serializeToString(svg);
-      const svgWithStyle = svgData.replace('<svg', `<svg xmlns="http://www.w3.org/2000/svg"${style}`);
+      const svgWithStyle = svgData.replace('</svg>', `${style}</svg>`);
 
       const canvas = document.createElement('canvas');
       canvas.width = svg.width.baseVal.value;
