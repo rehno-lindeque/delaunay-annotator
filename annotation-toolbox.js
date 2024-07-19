@@ -52,7 +52,9 @@ class AnnotationToolbox extends HTMLElement {
       tool.addEventListener('click', () => {
         this.shadowRoot.querySelectorAll('.tool').forEach(t => t.classList.remove('selected'));
         tool.classList.add('selected');
-        this.dispatchEvent(new CustomEvent('tool-selected', { detail: tool.classList[1] }));
+        const toolType = tool.classList.contains('brush') ? 'brush' : 'point';
+        const brushLabel = toolType === 'brush' ? tool.classList[1] : null;
+        this.dispatchEvent(new CustomEvent('tool-selected', { detail: { tool: toolType, brushLabel: brushLabel } }));
       });
     });
   }

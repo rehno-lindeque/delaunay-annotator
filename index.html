@@ -45,14 +45,14 @@
         });
         const toolbox = this.shadowRoot.querySelector('annotation-toolbox');
         toolbox.addEventListener('tool-selected', (e) => {
-          const selectedTool = e.detail;
-          console.log('Selected tool:', selectedTool);
-          this.selectedTool = selectedTool;
+          const { tool, brushLabel } = e.detail;
+          console.log('Selected tool:', tool, 'Brush label:', brushLabel);
+          this.selectedTool = tool;
           const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
           if (delaunayEditor) {
-            delaunayEditor.setAttribute('selected-tool', selectedTool);
-            if (selectedTool.startsWith('brush')) {
-              delaunayEditor.setAttribute('brush-label', selectedTool.split(' ')[1]);
+            delaunayEditor.setAttribute('selected-tool', tool);
+            if (brushLabel) {
+              delaunayEditor.setAttribute('brush-label', brushLabel);
             }
           }
         });
