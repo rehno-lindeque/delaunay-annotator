@@ -83,7 +83,14 @@ const coincident = (edge1, edge2) => (
 const outerEdges = (edges) => {
   const edgeCount = new Map();
 
-  // TODO
+  edges.forEach(edge => {
+    const key = edge.key;
+    if (edgeCount.has(key)) {
+      edgeCount.set(key, edgeCount.get(key) + 1);
+    } else {
+      edgeCount.set(key, 1);
+    }
+  });
 
   return edges.filter(edge => {
     const key = edge.key;
