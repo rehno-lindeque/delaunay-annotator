@@ -16,15 +16,6 @@
             flex: 1;
             overflow: hidden;
         }
-        toolbar-component {
-            flex: 0 0 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: #f0f0f0;
-            border-right: 1px solid #ccc;
-        }
         segmentation-editor {
             flex: 1;
             display: flex;
@@ -40,11 +31,10 @@
 </head>
 <body>
   <div class="container">
-    <toolbar-component></toolbar-component>
     <segmentation-editor></segmentation-editor>
   </div>
   <script src="delaunay-editor.js"></script>
-  <script src="toolbar.js"></script>
+  <script src="toolbox.js"></script>
 
   <script>
     class SegmentationEditor extends HTMLElement {
@@ -54,6 +44,15 @@
         this.triangles = [];
         this.selectedTool = 'point'; // Default tool
         this.render();
+        this.shadowRoot.querySelector('#image-url-input').addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            this.loadImage();
+          }
+        });
+        this.shadowRoot.querySelector('toolbox').addEventListener('tool-selected', (e) => {
+          console.log('Selected tool:', e.detail);
+          this.selectedTool = e.detail;
+        });
         this.shadowRoot.querySelector('#image-url-input').addEventListener('keypress', (e) => {
           if (e.key === 'Enter') {
             this.loadImage();
@@ -95,7 +94,27 @@
 
       render() {
         this.shadowRoot.innerHTML = `
-        <div>
+        <style>
+          .control-bar {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ccc;
+          }
+          .control-bar input {
+            flex: 1;
+            margin-right: 10px;
+          }
+          .image-container {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        </style>
+        <div class="control-bar">
           <input id="image-url-input" type="url" placeholder="Enter image URL" pattern="https://.*">
           <button id="render-upload">Render and Upload</button>
         </div>
