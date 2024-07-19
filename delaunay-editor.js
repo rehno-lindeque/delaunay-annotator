@@ -280,14 +280,14 @@ class DelaunayEditor extends HTMLElement {
       const svg = this.shadowRoot.querySelector('#svg');
       const style = document.createElement('style');
       style.textContent = `
-        .unknown { fill: transparent; shape-rendering: crispEdges; }
-        .ignore { fill: gray; shape-rendering: crispEdges; }
-        .background { fill: white; shape-rendering: crispEdges; }
-        .body { fill: red; shape-rendering: crispEdges; }
-        .pick-surface { fill: green; shape-rendering: crispEdges; }
-        .lead { fill: blue; shape-rendering: crispEdges; }
+        .unknown { fill: transparent; }
+        .ignore { fill: gray; }
+        .background { fill: white; }
+        .body { fill: red; }
+        .pick-surface { fill: green; }
+        .lead { fill: blue; }
         polygon { stroke: none; shape-rendering: crispEdges; }
-        circle { fill: none; shape-rendering: crispEdges; }
+        circle { fill: none; }
       `;
 
       const clonedSvg = svg.cloneNode(true);
