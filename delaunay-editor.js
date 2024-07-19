@@ -196,12 +196,12 @@ class DelaunayEditor extends HTMLElement {
           svg {
             border: 1px solid black;
           }
-          .unknown { fill: transparent; }
-          .ignore { fill: gray; }
-          .background { fill: white; }
-          .body { fill: red; }
-          .pick-surface { fill: green; }
-          .lead { fill: blue; }
+          svg polygon .unknown { fill: transparent; }
+          svg polygon .ignore { fill: gray; }
+          svg polygon .background { fill: white; }
+          svg polygon .body { fill: red; }
+          svg polygon .pick-surface { fill: green; }
+          svg polygon .lead { fill: blue; }
         </style>
         <svg id="svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"></svg>
       `;
