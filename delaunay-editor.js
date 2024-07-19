@@ -9,7 +9,7 @@ class Point {
       if (a.x > b.x || (a.x === b.x && a.y > b.y)) return 1;
       return 0;
     });
-    return `${p1.x},${p1.y}-${p2.x},${p2.y}`;
+    return `${p1.x},${p1.y},${p2.x},${p2.y}`;
   }
 }
 
