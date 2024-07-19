@@ -67,7 +67,7 @@ class DelaunayTriangle {
   }
 }
 
-const edgesMatch = (edge1, edge2) => (
+const coincident = (edge1, edge2) => (
     (edge1.p1.x === edge2.p1.x && edge1.p1.y === edge2.p1.y && edge1.p2.x === edge2.p2.x && edge1.p2.y === edge2.p2.y) ||
     (edge1.p1.x === edge2.p2.x && edge1.p1.y === edge2.p2.y && edge1.p2.x === edge2.p1.x && edge1.p2.y === edge2.p1.y)
   );
