@@ -192,6 +192,17 @@ class DelaunayEditor extends HTMLElement {
     const height = this.getAttribute('height') || 600;
     if (width && height) {
       this.shadowRoot.innerHTML = `
+        <style>
+          svg {
+            border: 1px solid black;
+          }
+          .unknown { fill: transparent; }
+          .ignore { fill: gray; }
+          .background { fill: white; }
+          .body { fill: red; }
+          .pick-surface { fill: green; }
+          .lead { fill: blue; }
+        </style>
         <svg id="svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"></svg>
       `;
       this.updateSvg();
