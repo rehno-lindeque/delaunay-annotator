@@ -53,7 +53,7 @@
           this.selectedTool = selectedTool;
           const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
           if (delaunayEditor) {
-            delaunayEditor.setAttribute('selectedTool', selectedTool);
+            delaunayEditor.setAttribute('selected-tool', selectedTool);
           }
         });
         this.shadowRoot.querySelector('#image-url-input').addEventListener('keypress', (e) => {

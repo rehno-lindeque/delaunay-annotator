@@ -37,6 +37,7 @@ class AnnotationToolbox extends HTMLElement {
       <div class="toolbar">
         <div class="tool point" title="Point Tool">●</div>
         <div class="tool unknown" title="Unknown Label"></div>
+        <div class="tool brush" title="Brush Tool">🖌️</div>
         <div class="tool ignore" title="Ignore Label"></div>
         <div class="tool background" title="Background Label"></div>
         <div class="tool body" title="Body Label"></div>

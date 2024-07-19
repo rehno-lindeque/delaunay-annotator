@@ -173,11 +173,11 @@ class DelaunayEditor extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['width', 'height', 'selectedTool'];
+    return ['width', 'height', 'selected-tool'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'selectedTool') {
+    if (name === 'selected-tool') {
       this.selectedTool = newValue;
     } else if (new Set(['width', 'height']).has(name)) {
       // Clear and regenrate the triangle mesh
@@ -251,5 +251,6 @@ class DelaunayEditor extends HTMLElement {
     };
     return labelColors[label] || 'none';
   }
+}
 
 customElements.define('delaunay-editor', DelaunayEditor);
