@@ -223,6 +223,9 @@ class DelaunayEditor extends HTMLElement {
           svg .body { fill: red; }
           svg .pick-surface { fill: green; }
           svg .lead { fill: blue; }
+          svg polygon {
+            stroke: black;
+          }
         </style>
         <svg id="svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"></svg>
       `;
@@ -266,7 +269,7 @@ class DelaunayEditor extends HTMLElement {
   updateSvg() {
     const svg = this.shadowRoot.querySelector('#svg');
     svg.innerHTML = this.triangles.map(triangle => 
-      `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" class="${triangle.label}" stroke="black"/>`
+      `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" class="${triangle.label}"/>`
     ).join('') + this.points.map(point => 
       `<circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>`
     ).join('');
