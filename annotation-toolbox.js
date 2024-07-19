@@ -11,11 +11,11 @@ class AnnotationToolbox extends HTMLElement {
         .toolbar {
           display: flex;
           flex-direction: column;
-          gap: 1em;
+          gap: 1Em;
         }
         .tool {
-          width: 30px;
-          height: 30px;
+          width: 2Em;
+          height: 2Em;
           border-radius: 50%;
           border: 1px solid black;
           display: flex;
