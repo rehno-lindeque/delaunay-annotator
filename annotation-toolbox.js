@@ -1,4 +1,4 @@
-class Toolbox extends HTMLElement {
+class AnnotationToolbox extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -54,4 +54,4 @@ class Toolbox extends HTMLElement {
   }
 }
 
-customElements.define('toolbar-component', Toolbar);
+customElements.define('annotation-toolbox', AnnotationToolbox);

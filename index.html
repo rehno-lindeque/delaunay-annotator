@@ -34,7 +34,7 @@
     <segmentation-editor></segmentation-editor>
   </div>
   <script src="delaunay-editor.js"></script>
-  <script src="toolbox.js"></script>
+  <script src="annotation-toolbox.js"></script>
 
   <script>
     class SegmentationEditor extends HTMLElement {
@@ -49,7 +49,7 @@
             this.loadImage();
           }
         });
-        this.shadowRoot.querySelector('toolbox').addEventListener('tool-selected', (e) => {
+        this.shadowRoot.querySelector('annotation-toolbox').addEventListener('tool-selected', (e) => {
           console.log('Selected tool:', e.detail);
           this.selectedTool = e.detail;
         });
@@ -95,6 +95,15 @@
       render() {
         this.shadowRoot.innerHTML = `
         <style>
+          annotation-toolbox {
+              flex: 0 0 50px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              background-color: #f0f0f0;
+              border-right: 1px solid #ccc;
+          }
           .control-bar {
             display: flex;
             align-items: center;
@@ -118,6 +127,7 @@
           <input id="image-url-input" type="url" placeholder="Enter image URL" pattern="https://.*">
           <button id="render-upload">Render and Upload</button>
         </div>
+        <annotation-toolbox></annotation-toolbox>
         <div id="image-container" style="position: relative;">
           <img id="loaded-image" style="position: absolute; top: 0; left: 0; z-index: 0; user-select: none;">
         </div>
