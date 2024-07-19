@@ -66,9 +66,9 @@
       loadImage() {
         const imageUrl = this.shadowRoot.querySelector('#image-url-input').value;
         const img = this.shadowRoot.querySelector('#sample-image');
-        img.onload = () => {
-          const width = img.width;
-          const height = img.height;
+        img.addEventListener('load', () => {
+          const width = img.naturalWidth;
+          const height = img.naturalHeight;
           const imageContainer = this.shadowRoot.querySelector('#image-container');
           img.width = width;
           img.height = height;
@@ -81,16 +81,13 @@
             delaunayEditor.style.top = 0;
             delaunayEditor.style.left = 0;
             delaunayEditor.innerHTML = '';
-            const imageElement = document.createElementNS("http://www.w3.org/2000/svg", "image");
-            imageElement.setAttributeNS("http://www.w3.org/1999/xlink", "href", img.src);
-            imageElement.setAttribute("width", width);
-            imageElement.setAttribute("height", height);
-            imageElement.setAttribute("x", 0);
-            imageElement.setAttribute("y", 0);
-            imageElement.setAttribute("slot", "image");
-            delaunayEditor.appendChild(imageElement);
+            img.setAttributeNS("http://www.w3.org/1999/xlink", "href", img.src);
+            img.setAttribute("width", width);
+            img.setAttribute("height", height);
+            img.setAttribute("x", 0);
+            img.setAttribute("y", 0);
           }
-        };
+        });
         img.src = imageUrl;
       }
 
@@ -133,7 +130,7 @@
           <annotation-toolbox></annotation-toolbox>
           <div id="image-container" style="flex: 1; position: relative;">
             <delaunay-editor>
-              <img id="sample-image" slot="image">
+              <image id="sample-image" slot="image"></image>
             </delaunay-editor>
           </div>
         </div>
