@@ -237,7 +237,7 @@ class DelaunayEditor extends HTMLElement {
 
     this.triangles.forEach(triangle => {
       if (triangle.intersectsPoint(point)) {
-        triangle.label = 'background';
+        triangle.label = this.brushLabel;
       }
     });
 
