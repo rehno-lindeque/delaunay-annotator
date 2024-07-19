@@ -278,7 +278,20 @@ class DelaunayEditor extends HTMLElement {
   renderToImageBlob() {
     return new Promise((resolve, reject) => {
       const svg = this.shadowRoot.querySelector('#svg');
+      const style = `
+        <style>
+          .unknown { fill: transparent; stroke: black; }
+          .ignore { fill: gray; stroke: black; }
+          .background { fill: white; stroke: black; }
+          .body { fill: red; stroke: black; }
+          .pick-surface { fill: green; stroke: black; }
+          .lead { fill: blue; stroke: black; }
+          polygon { stroke: black; }
+          circle { fill: red; }
+        </style>
+      `;
       const svgData = new XMLSerializer().serializeToString(svg);
+      const svgWithStyle = svgData.replace('<svg', `<svg xmlns="http://www.w3.org/2000/svg"${style}`);
 
       const canvas = document.createElement('canvas');
       canvas.width = svg.width.baseVal.value;
@@ -286,7 +299,7 @@ class DelaunayEditor extends HTMLElement {
       const ctx = canvas.getContext('2d');
 
       const img = new Image();
-      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const svgBlob = new Blob([svgWithStyle], { type: 'image/svg+xml;charset=utf-8' });
       const url = URL.createObjectURL(svgBlob);
 
       img.onload = () => {
