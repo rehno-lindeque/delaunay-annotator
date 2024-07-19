@@ -2,25 +2,7 @@ class Point {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.label = 'background'; // Default label
-    if (this.selectedTool === 'brush') {
-      this.updateTriangleLabels(event);
-    }
-  }
-
-  updateTriangleLabels(event) {
-    const svg = this.shadowRoot.querySelector('#svg');
-    const rect = svg.getBoundingClientRect();
-    const point = new Point(event.clientX - rect.left, event.clientY - rect.top);
-
-    this.triangles.forEach(triangle => {
-      if (triangle.containsPoint(point)) {
-        triangle.label = 'background'; // Hardcoded for now
-      }
-    });
-
-    this.updateSvg();
-  }
+    this.label = 'unknown'; // Default label
 }
 
 class Edge {
