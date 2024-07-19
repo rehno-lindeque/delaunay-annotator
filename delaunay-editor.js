@@ -3,22 +3,6 @@ class Point {
     this.x = x;
     this.y = y;
   }
-
-  updateImageSize() {
-    const img = this.querySelector('img');
-    if (img) {
-      img.onload = () => {
-        const width = img.width;
-        const height = img.height;
-        this.setAttribute('width', width);
-        this.setAttribute('height', height);
-        this.render();
-      };
-      if (img.complete) {
-        img.onload();
-      }
-    }
-  }
 }
 
 class Edge {
@@ -239,15 +223,16 @@ class DelaunayEditor extends HTMLElement {
           svg .body { fill: red; }
           svg .pick-surface { fill: green; }
           svg .lead { fill: blue; }
-          ::slotted(img) {
-            position: absolute;
-            top: 0;
-            left: 0;
-            user-select: none;
-          }
+          // ::slotted(img) {
+          //   position: absolute;
+          //   top: 0;
+          //   left: 0;
+          //   user-select: none;
+          // }
         </style>
         <svg id="svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
           <slot name="image"></slot>
+          <g></g>
         </svg>
       `;
       this.updateSvg();
@@ -288,8 +273,8 @@ class DelaunayEditor extends HTMLElement {
   }
 
   updateSvg() {
-    const svg = this.shadowRoot.querySelector('#svg');
-    svg.innerHTML = this.triangles.map(triangle => 
+    const drawing = this.shadowRoot.querySelector('#svg g');
+    drawing.innerHTML = this.triangles.map(triangle => 
       `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" class="${triangle.label}" stroke="black"/>`
     ).join('') + this.points.map(point => 
       `<circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>`
