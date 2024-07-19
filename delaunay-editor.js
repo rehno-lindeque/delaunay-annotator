@@ -3,6 +3,14 @@ class Point {
     this.x = x;
     this.y = y;
   }
+  get key() {
+    const [p1, p2] = [this.p1, this.p2].sort((a, b) => {
+      if (a.x < b.x || (a.x === b.x && a.y < b.y)) return -1;
+      if (a.x > b.x || (a.x === b.x && a.y > b.y)) return 1;
+      return 0;
+    });
+    return `${p1.x},${p1.y}-${p2.x},${p2.y}`;
+  }
 }
 
 class Edge {
