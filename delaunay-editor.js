@@ -2,6 +2,24 @@ class Point {
   constructor(x, y) {
     this.x = x;
     this.y = y;
+    this.label = 'background'; // Default label
+    if (this.selectedTool === 'brush') {
+      this.updateTriangleLabels(event);
+    }
+  }
+
+  updateTriangleLabels(event) {
+    const svg = this.shadowRoot.querySelector('#svg');
+    const rect = svg.getBoundingClientRect();
+    const point = new Point(event.clientX - rect.left, event.clientY - rect.top);
+
+    this.triangles.forEach(triangle => {
+      if (triangle.containsPoint(point)) {
+        triangle.label = 'background'; // Hardcoded for now
+      }
+    });
+
+    this.updateSvg();
   }
 }
 
@@ -148,7 +166,10 @@ class DelaunayEditor extends HTMLElement {
       new DelaunayTriangle(new Triangle(this.points[0], this.points[2], this.points[3]))
     ];
     this.selectedTool = 'point'; // Default tool
+    this.isDrawing = false;
     this.render();
+    this.addEventListener('mousedown', () => this.isDrawing = true);
+    this.addEventListener('mouseup', () => this.isDrawing = false);
   }
 
   static get observedAttributes() {
@@ -214,11 +235,21 @@ class DelaunayEditor extends HTMLElement {
   updateSvg() {
     const svg = this.shadowRoot.querySelector('#svg');
     svg.innerHTML = this.triangles.map(triangle => 
-      `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" fill="none" stroke="black"/>`
+      `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" fill="${this.getLabelColor(triangle.label)}" stroke="black"/>`
     ).join('') + this.points.map(point => 
       `<circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>`
     ).join('');
   }
-};
+  getLabelColor(label) {
+    const labelColors = {
+      'background': 'white',
+      'body': 'red',
+      'pick-surface': 'green',
+      'lead': 'blue',
+      'ignore': 'gray',
+      'unknown': 'transparent'
+    };
+    return labelColors[label] || 'none';
+  }
 
 customElements.define('delaunay-editor', DelaunayEditor);
