@@ -81,7 +81,14 @@
             delaunayEditor.style.top = 0;
             delaunayEditor.style.left = 0;
             delaunayEditor.innerHTML = '';
-            delaunayEditor.appendChild(img);
+            const imageElement = document.createElementNS("http://www.w3.org/2000/svg", "image");
+            imageElement.setAttributeNS("http://www.w3.org/1999/xlink", "href", img.src);
+            imageElement.setAttribute("width", width);
+            imageElement.setAttribute("height", height);
+            imageElement.setAttribute("x", 0);
+            imageElement.setAttribute("y", 0);
+            imageElement.setAttribute("slot", "image");
+            delaunayEditor.appendChild(imageElement);
           }
         };
         img.src = imageUrl;
@@ -126,7 +133,7 @@
           <annotation-toolbox></annotation-toolbox>
           <div id="image-container" style="flex: 1; position: relative;">
             <delaunay-editor>
-              <img id="sample-image">
+              <img id="sample-image" slot="image">
             </delaunay-editor>
           </div>
         </div>
