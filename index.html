@@ -27,7 +27,22 @@
   <div class="container">
     <segmentation-editor></segmentation-editor>
     <button id="preview-action">Preview png</button>
+    <img id="preview" width="800" height="800">
     <img id="preview" width="800" height="800"></canvas>
+    <script>
+      document.getElementById('preview-action').addEventListener('click', async () => {
+        const delaunayEditor = document.querySelector('delaunay-editor');
+        if (delaunayEditor) {
+          try {
+            const blob = await delaunayEditor.renderToImageBlob();
+            const url = URL.createObjectURL(blob);
+            document.getElementById('preview').src = url;
+          } catch (error) {
+            console.error('Error rendering image:', error);
+          }
+        }
+      });
+    </script>
   </div>
   <script src="delaunay-editor.js"></script>
   <script src="annotation-toolbox.js"></script>
