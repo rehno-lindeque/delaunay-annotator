@@ -3,20 +3,20 @@ class Point {
     this.x = x;
     this.y = y;
   }
-  get key() {
-    const [p1, p2] = [this.p1, this.p2].sort((a, b) => {
-      if (a.x < b.x || (a.x === b.x && a.y < b.y)) return -1;
-      if (a.x > b.x || (a.x === b.x && a.y > b.y)) return 1;
-      return 0;
-    });
-    return `${p1.x},${p1.y},${p2.x},${p2.y}`;
-  }
 }
 
 class Edge {
   constructor(p1, p2) {
     this.p1 = p1;
     this.p2 = p2;
+  }
+  key() {
+    const [p1, p2] = [this.p1, this.p2].sort((a, b) => {
+      if (a.x < b.x || (a.x === b.x && a.y < b.y)) return -1;
+      if (a.x > b.x || (a.x === b.x && a.y > b.y)) return 1;
+      return 0;
+    });
+    return `${p1.x},${p1.y},${p2.x},${p2.y}`;
   }
 }
 
@@ -84,7 +84,7 @@ const outerEdges = (edges) => {
   const edgeCount = new Map();
 
   edges.forEach(edge => {
-    const key = edge.key;
+    const key = edge.key();
     if (edgeCount.has(key)) {
       edgeCount.set(key, edgeCount.get(key) + 1);
     } else {
@@ -93,7 +93,7 @@ const outerEdges = (edges) => {
   });
 
   return edges.filter(edge => {
-    const key = edge.key;
+    const key = edge.key();
     return edgeCount.get(key) === 1;
   });
 }
