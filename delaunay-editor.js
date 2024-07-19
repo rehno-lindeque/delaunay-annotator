@@ -4,18 +4,6 @@ class Point {
     this.y = y;
   }
 
-  intersectsPoint(point) {
-    const { p1, p2, p3 } = this.triangle;
-
-    const area = (p1, p2, p3) => Math.abs((p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)) / 2.0);
-
-    const A = area(p1, p2, p3);
-    const A1 = area(point, p2, p3);
-    const A2 = area(p1, point, p3);
-    const A3 = area(p1, p2, point);
-
-    return (A === A1 + A2 + A3);
-  }
 }
 
 class Edge {
@@ -61,6 +49,19 @@ class DelaunayTriangle {
     const dy = point.y - this.circumcircle.center.y;
     const distanceSquared = dx * dx + dy * dy;
     return distanceSquared <= this.circumcircle.radius * this.circumcircle.radius;
+  }
+
+  intersectsPoint(point) {
+    const { p1, p2, p3 } = this.triangle;
+
+    const area = (p1, p2, p3) => Math.abs((p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)) / 2.0);
+
+    const A = area(p1, p2, p3);
+    const A1 = area(point, p2, p3);
+    const A2 = area(p1, point, p3);
+    const A3 = area(p1, p2, point);
+
+    return (A === A1 + A2 + A3);
   }
 
   edges() {
@@ -233,7 +234,7 @@ class DelaunayEditor extends HTMLElement {
     const point = new Point(event.clientX - rect.left, event.clientY - rect.top);
 
     this.triangles.forEach(triangle => {
-      if (triangle.containsPoint(point)) {
+      if (triangle.intersectsPoint(point)) {
         triangle.label = 'background';
       }
     });
