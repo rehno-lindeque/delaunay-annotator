@@ -30,21 +30,21 @@ class AnnotationToolbox extends HTMLElement {
         .tool.brush.selected:before {
           content: "🖌️"
         }
-        .tool.unknown { background-color: transparent; }
-        .tool.ignore { background-color: gray; }
-        .tool.background { background-color: white; }
-        .tool.body { background-color: red; }
-        .tool.pick-surface { background-color: green; }
-        .tool.lead { background-color: blue; }
+        .tool#unknown { background-color: transparent; }
+        .tool#ignore { background-color: gray; }
+        .tool#background { background-color: white; }
+        .tool#body { background-color: red; }
+        .tool#pick-surface { background-color: green; }
+        .tool#lead { background-color: blue; }
       </style>
       <div class="toolbar">
         <div class="tool point" title="Point Tool">●</div>
-        <div class="tool brush unknown" title="Unknown Brush"></div>
-        <div class="tool brush ignore" title="Ignore Brush"></div>
-        <div class="tool brush background" title="Background Brush"></div>
-        <div class="tool brush body" title="Body Brush"></div>
-        <div class="tool brush pick-surface" title="Pick Surface Brush"></div>
-        <div class="tool brush lead" title="Lead Brush"></div>
+        <div class="tool brush" id="unknown" title="Unknown Brush"></div>
+        <div class="tool brush" id="ignore" title="Ignore Brush"></div>
+        <div class="tool brush" id="background" title="Background Brush"></div>
+        <div class="tool brush" id="body" title="Body Brush"></div>
+        <div class="tool brush" id="pick-surface" title="Pick Surface Brush"></div>
+        <div class="tool brush" id="lead" title="Lead Brush"></div>
       </div>
     `;
 
@@ -53,7 +53,7 @@ class AnnotationToolbox extends HTMLElement {
         this.shadowRoot.querySelectorAll('.tool').forEach(t => t.classList.remove('selected'));
         tool.classList.add('selected');
         const toolType = tool.classList.contains('brush') ? 'brush' : 'point';
-        const brushLabel = toolType === 'brush' ? tool.classList[2] : null;
+        const brushLabel = toolType === 'brush' ? tool.id : null;
         this.dispatchEvent(new CustomEvent('tool-selected', { detail: { tool: toolType, brushLabel: brushLabel } }));
       });
     });
