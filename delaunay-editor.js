@@ -299,6 +299,7 @@ class DelaunayEditor extends HTMLElement {
       canvas.width = svg.width.baseVal.value;
       canvas.height = svg.height.baseVal.value;
       const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
 
       const img = new Image();
       const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
