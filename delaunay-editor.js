@@ -72,20 +72,13 @@ const coincident = (edge1, edge2) => (
     (edge1.p1.x === edge2.p2.x && edge1.p1.y === edge2.p2.y && edge1.p2.x === edge2.p1.x && edge1.p2.y === edge2.p1.y)
   );
 
-const uniqueEdges = (edges) => {
+const outerEdges = (edges) => {
   const edgeCount = new Map();
 
-  edges.forEach(edge => {
-    const key = `${Math.min(edge.p1.x, edge.p2.x)},${Math.min(edge.p1.y, edge.p2.y)}-${Math.max(edge.p1.x, edge.p2.x)},${Math.max(edge.p1.y, edge.p2.y)}`;
-    if (edgeCount.has(key)) {
-      edgeCount.set(key, edgeCount.get(key) + 1);
-    } else {
-      edgeCount.set(key, 1);
-    }
-  });
+  // TODO
 
   return edges.filter(edge => {
-    const key = `${Math.min(edge.p1.x, edge.p2.x)},${Math.min(edge.p1.y, edge.p2.y)}-${Math.max(edge.p1.x, edge.p2.x)},${Math.max(edge.p1.y, edge.p2.y)}`;
+    const key = edge.key;
     return edgeCount.get(key) === 1;
   });
 }
