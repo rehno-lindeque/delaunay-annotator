@@ -34,7 +34,7 @@ class Toolbar extends HTMLElement {
         .tool.lead { background-color: blue; }
       </style>
       <div class="toolbar">
-        <div class="tool point" title="Point Tool">P</div>
+        <div class="tool point" title="Point Tool">●</div>
         <div class="tool unknown" title="Unknown Label"></div>
         <div class="tool ignore" title="Ignore Label"></div>
         <div class="tool background" title="Background Label"></div>
