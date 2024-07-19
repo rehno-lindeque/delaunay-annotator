@@ -156,22 +156,11 @@ class DelaunayEditor extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue !== newValue) {
-      const width = this.getAttribute('width') || 800;
-      const height = this.getAttribute('height') || 600;
-      this.points = [
-        new Point(0, 0),
-        new Point(parseInt(width), 0),
-        new Point(parseInt(width), parseInt(height)),
-        new Point(0, parseInt(height))
-      ];
-      this.triangles = [
-        new DelaunayTriangle(new Triangle(this.points[0], this.points[1], this.points[2])),
-        new DelaunayTriangle(new Triangle(this.points[0], this.points[2], this.points[3]))
-      ];
-      if (name === 'selectedTool') {
-        this.selectedTool = newValue;
-      } else {
+    if (name === 'selectedTool') {
+      this.selectedTool = newValue;
+    } else if (new Set(['width', 'height']).has(name)) {
+      // Clear and regenrate the triangle mesh
+      if (oldValue !== newValue) {
         const width = this.getAttribute('width') || 800;
         const height = this.getAttribute('height') || 600;
         this.points = [
@@ -184,8 +173,9 @@ class DelaunayEditor extends HTMLElement {
           new DelaunayTriangle(new Triangle(this.points[0], this.points[1], this.points[2])),
           new DelaunayTriangle(new Triangle(this.points[0], this.points[2], this.points[3]))
         ];
-        this.render();
       }
+
+      this.render();
     }
   }
 
