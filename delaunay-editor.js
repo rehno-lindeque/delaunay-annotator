@@ -147,11 +147,12 @@ class DelaunayEditor extends HTMLElement {
       new DelaunayTriangle(new Triangle(this.points[0], this.points[1], this.points[2])),
       new DelaunayTriangle(new Triangle(this.points[0], this.points[2], this.points[3]))
     ];
+    this.selectedTool = 'point'; // Default tool
     this.render();
   }
 
   static get observedAttributes() {
-    return ['width', 'height'];
+    return ['width', 'height', 'selectedTool'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -168,7 +169,23 @@ class DelaunayEditor extends HTMLElement {
         new DelaunayTriangle(new Triangle(this.points[0], this.points[1], this.points[2])),
         new DelaunayTriangle(new Triangle(this.points[0], this.points[2], this.points[3]))
       ];
-      this.render();
+      if (name === 'selectedTool') {
+        this.selectedTool = newValue;
+      } else {
+        const width = this.getAttribute('width') || 800;
+        const height = this.getAttribute('height') || 600;
+        this.points = [
+          new Point(0, 0),
+          new Point(parseInt(width), 0),
+          new Point(parseInt(width), parseInt(height)),
+          new Point(0, parseInt(height))
+        ];
+        this.triangles = [
+          new DelaunayTriangle(new Triangle(this.points[0], this.points[1], this.points[2])),
+          new DelaunayTriangle(new Triangle(this.points[0], this.points[2], this.points[3]))
+        ];
+        this.render();
+      }
     }
   }
 

@@ -46,9 +46,15 @@
             this.loadImage();
           }
         });
-        this.shadowRoot.querySelector('annotation-toolbox').addEventListener('tool-selected', (e) => {
-          console.log('Selected tool:', e.detail);
-          this.selectedTool = e.detail;
+        const toolbox = this.shadowRoot.querySelector('annotation-toolbox');
+        toolbox.addEventListener('tool-selected', (e) => {
+          const selectedTool = e.detail;
+          console.log('Selected tool:', selectedTool);
+          this.selectedTool = selectedTool;
+          const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
+          if (delaunayEditor) {
+            delaunayEditor.setAttribute('selectedTool', selectedTool);
+          }
         });
         this.shadowRoot.querySelector('#image-url-input').addEventListener('keypress', (e) => {
           if (e.key === 'Enter') {
