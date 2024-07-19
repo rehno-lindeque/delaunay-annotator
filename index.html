@@ -52,6 +52,7 @@
         super();
         this.attachShadow({ mode: 'open' });
         this.triangles = [];
+        this.selectedTool = 'point'; // Default tool
         this.render();
         this.shadowRoot.querySelector('#image-url-input').addEventListener('keypress', (e) => {
           if (e.key === 'Enter') {
@@ -60,7 +61,7 @@
         });
         this.shadowRoot.querySelector('toolbar-component').addEventListener('tool-selected', (e) => {
           console.log('Selected tool:', e.detail);
-          // Handle tool selection logic here
+          this.selectedTool = e.detail;
         });
       }
 
