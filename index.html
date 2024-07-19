@@ -73,17 +73,11 @@
           img.width = width;
           img.height = height;
 
-          const delaunayEditor = document.createElement('delaunay-editor');
-          delaunayEditor.setAttribute('width', width);
-          delaunayEditor.setAttribute('height', height);
-          delaunayEditor.style.position = 'absolute';
-          delaunayEditor.style.top = 0;
-          delaunayEditor.style.left = 0;
-
-          imageContainer.appendChild(img);
-          delaunayEditor.setAttribute('width', width);
-          delaunayEditor.setAttribute('height', height);
-          imageContainer.appendChild(delaunayEditor);
+          const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
+          if (delaunayEditor) {
+            delaunayEditor.innerHTML = '';
+            delaunayEditor.appendChild(img);
+          }
         };
         img.src = imageUrl;
       }
@@ -126,7 +120,9 @@
         <div style="display: flex; flex: 1;">
           <annotation-toolbox></annotation-toolbox>
           <div id="image-container" style="flex: 1; position: relative;">
-            <img id="sample-image" style="user-select: none;">
+            <delaunay-editor>
+              <img id="sample-image">
+            </delaunay-editor>
           </div>
         </div>
         `;

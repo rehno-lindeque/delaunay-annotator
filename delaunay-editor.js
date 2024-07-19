@@ -4,6 +4,22 @@ class Point {
     this.y = y;
   }
 
+  updateImageSize() {
+    const img = this.querySelector('img');
+    if (img) {
+      img.onload = () => {
+        const width = img.width;
+        const height = img.height;
+        this.setAttribute('width', width);
+        this.setAttribute('height', height);
+        this.render();
+      };
+      if (img.complete) {
+        img.onload();
+      }
+    }
+  }
+
 }
 
 class Edge {
@@ -165,7 +181,8 @@ class DelaunayEditor extends HTMLElement {
     this.selectedTool = 'point'; // Default tool
     this.isDrawing = false;
     this.render();
-    this.addEventListener('mousedown', () => this.isDrawing = this.selectedTool == "brush");
+    this.addEventListener('mousedown', () => this.isDrawing = this.selectedTool === "brush");
+    this.shadowRoot.querySelector('slot').addEventListener('slotchange', () => this.updateImageSize());
     this.addEventListener('mouseup', (e) => {
       if (this.isDrawing)
         this.handleSvgMouseMove(e)
@@ -223,7 +240,14 @@ class DelaunayEditor extends HTMLElement {
           svg .body { fill: red; }
           svg .pick-surface { fill: green; }
           svg .lead { fill: blue; }
+          ::slotted(img) {
+            position: absolute;
+            top: 0;
+            left: 0;
+            user-select: none;
+          }
         </style>
+        <slot></slot>
         <svg id="svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"></svg>
       `;
       this.updateSvg();
