@@ -26,24 +26,6 @@
 <body>
   <div class="container">
     <segmentation-editor></segmentation-editor>
-    <button id="preview-action">Preview png</button>
-    <img id="preview" width="800" height="800"></img>
-    <script>
-      document.getElementById('preview-action').addEventListener('click', async () => {
-        const delaunayEditor = document.querySelector('delaunay-editor');
-        console.log("here", delaunayEditor)
-        if (delaunayEditor) {
-          try {
-            const blob = await delaunayEditor.renderToImageBlob();
-            console.log("here", blob)
-            const url = URL.createObjectURL(blob);
-            document.getElementById('preview').src = url;
-          } catch (error) {
-            console.error('Error rendering image:', error);
-          }
-        }
-      });
-    </script>
   </div>
   <script src="delaunay-editor.js"></script>
   <script src="annotation-toolbox.js"></script>
@@ -56,11 +38,9 @@
         this.triangles = [];
         this.selectedTool = 'point'; // Default tool
         this.render();
-        this.shadowRoot.querySelector('#image-url-input').addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') {
-            this.loadImage();
-          }
-        });
+
+        // Register events
+        // Toolbox selection
         const toolbox = this.shadowRoot.querySelector('annotation-toolbox');
         toolbox.addEventListener('tool-selected', (e) => {
           const { tool, brushLabel } = e.detail;
@@ -74,9 +54,25 @@
             }
           }
         });
+
+        // Image url changed
         this.shadowRoot.querySelector('#image-url-input').addEventListener('keypress', (e) => {
           if (e.key === 'Enter') {
             this.loadImage();
+          }
+        });
+
+        // Preview action
+        this.shadowRoot.querySelector('#preview-action').addEventListener('click', async () => {
+          const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
+          if (delaunayEditor) {
+            try {
+              const blob = await delaunayEditor.renderToImageBlob();
+              const url = URL.createObjectURL(blob);
+              this.shadowRoot.querySelector('#preview').src = url;
+            } catch (error) {
+              console.error('Error rendering image:', error);
+            }
           }
         });
       }
@@ -136,6 +132,12 @@
               margin-top: 3em; /* Adjust based on control bar height */
               margin-left: 3em; /* Adjust based on toolbox width */
           }
+          .preview-container {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              margin-top: 1em;
+          }
         </style>
         <div class="control-bar">
           <input id="image-url-input" type="url" placeholder="Enter image URL" pattern="https://.*">
@@ -145,6 +147,10 @@
           <annotation-toolbox></annotation-toolbox>
           <div id="image-container" style="flex: 1; position: relative;">
             <img id="sample-image" style="user-select: none;">
+          </div>
+          <div class="preview-container">
+            <button id="preview-action">Preview png</button>
+            <img id="preview" width="800" height="800"></img>
           </div>
         </div>
         `;
