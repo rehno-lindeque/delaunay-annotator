@@ -55,10 +55,6 @@
             this.loadImage();
           }
         });
-        this.shadowRoot.querySelector('toolbar-component').addEventListener('tool-selected', (e) => {
-          console.log('Selected tool:', e.detail);
-          this.selectedTool = e.detail;
-        });
       }
 
       loadImage() {
