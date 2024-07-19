@@ -25,7 +25,10 @@ class AnnotationToolbox extends HTMLElement {
           cursor: pointer;
         }
         .tool.selected {
-          border: 2px solid blue;
+          border-width: 2px;
+        }
+        .tool.brush.selected:before {
+          content: "🖌️"
         }
         .tool.unknown { background-color: transparent; }
         .tool.ignore { background-color: gray; }
@@ -36,13 +39,12 @@ class AnnotationToolbox extends HTMLElement {
       </style>
       <div class="toolbar">
         <div class="tool point" title="Point Tool">●</div>
-        <div class="tool unknown" title="Unknown Label"></div>
-        <div class="tool brush" title="Brush Tool">🖌️</div>
-        <div class="tool ignore" title="Ignore Label"></div>
-        <div class="tool background" title="Background Label"></div>
-        <div class="tool body" title="Body Label"></div>
-        <div class="tool pick-surface" title="Pick Surface Label"></div>
-        <div class="tool lead" title="Lead Label"></div>
+        <div class="tool brush unknown" title="Unknown Brush"></div>
+        <div class="tool brush ignore" title="Ignore Brush"></div>
+        <div class="tool brush background" title="Background Brush"></div>
+        <div class="tool brush body" title="Body Brush"></div>
+        <div class="tool brush pick-surface" title="Pick Surface Brush"></div>
+        <div class="tool brush lead" title="Lead Brush"></div>
       </div>
     `;
 
