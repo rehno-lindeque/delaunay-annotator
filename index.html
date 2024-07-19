@@ -75,6 +75,11 @@
 
           const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
           if (delaunayEditor) {
+            delaunayEditor.setAttribute('width', width);
+            delaunayEditor.setAttribute('height', height);
+            delaunayEditor.style.position = 'absolute';
+            delaunayEditor.style.top = 0;
+            delaunayEditor.style.left = 0;
             delaunayEditor.innerHTML = '';
             delaunayEditor.appendChild(img);
           }
