@@ -276,23 +276,40 @@ class DelaunayEditor extends HTMLElement {
   }
 
   renderToImageBlob() {
-    const svg = this.shadowRoot.querySelector('#svg');
-    // TODO: Create temporary canvas element
-    // const canvas = 
-    const ctx = canvas.getContext('2d');
-    const svgData = new XMLSerializer().serializeToString(svg);
+    return new Promise((resolve, reject) => {
+      const svg = this.shadowRoot.querySelector('#svg');
+      const svgData = new XMLSerializer().serializeToString(svg);
 
-    const img = new Image();
-    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(svgBlob);
+      const canvas = document.createElement('canvas');
+      canvas.width = svg.width.baseVal.value;
+      canvas.height = svg.height.baseVal.value;
+      const ctx = canvas.getContext('2d');
 
-    img.onload = function () {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
-      URL.revokeObjectURL(url);
-    };
+      const img = new Image();
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
 
-    img.src = url;
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Canvas toBlob conversion failed.'));
+          }
+        });
+      };
+
+      img.onerror = (err) => {
+        URL.revokeObjectURL(url);
+        reject(err);
+      };
+
+      img.src = url;
+    });
   }
 
 }
