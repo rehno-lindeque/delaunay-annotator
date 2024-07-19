@@ -109,7 +109,7 @@ const partitionTriangles = (point, triangles) => {
 const addDelaunayPoint = (point, triangles) => {
   const { goodTriangles, badTriangles } = partitionTriangles(point, triangles);
 
-  let hole = uniqueEdges(badTriangles.flatMap(triangle => triangle.edges()));
+  let hole = outerEdges(badTriangles.flatMap(triangle => triangle.edges()));
 
   const newTriangles = fillHole(hole, point);
 
