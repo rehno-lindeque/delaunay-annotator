@@ -51,6 +51,9 @@
           const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
           if (delaunayEditor) {
             delaunayEditor.setAttribute('selected-tool', selectedTool);
+            if (selectedTool.startsWith('brush')) {
+              delaunayEditor.setAttribute('brush-label', selectedTool.split(' ')[1]);
+            }
           }
         });
         this.shadowRoot.querySelector('#image-url-input').addEventListener('keypress', (e) => {

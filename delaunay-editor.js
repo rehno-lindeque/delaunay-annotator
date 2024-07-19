@@ -171,12 +171,14 @@ class DelaunayEditor extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['width', 'height', 'selected-tool'];
+    return ['width', 'height', 'selected-tool', 'brush-label'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'selected-tool') {
       this.selectedTool = newValue;
+    } else if (name === 'brush-label') {
+      this.brushLabel = newValue;
     } else if (new Set(['width', 'height']).has(name)) {
       // Clear and regenrate the triangle mesh
       if (oldValue !== newValue) {
