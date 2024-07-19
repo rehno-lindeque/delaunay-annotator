@@ -3,6 +3,22 @@ class Point {
     this.x = x;
     this.y = y;
   }
+
+  handleMouseMove(event) {
+    if (!this.isDrawing) return;
+
+    const svg = this.shadowRoot.querySelector('#svg');
+    const rect = svg.getBoundingClientRect();
+    const point = new Point(event.clientX - rect.left, event.clientY - rect.top);
+
+    this.triangles.forEach(triangle => {
+      if (triangle.containsPoint(point)) {
+        triangle.label = 'background';
+      }
+    });
+
+    this.updateSvg();
+  }
 }
 
 class Edge {
@@ -153,6 +169,7 @@ class DelaunayEditor extends HTMLElement {
     this.render();
     this.addEventListener('mousedown', () => this.isDrawing = true);
     this.addEventListener('mouseup', () => this.isDrawing = false);
+    this.addEventListener('mousemove', (e) => this.handleMouseMove(e));
   }
 
   static get observedAttributes() {
