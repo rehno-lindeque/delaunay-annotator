@@ -1,4 +1,4 @@
-class Toolbar extends HTMLElement {
+class Toolbox extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
