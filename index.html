@@ -11,8 +11,10 @@
     </style>
 </head>
 <body>
+  <toolbar-component></toolbar-component>
   <segmentation-editor></segmentation-editor>
   <script src="delaunay-editor.js"></script>
+  <script src="toolbar.js"></script>
 
   <script>
     class SegmentationEditor extends HTMLElement {
@@ -25,6 +27,10 @@
           if (e.key === 'Enter') {
             this.loadImage();
           }
+        });
+        this.shadowRoot.querySelector('toolbar-component').addEventListener('tool-selected', (e) => {
+          console.log('Selected tool:', e.detail);
+          // Handle tool selection logic here
         });
       }
 
