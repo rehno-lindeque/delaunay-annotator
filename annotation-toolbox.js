@@ -12,6 +12,7 @@ class AnnotationToolbox extends HTMLElement {
           display: flex;
           flex-direction: column;
           gap: 1Em;
+          padding: .5Em;
         }
         .tool {
           width: 2Em;
