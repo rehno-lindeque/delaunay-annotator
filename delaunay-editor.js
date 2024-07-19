@@ -274,6 +274,27 @@ class DelaunayEditor extends HTMLElement {
       `<circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>`
     ).join('');
   }
+
+  renderToImageBlob() {
+    const svg = this.shadowRoot.querySelector('#svg');
+    // TODO: Create temporary canvas element
+    // const canvas = 
+    const ctx = canvas.getContext('2d');
+    const svgData = new XMLSerializer().serializeToString(svg);
+
+    const img = new Image();
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+
+    img.onload = function () {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+    };
+
+    img.src = url;
+  }
+
 }
 
 customElements.define('delaunay-editor', DelaunayEditor);
