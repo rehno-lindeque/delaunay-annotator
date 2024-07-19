@@ -199,8 +199,7 @@ class DelaunayEditor extends HTMLElement {
   handleSvgClick(event) {
     const svg = this.shadowRoot.querySelector('#svg');
     const rect = svg.getBoundingClientRect();
-    const segmentationEditor = this.closest('segmentation-editor');
-    if (segmentationEditor && segmentationEditor.selectedTool === 'point') {
+    if (this.selectedTool === 'point') {
       const point = new Point(event.clientX - rect.left, event.clientY - rect.top);
       this.addPoint(point);
     }
