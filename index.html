@@ -63,22 +63,20 @@
 
       loadImage() {
         const imageUrl = this.shadowRoot.querySelector('#image-url-input').value;
-        const img = new Image();
+        const img = this.shadowRoot.querySelector('#sample-image');
         img.onload = () => {
           const width = img.width;
           const height = img.height;
           const imageContainer = this.shadowRoot.querySelector('#image-container');
-          const loadedImage = this.shadowRoot.querySelector('#loaded-image');
-          loadedImage.src = imageUrl;
-          loadedImage.width = width;
-          loadedImage.height = height;
+          img.width = width;
+          img.height = height;
 
           const delaunayEditor = document.createElement('delaunay-editor');
           delaunayEditor.setAttribute('width', width);
           delaunayEditor.setAttribute('height', height);
           delaunayEditor.style.position = 'absolute';
 
-          imageContainer.appendChild(loadedImage);
+          imageContainer.appendChild(img);
           delaunayEditor.setAttribute('width', width);
           delaunayEditor.setAttribute('height', height);
           imageContainer.appendChild(delaunayEditor);
@@ -124,7 +122,7 @@
         <div style="display: flex; flex: 1;">
           <annotation-toolbox></annotation-toolbox>
           <div id="image-container" style="flex: 1; position: relative;">
-            <img id="loaded-image" style="user-select: none;">
+            <img id="sample-image" style="user-select: none;">
           </div>
         </div>
         `;
