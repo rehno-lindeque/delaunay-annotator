@@ -17,12 +17,9 @@
             overflow: hidden;
         }
         segmentation-editor {
-            flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: auto;
+            height: 100%;
         }
         svg {
             border: 1px solid black;
@@ -96,40 +93,45 @@
         this.shadowRoot.innerHTML = `
         <style>
           annotation-toolbox {
-              flex: 0 0 50px;
+              flex: 0 0 3em;
               display: flex;
               flex-direction: column;
               align-items: center;
-              justify-content: center;
+              justify-content: flex-start;
               background-color: #f0f0f0;
               border-right: 1px solid #ccc;
+              height: 100%;
           }
           .control-bar {
-            display: flex;
-            align-items: center;
-            padding: .5em;
-            background-color: #f0f0f0;
-            border-bottom: 1px solid #ccc;
+              display: flex;
+              align-items: center;
+              padding: .5em;
+              background-color: #f0f0f0;
+              border-bottom: 1px solid #ccc;
+              flex: 0 0 auto;
           }
           .control-bar input {
             flex: 1;
             margin-right: .5Em;
           }
           .image-container {
-            position: relative;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+              position: relative;
+              flex: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              overflow: hidden;
           }
         </style>
         <div class="control-bar">
           <input id="image-url-input" type="url" placeholder="Enter image URL" pattern="https://.*">
           <button id="render-upload">Render and Upload</button>
         </div>
-        <annotation-toolbox></annotation-toolbox>
-        <div id="image-container" style="position: relative;">
-          <img id="loaded-image" style="position: absolute; top: 0; left: 0; z-index: 0; user-select: none;">
+        <div style="display: flex; flex: 1;">
+          <annotation-toolbox></annotation-toolbox>
+          <div id="image-container">
+            <img id="loaded-image" style="position: absolute; top: 0; left: 0; z-index: 0; user-select: none;">
+          </div>
         </div>
         `;
       }
