@@ -43,6 +43,21 @@ class SegmentationEditor extends HTMLElement {
         }
       }
     });
+    // Render and upload action
+    this.shadowRoot.querySelector('#render-upload').addEventListener('click', async () => {
+      const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
+      if (delaunayEditor) {
+        try {
+          const blob = await delaunayEditor.renderToImageBlob();
+          const presignedUrl = await this.getPresignedUploadUrl('rendered-image.png');
+          if (presignedUrl) {
+            await this.uploadImageToS3(presignedUrl, blob);
+          }
+        } catch (error) {
+          console.error('Error rendering and uploading image:', error);
+        }
+      }
+    });
   }
 
   loadImage() {
