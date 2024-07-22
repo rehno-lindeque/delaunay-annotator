@@ -43,7 +43,11 @@ class SegmentationEditor extends HTMLElement {
         }
       }
     });
-    // Render and upload action
+    // Retrieve action
+    this.shadowRoot.querySelector('#retrieve-action').addEventListener('click', () => {
+      const url = 'https://gpu-server.tiger-jazz.ts.net:4443/samples/372768ef-fe67-4a59-a6aa-6e32b363789d/segmentation';
+      this.shadowRoot.querySelector('#preview').src = url;
+    });
     this.shadowRoot.querySelector('#render-upload').addEventListener('click', async () => {
       const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
       if (delaunayEditor) {
@@ -137,6 +141,7 @@ class SegmentationEditor extends HTMLElement {
       </div>
       <div class="preview-container">
         <button id="preview-action">Preview png</button>
+        <button id="retrieve-action">Retrieve Segmentation</button>
         <img id="preview" width="800" height="800"></img>
       </div>
     </div>
