@@ -1,3 +1,4 @@
+
 class SegmentationEditor extends HTMLElement {
   constructor() {
     super();
@@ -125,6 +126,38 @@ class SegmentationEditor extends HTMLElement {
       </div>
     </div>
     `;
+  }
+
+  async getPresignedUploadUrl(filename) {                                 
+    try {
+      const response = await fetch('https://gpu-server.tiger-jazz.ts.net:4443/samples/372768ef-fe67-4a59-a6aa-6e32b363789d/segmentation/upload');
+      if (!response.ok) {
+          throw new Error('Failed to fetch presigned URL');
+      }
+      const data = await response.json();
+      return data.uploadUrl;
+    } catch (error) {
+      console.error('Error getting presigned URL:', error);
+      return null;
+    }
+  }
+
+  async uploadImageToS3(url, file) {                                
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': 'image/png' },
+      });
+
+      if (response.ok) {
+        console.log('Upload successful');
+      } else {
+        console.error('Upload failed', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
   }
 }
 
