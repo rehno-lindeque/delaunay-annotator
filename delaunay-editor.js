@@ -5,6 +5,18 @@ class Point {
   }
 }
 
+class Vector {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  between(v1, v2) {
+    const det = (w1, w2) => w1.x * w2.y - w1.y * w2.x
+    return Math.sign(det(this, v1)) != Math.sign(det(this, v2))
+  }
+}
+
 class Edge {
   constructor(p1, p2) {
     this.p1 = p1;
