@@ -112,24 +112,23 @@ class DelaunayTriangle {
 
   occluded(pov, occluders) {
     const coincident = (p1, p2) => p1.x === p2.x && p1.y === p2.y;
+    const corners = [ this.triangle.p1, this.triangle.p2, this.triangle.p3 ]; 
 
-    // Construct three rays from the point of view (pov), one for each corner
-    const v1 = new Vector(this.triangle.p1.x - pov.x, this.triangle.p1.y - pov.y);
-    const v2 = new Vector(this.triangle.p2.x - pov.x, this.triangle.p2.y - pov.y);
-    const v3 = new Vector(this.triangle.p3.x - pov.x, this.triangle.p3.y - pov.y);
+    return corners.some(corner => {
+      const v = new Vector(corner.x - pov.x, corner.y - pov.y);
 
-    return occluders.some(edge => {
-      // Construct a ray for each end point of the line segment
-      const w1 = new Vector(edge.p1.x - pov.x, edge.p1.y - pov.y);
-      const w2 = new Vector(edge.p2.x - pov.x, edge.p2.y - pov.y);
+      return occluders.some(edge => {
+        const w = new Vector(edge.p2.x - edge.p1.x, edge.p2.y - edge.p1.y);
 
-      // Check if the point of view coincides with any of the occluder points
-      if (coincident(pov, edge.p1) || coincident(pov, edge.p2)) {
-        return false;
-      }
+        // Line segment intersection test
+        const v1 = new Vector(edge.p1.x - pov.x, edge.p1.y - pov.y);
+        const v2 = new Vector(edge.p2.x - pov.x, edge.p2.y - pov.y);
 
-      // Check if any of the triangle rays are strictly between the w1 and w2
-      return (v1.between(w1, w2) || v2.between(w1, w2) || v3.between(w1, w2));
+        const w1 = new Vector(pov.x - edge.p1.x, pov.y - edge.p1.y);
+        const w2 = new Vector(corner.x - edge.p1.x, corner.y - edge.p1.y);
+
+        return v.between(v1, v2) && w.between(w1, w2);
+      });
     });
   }
 }
