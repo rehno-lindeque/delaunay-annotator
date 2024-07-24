@@ -12,8 +12,18 @@ class Vector {
   }
 
   between(v1, v2) {
+    // The sign of the determinant formed from two basis vectors gives a clocwise/anti-clockwise orientation
     const det = (w1, w2) => w1.x * w2.y - w1.y * w2.x
-    return Math.sign(det(this, v1)) != Math.sign(det(this, v2))
+    const d1 = Math.sign(det(this, v1))
+    const d2 = Math.sign(det(this, v2))
+
+    // A vector w is between two vectors v1, v2 if those vectors are on opposite sides
+    const isOpposite = d1 !== d2
+
+    // Check if the vector is *strictly* between by checking if either v1 or v2 coincides with it
+    const isCoincident = d1 === 0 || d2 === 0
+
+    return !isCoincident && isOpposite
   }
 }
 
@@ -149,9 +159,7 @@ class DelaunayTriangle {
       const w2 = Vector(edge.p2.x - pov.x, edge.p2.y - pov.y)
 
       // Test whether any of the triangle rays are strictly between the w1 and w2
-      if ((!coincident(edge.p1, this.triangle.p1) && v1.between(w1, w2)) ||
-        (!coincident(edge.p2, this.triangle.p2) && v2.between(w1, w2)) ||
-        (!coincident(edge.p3, this.triangle.p3) && v3.between(w1, w2)))
+      if (v1.between(w1, w2) || v2.between(w1, w2) || v3.between(w1, w2))
         return true;
     })
     return false;
