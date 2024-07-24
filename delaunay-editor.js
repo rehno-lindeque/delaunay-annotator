@@ -159,15 +159,14 @@ const fillHole = (edges, point) =>
   edges.map(edge => connect(edge, point));
 
 const partitionTriangles = (point, triangles) => {
-  const goodTriangles = [];
-  const badTriangles = [];
+  let goodTriangles = [];
+  let badTriangles = [];
 
   triangles.forEach(triangle => {
-    if (triangle.containsPoint(point)) {
+    if (triangle.containsPoint(point))
       badTriangles.push(triangle);
-    } else {
+    else
       goodTriangles.push(triangle);
-    }
   });
 
   return { goodTriangles, badTriangles };
