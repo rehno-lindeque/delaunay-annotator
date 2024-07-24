@@ -330,6 +330,15 @@ class DelaunayEditor extends HTMLElement {
 
   addPoint(point) {
     this.points.push(point);
+
+    // If the point directly intersects a labeled triangle reset its label so that it may be split apart
+    this.triangles.forEach(triangle => {
+      if (triangle.intersectsPoint(point)) {
+        triangle.label = "unknown";
+      }
+    });
+
+    // Re-triangulate the mesh using a constrained delaunay triangulation method
     this.triangles = addDelaunayPoint(point, this.triangles);
     this.updateSvg();
   }
