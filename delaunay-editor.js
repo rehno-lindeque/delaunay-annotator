@@ -32,6 +32,7 @@ class Edge {
     this.p1 = p1;
     this.p2 = p2;
   }
+
   key() {
     const [p1, p2] = [this.p1, this.p2].sort((a, b) => {
       if (a.x < b.x || (a.x === b.x && a.y < b.y)) return -1;
