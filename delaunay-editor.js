@@ -48,7 +48,6 @@ class Triangle {
     this.p2 = p2;
     this.p3 = p3;
   }
-
 }
 
 class Circle {
@@ -110,7 +109,7 @@ class DelaunayTriangle {
     return new Circle(center, radius);
   }
 
-  const occluded(pov, occluders) {
+  occluded(pov, occluders) {
     const coincident = (p1, p2) => p1.x === p2.x && p1.y === p2.y
 
     // Construct three rays from the point of view (pov), one for each corner
