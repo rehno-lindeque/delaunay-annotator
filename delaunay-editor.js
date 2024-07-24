@@ -172,11 +172,42 @@ const partitionTriangles = (point, triangles) => {
   return { goodTriangles, badTriangles };
 }
 
+const partitionTrianglesWithConstraints = (point, triangles) => {
+  // Partition triangles into a labeled and unlabeled (technically labeled "unknown") sets,
+  // where labeled triangles are considered constrained.
+  // Constrained triangles may not be split.
+  let unconstrainedTriangles = [];
+  let constrainedTriangles = [];
+  triangles.forEach(triangle => {
+    if (triangle.label === "unknown")
+      unconstrainedTriangles.push(triangle);
+    else
+      constrainedTriangles.push(triangle);
+  });
+
+  // Partition all unconstrained triangles by identifying triangles that violate the Delaunay condition
+  const { goodTriangles, badTriangles } = partitionTriangles(point, unconstrainedTriangles);
+
+  // Get the exterior edges of the polygonal hole(s) for efficiency
+  const occluders = outerEdges(badTriangles.flatMap(triangle => triangle.edges()));
+
+  // Ensure that the polygonal hole will be star shaped by removing occluded triangles from the set of bad triangles
+  let occludedTriangles = [];
+  let visibleTriangles = [];
+
+  badTriangles.forEach(triangle => {
+    if (triangle.occluded(point, occluders))
+      occludedTriangles.push(triangle);
+    else
+      visibleTriangles.push(triangle);
+  })
+
+  return { goodTriangles: goodTriangles.concat(constrainedTriangles, occludedTriangles), badTriangles: visibleTriangles }
+}
+
 const addDelaunayPoint = (point, triangles) => {
-  const { goodTriangles, badTriangles } = partitionTriangles(point, triangles);
-
-  let hole = outerEdges(badTriangles.flatMap(triangle => triangle.edges()));
-
+  const { goodTriangles, badTriangles } = partitionTrianglesWithConstraints(point, triangles);
+  const hole = outerEdges(badTriangles.flatMap(triangle => triangle.edges()));
   const newTriangles = fillHole(hole, point);
 
   return goodTriangles.concat(newTriangles);
