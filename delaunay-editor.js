@@ -85,41 +85,6 @@ class DelaunayTriangle {
     return (A === A1 + A2 + A3);
   }
 
-  intersectsEdge(edge) {
-    const { p1, p2, p3 } = this.triangle;
-
-    const onSegment = (p, q, r) => {
-      return q.x <= Math.max(p.x, r.x) && q.x >= Math.min(p.x, r.x) &&
-             q.y <= Math.max(p.y, r.y) && q.y >= Math.min(p.y, r.y);
-    };
-
-    const orientation = (p, q, r) => {
-      const val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
-      if (val === 0) return 0;  // collinear
-      return (val > 0) ? 1 : 2; // clock or counterclock wise
-    };
-
-    const doIntersect = (p1, q1, p2, q2) => {
-      const o1 = orientation(p1, q1, p2);
-      const o2 = orientation(p1, q1, q2);
-      const o3 = orientation(p2, q2, p1);
-      const o4 = orientation(p2, q2, q1);
-
-      if (o1 !== o2 && o3 !== o4) return true;
-
-      if (o1 === 0 && onSegment(p1, p2, q1)) return true;
-      if (o2 === 0 && onSegment(p1, q2, q1)) return true;
-      if (o3 === 0 && onSegment(p2, p1, q2)) return true;
-      if (o4 === 0 && onSegment(p2, q1, q2)) return true;
-
-      return false;
-    };
-
-    return doIntersect(p1, p2, edge.p1, edge.p2) ||
-           doIntersect(p2, p3, edge.p1, edge.p2) ||
-           doIntersect(p3, p1, edge.p1, edge.p2);
-  }
-
   edges() {
     const { p1, p2, p3 } = this.triangle;
     return [
