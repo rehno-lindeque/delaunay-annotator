@@ -17,13 +17,17 @@ class Vector {
     const d1 = Math.sign(det(this, v1));
     const d2 = Math.sign(det(this, v2));
 
-    // A vector w is between two vectors v1, v2 if those vectors are on opposite sides
+    // The line formed by the a vector u is between two vectors v1, v2 if those vectors are on opposite sides
     const isOpposite = d1 !== d2;
+
+    // v1 and v2 could be opposite the line but pointing in the flipped direction
+    // To guard against this, make sure that u and v1 are not opposite the line formed by v2
+    const isFlipped = Math.sign(det(v1, v2)) !== d2;
 
     // Check if the vector is *strictly* between by checking if either v1 or v2 coincides with it
     const isCoincident = d1 === 0 || d2 === 0;
 
-    return !isCoincident && isOpposite;
+    return isOpposite && !isFlipped && !isCoincident;
   }
 }
 
