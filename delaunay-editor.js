@@ -13,17 +13,17 @@ class Vector {
 
   between(v1, v2) {
     // The sign of the determinant formed from two basis vectors gives a clocwise/anti-clockwise orientation
-    const det = (w1, w2) => w1.x * w2.y - w1.y * w2.x
-    const d1 = Math.sign(det(this, v1))
-    const d2 = Math.sign(det(this, v2))
+    const det = (w1, w2) => w1.x * w2.y - w1.y * w2.x;
+    const d1 = Math.sign(det(this, v1));
+    const d2 = Math.sign(det(this, v2));
 
     // A vector w is between two vectors v1, v2 if those vectors are on opposite sides
-    const isOpposite = d1 !== d2
+    const isOpposite = d1 !== d2;
 
     // Check if the vector is *strictly* between by checking if either v1 or v2 coincides with it
-    const isCoincident = d1 === 0 || d2 === 0
+    const isCoincident = d1 === 0 || d2 === 0;
 
-    return !isCoincident && isOpposite
+    return !isCoincident && isOpposite;
   }
 }
 
