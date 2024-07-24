@@ -136,6 +136,8 @@ class DelaunayTriangle {
   }
 
   const occluded(pov, occluders) {
+    const coincident = (p1, p2) => p1.x === p2.x && p1.y === p2.y
+
     // Construct three rays from the point of view (pov), one for each corner
     const v1 = Vector(this.triangle.p1.x - pov.x, this.triangle.p1.y - pov.y);
     const v2 = Vector(this.triangle.p2.x - pov.x, this.triangle.p2.y - pov.y);
@@ -147,19 +149,14 @@ class DelaunayTriangle {
       const w2 = Vector(edge.p2.x - pov.x, edge.p2.y - pov.y)
 
       // Test whether any of the triangle rays are strictly between the w1 and w2
-      if ((edge.p1 !== this.triangle.p1 && v1.between(w1, w2)) ||
-        (edge.p2 !== this.triangle.p2 && v2.between(w1, w2)) ||
-        (edge.p3 !== this.triangle.p3 && v3.between(w1, w2)))
+      if ((!coincident(edge.p1, this.triangle.p1) && v1.between(w1, w2)) ||
+        (!coincident(edge.p2, this.triangle.p2) && v2.between(w1, w2)) ||
+        (!coincident(edge.p3, this.triangle.p3) && v3.between(w1, w2)))
         return true;
     })
     return false;
   }
 }
-
-const coincident = (edge1, edge2) => (
-    (edge1.p1.x === edge2.p1.x && edge1.p1.y === edge2.p1.y && edge1.p2.x === edge2.p2.x && edge1.p2.y === edge2.p2.y) ||
-    (edge1.p1.x === edge2.p2.x && edge1.p1.y === edge2.p2.y && edge1.p2.x === edge2.p1.x && edge1.p2.y === edge2.p1.y)
-  );
 
 const outerEdges = (edges) => {
   const edgeCount = new Map();
