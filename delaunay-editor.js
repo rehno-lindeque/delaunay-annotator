@@ -113,14 +113,14 @@ class DelaunayTriangle {
     const coincident = (p1, p2) => p1.x === p2.x && p1.y === p2.y
 
     // Construct three rays from the point of view (pov), one for each corner
-    const v1 = Vector(this.triangle.p1.x - pov.x, this.triangle.p1.y - pov.y);
-    const v2 = Vector(this.triangle.p2.x - pov.x, this.triangle.p2.y - pov.y);
-    const v3 = Vector(this.triangle.p3.x - pov.x, this.triangle.p3.y - pov.y);
+    const v1 = new Vector(this.triangle.p1.x - pov.x, this.triangle.p1.y - pov.y);
+    const v2 = new Vector(this.triangle.p2.x - pov.x, this.triangle.p2.y - pov.y);
+    const v3 = new Vector(this.triangle.p3.x - pov.x, this.triangle.p3.y - pov.y);
 
     occluders.forEach(edge => {
       // Construct a ray for each end points of the line segment
-      const w1 = Vector(edge.p1.x - pov.x, edge.p1.y - pov.y)
-      const w2 = Vector(edge.p2.x - pov.x, edge.p2.y - pov.y)
+      const w1 = new Vector(edge.p1.x - pov.x, edge.p1.y - pov.y);
+      const w2 = new Vector(edge.p2.x - pov.x, edge.p2.y - pov.y);
 
       // Test whether any of the triangle rays are strictly between the w1 and w2
       if (v1.between(w1, w2) || v2.between(w1, w2) || v3.between(w1, w2))
