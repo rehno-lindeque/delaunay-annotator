@@ -134,6 +134,26 @@ class DelaunayTriangle {
 
     return new Circle(center, radius);
   }
+
+  const occluded(pov, occluders) {
+    // Construct three rays from the point of view (pov), one for each corner
+    const v1 = Vector(this.triangle.p1.x - pov.x, this.triangle.p1.y - pov.y);
+    const v2 = Vector(this.triangle.p2.x - pov.x, this.triangle.p2.y - pov.y);
+    const v3 = Vector(this.triangle.p3.x - pov.x, this.triangle.p3.y - pov.y);
+
+    occluders.forEach(edge => {
+      // Construct a ray for each end points of the line segment
+      const w1 = Vector(edge.p1.x - pov.x, edge.p1.y - pov.y)
+      const w2 = Vector(edge.p2.x - pov.x, edge.p2.y - pov.y)
+
+      // Test whether any of the triangle rays are strictly between the w1 and w2
+      if ((edge.p1 !== this.triangle.p1 && v1.between(w1, w2)) ||
+        (edge.p2 !== this.triangle.p2 && v2.between(w1, w2)) ||
+        (edge.p3 !== this.triangle.p3 && v3.between(w1, w2)))
+        return true;
+    })
+    return false;
+  }
 }
 
 const coincident = (edge1, edge2) => (
