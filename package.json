@@ -1,0 +1,49 @@
+{
+  "name": "segmentation-components",
+  "version": "0.1.0",
+  "description": "An image annotation tool implemented as simple, reusable web components",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./segmentation-editor": "./segmentation-editor.js",
+    "./delaunay-editor": "./delaunay-editor.js",
+    "./annotation-toolbox": "./annotation-toolbox.js"
+  },
+  "author": "Rehno Lindeque",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rehno-lindeque/segmentation-components.git"
+  },
+  "keywords": [
+    "semantic-segmentation",
+    "instance-segmentation",
+
+    "annotation",
+    "annotations",
+    "image-annotation",
+    "annotation-tool",
+
+    "labeling",
+    "image-labeling",
+    "labeling-tool",
+    "image-labeling-tool",
+
+    "delaunay",
+    "triangulation",
+    "delaunay-triangulation",
+    "constrained-delaunay-triangulation",
+
+    "web-component",
+    "webcomponent",
+    "web-components",
+    "webcomponents"
+  ],
+  "bugs": {
+    "url": "https://github.com/rehno-lindeque/segmentation-components/issues"
+  },
+  "homepage": "https://github.com/rehno-lindeque/segmentation-components#readme"
+}
