@@ -408,3 +408,5 @@ class DelaunayEditor extends HTMLElement {
 }
 
 customElements.define('delaunay-editor', DelaunayEditor);
+
+export { DelaunayEditor };

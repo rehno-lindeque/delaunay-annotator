@@ -182,3 +182,5 @@ class SegmentationEditor extends HTMLElement {
 }
 
 customElements.define('segmentation-editor', SegmentationEditor);
+
+export { SegmentationEditor };

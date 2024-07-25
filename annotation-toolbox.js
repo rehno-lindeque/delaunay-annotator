@@ -61,3 +61,5 @@ class AnnotationToolbox extends HTMLElement {
 }
 
 customElements.define('annotation-toolbox', AnnotationToolbox);
+
+export { AnnotationToolbox };
