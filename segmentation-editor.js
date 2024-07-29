@@ -6,6 +6,7 @@ class SegmentationEditor extends HTMLElement {
     this.triangles = [];
     this.selectedTool = 'point'; // Default tool
     this.render();
+    this.populateImageUrlFromParams();
 
     // Register events
     // Toolbox selection
@@ -62,6 +63,16 @@ class SegmentationEditor extends HTMLElement {
         }
       }
     });
+  }
+
+  populateImageUrlFromParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const imageUrl = urlParams.get('image');
+    if (imageUrl) {
+      const imageUrlInput = this.shadowRoot.querySelector('#image-url-input');
+      imageUrlInput.value = imageUrl;
+      this.loadImage();
+    }
   }
 
   loadImage() {
