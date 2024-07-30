@@ -214,6 +214,34 @@ const addDelaunayPoint = (point, triangles) => {
   return goodTriangles.concat(newTriangles);
 }
 
+const connectedComponents = (triangles) => {
+  const visited = new Set();
+  const components = [];
+
+  const dfs = (triangle, label, component) => {
+    visited.add(triangle);
+    component.push(triangle);
+
+    triangle.edges().forEach(edge => {
+      triangles.forEach(neighbor => {
+        if (!visited.has(neighbor) && neighbor.label === label && neighbor.edges().some(e => e.key() === edge.key())) {
+          dfs(neighbor, label, component);
+        }
+      });
+    });
+  };
+
+  triangles.forEach(triangle => {
+    if (!visited.has(triangle)) {
+      const component = [];
+      dfs(triangle, triangle.label, component);
+      components.push(component);
+    }
+  });
+
+  return components;
+};
+
 class DelaunayEditor extends HTMLElement {
   constructor() {
     super();
