@@ -273,16 +273,16 @@ const connectedLoops = (triangles) => {
   const adjacent = (e1, e2) => 
     !new Set(e1.points).isDisjointFrom(new Set(e2.points))
 
-  const reorder = ([prev, next, ...remaining]) => {
+  const order = ([prev, next, ...remaining]) => {
     if (next == null)
       return [prev];
     if (adjacent(prev, next)) {
-      return [prev, ...reorder([next, ...remaining])];
+      return [prev, ...order([next, ...remaining])];
     }
-    return reorder([prev, ...remaining, next]);
+    return order([prev, ...remaining, next]);
   };
     
-  const edgeLoops = connectedEdges(edges).map(reorder);
+  const edgeLoops = connectedEdges(edges).map(order);
 
   return edgeLoops.map(loop =>
     loop.reduce(
