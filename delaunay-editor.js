@@ -284,9 +284,13 @@ const connectedLoops = (triangles) => {
     
   const edgeLoops = connectedEdges(edges).map(reorder);
 
-  return edgeLoops.map(loop => {
-    // TODO convert loop edges to sequential points
-  });
+  return edgeLoops.map(loop =>
+    loop.reduce(
+      callbackFn = (points, edge) =>
+        [...points, (points[points.length - 1] === edge.p1) ? edge.p2 : edge.p1],
+      initialValue = loop[0].p1
+    )
+  );
 };
 
 class DelaunayEditor extends HTMLElement {
