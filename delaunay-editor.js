@@ -280,6 +280,10 @@ const sortPoints = (points, clockwise) => {
   );
 };
 
+const connectedLoops = (edges) => {
+  return connectedEdges(edges);
+};
+
 class DelaunayEditor extends HTMLElement {
   constructor() {
     super();
