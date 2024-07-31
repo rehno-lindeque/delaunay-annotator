@@ -280,7 +280,8 @@ const sortPoints = (points, clockwise) => {
   );
 };
 
-const connectedLoops = (edges) => {
+const connectedLoops = (triangles) => {
+  const edges = outerEdges(triangles.flatMap(triangle => triangle.edges()));
   return connectedEdges(edges);
 };
 
