@@ -123,7 +123,7 @@ class DelaunayTriangle {
     return this.triangle.points.some(p => {
       const v = new Vector(p.x - pov.x, p.y - pov.y);
 
-      return occluders.some({p1, p2} => {
+      return occluders.some(({p1, p2}) => {
         const w = new Vector(p2.x - p1.x, p2.y - p1.y);
 
         // Line segment intersection test
