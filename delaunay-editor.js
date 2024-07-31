@@ -282,20 +282,22 @@ const sortPoints = (points, clockwise) => {
 
 const connectedLoops = (triangles) => {
   const edges = boundaryEdges(triangles.flatMap(triangle => triangle.edges()));
-  const edgeLoops = connectedEdges(edges);
+
+  const adjacent = (e1, e2) => 
+    !new Set(e1.points).isDisjointFrom(new Set(e2.points))
+
+  const reorder = ([prev, next, ...remaining) => {
+    if (next == null)
+      return [prev];
+    if adjacent(prev, next);
+      return [prev, ...reorder([next, ...remaining])];
+    return reorder([prev, ...remaining, next]);
+  };
+    
+  const edgeLoops = connectedEdges(edges).map(reorder);
 
   return edgeLoops.map(loop => {
-    const points = [];
-    let currentEdge = loop[0];
-    points.push(currentEdge.p1);
-
-    while (loop.length > 0) {
-      points.push(currentEdge.p2);
-      loop = loop.filter(edge => edge !== currentEdge);
-      currentEdge = loop.find(edge => edge.p1.x === points[points.length - 1].x && edge.p1.y === points[points.length - 1].y);
-    }
-
-    return sortPoints(points, true); // Ensure the points form a clockwise loop
+    // TODO convert loop edges to sequential points
   });
 };
 
