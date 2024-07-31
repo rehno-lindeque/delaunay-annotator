@@ -293,16 +293,18 @@ const connectedLoops = (triangles) => {
   );
 };
 
-const orientEdgeLoop = (points, clockwise = true) => {
+const signedArea = (points) => {
   // Shoelace formula
   const zip = (as, bs) => as.map((a, i) => [a, bs[i]]);
   const det = (v1, v2) => v1.x * v2.y - v1.y * v2.x;
 
-  const signedArea = zip(points, [...points.slice(1), points[0]])
+  return zip(points, [...points.slice(1), points[0]])
     .map(([p1, p2]) => det(p1, p2))
     .reduce((sum, area) => sum + area);
+};
 
-  return ((signedArea > 0) === clockwise) ? points : points.reverse();
+const orientEdgeLoop = (points, clockwise = true) => {
+  return ((signedArea(points) > 0) === clockwise) ? points : points.reverse();
 };
 
 class DelaunayEditor extends HTMLElement {
