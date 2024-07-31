@@ -264,8 +264,8 @@ const connectedTriangles = (triangles) => {
 
 const connectedEdges = (edges) => {
   return connectedComponents(
-    nodes = edges,
-    adjacent = (e1, e2) => 
+    edges,
+    (e1, e2) => 
       !new Set(e1.points).isDisjointFrom(new Set(e2.points))
   )
 };
