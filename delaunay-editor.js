@@ -214,13 +214,9 @@ const addDelaunayPoint = (point, triangles) => {
   return goodTriangles.concat(newTriangles);
 }
 
-const connectedComponents = (triangles) => {
-  // Triangle adjacency tests if any edges are shared
-  const adjacent = (t1, t2) =>
-    !new Set(t1.edges().map(e => e.key())).isDisjointFrom(new Set(t2.edges.map(e => e.key))))
-
+const connectedComponents = (nodes, adjacent) => {
   // Depth first graph traversal
-  const dfs = ([prev, next, ...remaining], disconnected) => {
+  const dfs = ([prev, next, ...remaining], disconnected = []) => {
     if (next == null)
       return {
         connected: [prev],
@@ -230,13 +226,13 @@ const connectedComponents = (triangles) => {
     // Test if the next triangle is disconnected from the previous triangle
     if (next.label !== prev.label || !adjacent(prev, next))
       return dfs(
-        triangles = [prev, ...remaining],
-        disconnected = [...disconnected, next]
+        nodes = [prev, ...remaining],
+        disconnected = [...disconnected, next],
       );
 
     // The next triangle is connected to the previous triangle
     result = dfs(
-      triangles = [next, ...remaining],
+      nodes = [next, ...remaining],
       disconnected = disconnected
     );
     return {
@@ -245,8 +241,8 @@ const connectedComponents = (triangles) => {
     };
   };
 
-  {connected, disconnected} = dfs(triangles, []);
-  return [connected, ...connectedComponents(disconnected)];
+  const { connected, disconnected } = dfs(nodes);
+  return [connected, ...connectedComponents(disconnected, adjacent)];
 };
 
 const sortPoints = (points, clockwise) => {
