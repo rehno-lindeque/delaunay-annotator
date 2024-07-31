@@ -237,7 +237,7 @@ const connectedComponents = (nodes, adjacent) => {
       );
 
     // The next triangle is connected to the previous triangle
-    result = dfs(
+    const result = dfs(
       nodes = [next, ...remaining],
       disconnected = disconnected
     );
