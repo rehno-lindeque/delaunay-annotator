@@ -273,11 +273,12 @@ const connectedLoops = (triangles) => {
   const adjacent = (e1, e2) => 
     !new Set(e1.points).isDisjointFrom(new Set(e2.points))
 
-  const reorder = ([prev, next, ...remaining) => {
+  const reorder = ([prev, next, ...remaining]) => {
     if (next == null)
       return [prev];
-    if adjacent(prev, next);
+    if (adjacent(prev, next)) {
       return [prev, ...reorder([next, ...remaining])];
+    }
     return reorder([prev, ...remaining, next]);
   };
     
