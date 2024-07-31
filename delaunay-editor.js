@@ -275,7 +275,7 @@ const sortPoints = (points, clockwise) => {
 
   const det = (v1, v2) => v1.x * v2.y - v1.y * v2.x;
 
-  return points.sort((p1, p2) =>
+  return points.toSorted(p1, p2) =>
     (clockwise ? -1 : 1) * Math.sign(det(new Vector(p1.x - center.x, p1.y - center.y), new Vector(p2.x - center.x, p2.y - center.y)))
   );
 };
