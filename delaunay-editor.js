@@ -160,8 +160,8 @@ const fillHole = (edges, point) =>
   edges.map(edge => connect(edge, point));
 
 const partitionTriangles = (point, triangles) => {
-  let goodTriangles = [];
-  let badTriangles = [];
+  const goodTriangles = [];
+  const badTriangles = [];
 
   triangles.forEach(triangle => {
     if (triangle.containsPoint(point))
@@ -177,8 +177,8 @@ const partitionTrianglesWithConstraints = (point, triangles) => {
   // Partition triangles into a labeled and unlabeled (technically labeled "unknown") sets,
   // where labeled triangles are considered constrained.
   // Constrained triangles may not be split.
-  let unconstrainedTriangles = [];
-  let constrainedTriangles = [];
+  const unconstrainedTriangles = [];
+  const constrainedTriangles = [];
   triangles.forEach(triangle => {
     if (triangle.label === "unknown")
       unconstrainedTriangles.push(triangle);
@@ -193,8 +193,8 @@ const partitionTrianglesWithConstraints = (point, triangles) => {
   const occluders = outerEdges(badTriangles.flatMap(triangle => triangle.edges()));
 
   // Ensure that the polygonal hole will be star shaped by removing occluded triangles from the set of bad triangles
-  let occludedTriangles = [];
-  let visibleTriangles = [];
+  const occludedTriangles = [];
+  const visibleTriangles = [];
 
   badTriangles.forEach(triangle => {
     if (triangle.occluded(point, occluders))
@@ -249,7 +249,7 @@ const connectedComponents = (triangles) => {
   return [connected, ...connectedComponents(disconnected)];
 };
 
-const sortPoints = (points, clockwise = true) => {
+const sortPoints = (points, clockwise) => {
   const center = points.reduce((acc, point) => {
     acc.x += point.x;
     acc.y += point.y;
