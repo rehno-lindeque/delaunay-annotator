@@ -33,6 +33,10 @@ class Edge {
     this.p2 = p2;
   }
 
+  get points() {
+    return [this.p1, this.p2];
+  }
+
   key() {
     const [p1, p2] = [this.p1, this.p2].sort((a, b) => {
       if (a.x < b.x || (a.x === b.x && a.y < b.y)) return -1;
@@ -48,6 +52,10 @@ class Triangle {
     this.p1 = p1;
     this.p2 = p2;
     this.p3 = p3;
+  }
+
+  get points() {
+    return [this.p1, this.p2, this.p3];
   }
 }
 
@@ -112,20 +120,18 @@ class DelaunayTriangle {
 
   occluded(pov, occluders) {
     const coincident = (p1, p2) => p1.x === p2.x && p1.y === p2.y;
-    const corners = [ this.triangle.p1, this.triangle.p2, this.triangle.p3 ]; 
+    return this.triangle.points.some(p => {
+      const v = new Vector(p.x - pov.x, p.y - pov.y);
 
-    return corners.some(corner => {
-      const v = new Vector(corner.x - pov.x, corner.y - pov.y);
-
-      return occluders.some(edge => {
-        const w = new Vector(edge.p2.x - edge.p1.x, edge.p2.y - edge.p1.y);
+      return occluders.some({p1, p2} => {
+        const w = new Vector(p2.x - p1.x, p2.y - p1.y);
 
         // Line segment intersection test
-        const v1 = new Vector(edge.p1.x - pov.x, edge.p1.y - pov.y);
-        const v2 = new Vector(edge.p2.x - pov.x, edge.p2.y - pov.y);
+        const v1 = new Vector(p1.x - pov.x, p1.y - pov.y);
+        const v2 = new Vector(p2.x - pov.x, p2.y - pov.y);
 
-        const w1 = new Vector(pov.x - edge.p1.x, pov.y - edge.p1.y);
-        const w2 = new Vector(corner.x - edge.p1.x, corner.y - edge.p1.y);
+        const w1 = new Vector(pov.x - p1.x, pov.y - p1.y);
+        const w2 = new Vector(p.x - p1.x, p.y - p1.y);
 
         return v.between(v1, v2) && w.between(w1, w2);
       });
@@ -257,7 +263,7 @@ const connectedEdges = (edges) => {
   return connectedComponents(
     nodes = edges,
     adjacent = (e1, e2) => 
-      !new Set([e1.p1, e1.p2]).isDisjointFrom(new Set([e2.p1, e2.p2]))
+      !new Set(e1.points).isDisjointFrom(new Set(e2.points))
   )
 };
 
