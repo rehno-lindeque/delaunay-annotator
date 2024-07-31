@@ -250,24 +250,16 @@ const connectedComponents = (triangles) => {
 };
 
 const sortPoints = (points, clockwise) => {
-  const center = points.reduce((acc, point) => {
-    acc.x += point.x;
-    acc.y += point.y;
-    return acc;
-  }, { x: 0, y: 0 });
+  const center = points.reduce((acc, point) => { x: acc.x + point.x, y: acc.y + point.y }, { x: 0, y: 0 });
 
   center.x /= points.length;
   center.y /= points.length;
 
-  const angle = (point) => Math.atan2(point.y - center.y, point.x - center.x);
+  const det = (v1, v2) => v1.x * v2.y - v1.y * v2.x;
 
-  points.sort((a, b) => {
-    const angleA = angle(a);
-    const angleB = angle(b);
-    return clockwise ? angleB - angleA : angleA - angleB;
-  });
-
-  return points;
+  return points.sort((p1, p2) =>
+    (clockwise ? -1 : 1) * Math.sign(det(new Vector(p1.x - center.x, p1.y - center.y), new Vector(p2.x - center.x, p2.y - center.y)));
+  );
 };
 
 class DelaunayEditor extends HTMLElement {
