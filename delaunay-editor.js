@@ -253,6 +253,14 @@ const connectedTriangles = (triangles) => {
   );
 }
 
+const connectedEdges = (edges) => {
+  return connectedComponents(
+    nodes = edges,
+    adjacent = (e1, e2) => 
+      !new Set([e1.p1, e1.p2]).isDisjointFrom(new Set([e2.p1, e2.p2]))
+  )
+};
+
 const sortPoints = (points, clockwise) => {
   const center = points.reduce((acc, point) => { x: acc.x + point.x, y: acc.y + point.y }, { x: 0, y: 0 });
 
