@@ -282,7 +282,21 @@ const sortPoints = (points, clockwise) => {
 
 const connectedLoops = (triangles) => {
   const edges = boundaryEdges(triangles.flatMap(triangle => triangle.edges()));
-  return connectedEdges(edges);
+  const edgeLoops = connectedEdges(edges);
+
+  return edgeLoops.map(loop => {
+    const points = [];
+    let currentEdge = loop[0];
+    points.push(currentEdge.p1);
+
+    while (loop.length > 0) {
+      points.push(currentEdge.p2);
+      loop = loop.filter(edge => edge !== currentEdge);
+      currentEdge = loop.find(edge => edge.p1.x === points[points.length - 1].x && edge.p1.y === points[points.length - 1].y);
+    }
+
+    return sortPoints(points, true); // Ensure the points form a clockwise loop
+  });
 };
 
 class DelaunayEditor extends HTMLElement {
