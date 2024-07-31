@@ -215,31 +215,38 @@ const addDelaunayPoint = (point, triangles) => {
 }
 
 const connectedComponents = (triangles) => {
-  const visited = new Set();
-  const components = [];
+  // Triangle adjacency tests if any edges are shared
+  const adjacent = (t1, t2) =>
+    !new Set(t1.edges().map(e => e.key())).isDisjointFrom(new Set(t2.edges.map(e => e.key))))
 
-  const dfs = (triangle, label, component) => {
-    visited.add(triangle);
-    component.push(triangle);
+  // Depth first graph traversal
+  const dfs = ([prev, next, ...remaining], disconnected) => {
+    if (next == null)
+      return {
+        connected: [prev],
+        disconnected
+      };
 
-    triangle.edges().forEach(edge => {
-      triangles.forEach(neighbor => {
-        if (!visited.has(neighbor) && neighbor.label === label && neighbor.edges().some(e => e.key() === edge.key())) {
-          dfs(neighbor, label, component);
-        }
-      });
-    });
+    // Test if the next triangle is disconnected from the previous triangle
+    if (next.label !== prev.label || !adjacent(prev, next))
+      return dfs(
+        triangles = [prev, ...remaining],
+        disconnected = [...disconnected, next]
+      );
+
+    // The next triangle is connected to the previous triangle
+    result = dfs(
+      triangles = [next, ...remaining],
+      disconnected = disconnected
+    );
+    return {
+      connected: [ prev, ...result.connected ],
+      disconnected: result.disconnected
+    };
   };
 
-  triangles.forEach(triangle => {
-    if (!visited.has(triangle)) {
-      const component = [];
-      dfs(triangle, triangle.label, component);
-      components.push(component);
-    }
-  });
-
-  return components;
+  {connected, disconnected} = dfs(triangles, []);
+  return [connected, ...connectedComponents(disconnected)];
 };
 
 class DelaunayEditor extends HTMLElement {
