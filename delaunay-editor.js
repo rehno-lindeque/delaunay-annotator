@@ -268,7 +268,7 @@ const connectedEdges = (edges) => {
 };
 
 const sortPoints = (points, clockwise) => {
-  const center = points.reduce((acc, point) => { x: acc.x + point.x, y: acc.y + point.y }, { x: 0, y: 0 });
+  const center = points.reduce((acc, point) => ({ x: acc.x + point.x, y: acc.y + point.y }), { x: 0, y: 0 });
 
   center.x /= points.length;
   center.y /= points.length;
