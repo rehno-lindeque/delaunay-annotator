@@ -248,7 +248,10 @@ const connectedComponents = (nodes, adjacent) => {
   };
 
   const { connected, disconnected } = dfs(nodes);
-  return [connected, ...connectedComponents(disconnected, adjacent)];
+  if (disconnected.length > 0)
+    return [connected, ...connectedComponents(disconnected, adjacent)];
+  else
+    return connected;
 };
 
 const connectedTriangles = (triangles) => {
