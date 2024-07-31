@@ -267,19 +267,6 @@ const connectedEdges = (edges) => {
   )
 };
 
-const sortPoints = (points, clockwise) => {
-  const center = points.reduce((acc, point) => ({ x: acc.x + point.x, y: acc.y + point.y }), { x: 0, y: 0 });
-
-  center.x /= points.length;
-  center.y /= points.length;
-
-  const det = (v1, v2) => v1.x * v2.y - v1.y * v2.x;
-
-  return points.toSorted(p1, p2) =>
-    (clockwise ? -1 : 1) * Math.sign(det(new Vector(p1.x - center.x, p1.y - center.y), new Vector(p2.x - center.x, p2.y - center.y)))
-  );
-};
-
 const connectedLoops = (triangles) => {
   const edges = boundaryEdges(triangles.flatMap(triangle => triangle.edges()));
 
