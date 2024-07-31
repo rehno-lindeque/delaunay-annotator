@@ -249,6 +249,27 @@ const connectedComponents = (triangles) => {
   return [connected, ...connectedComponents(disconnected)];
 };
 
+const sortPoints = (points, clockwise = true) => {
+  const center = points.reduce((acc, point) => {
+    acc.x += point.x;
+    acc.y += point.y;
+    return acc;
+  }, { x: 0, y: 0 });
+
+  center.x /= points.length;
+  center.y /= points.length;
+
+  const angle = (point) => Math.atan2(point.y - center.y, point.x - center.x);
+
+  points.sort((a, b) => {
+    const angleA = angle(a);
+    const angleB = angle(b);
+    return clockwise ? angleB - angleA : angleA - angleB;
+  });
+
+  return points;
+};
+
 class DelaunayEditor extends HTMLElement {
   constructor() {
     super();
