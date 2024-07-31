@@ -464,11 +464,24 @@ class DelaunayEditor extends HTMLElement {
 
   updateSvg() {
     const svg = this.shadowRoot.querySelector('#svg');
-    svg.innerHTML = this.triangles.map(triangle => 
-      `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" class="${triangle.label}"/>`
-    ).join('') + this.points.map(point => 
+    const connectedTriangles = connectedComponents(this.triangles, (t1, t2) =>
+      !new Set(t1.edges().map(e => e.key())).isDisjointFrom(new Set(t2.edges().map(e => e.key())))
+    );
+
+    const polygons = connectedTriangles.map(triangleGroup => {
+      const edgeLoops = connectedLoops(triangleGroup);
+      return this.renderPolygon(edgeLoops);
+    }).join('');
+
+    const triangleOutlines = this.triangles.map(triangle => 
+      `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" class="${triangle.label}" fill="none" stroke="black"/>`
+    ).join('');
+
+    const points = this.points.map(point => 
       `<circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>`
     ).join('');
+
+    svg.innerHTML = polygons + triangleOutlines + points;
   }
 
   renderToImageBlob() {
