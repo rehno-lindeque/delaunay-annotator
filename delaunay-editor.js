@@ -139,7 +139,7 @@ class DelaunayTriangle {
   }
 }
 
-const outerEdges = (edges) => {
+const boundaryEdges = (edges) => {
   const edgeCount = new Map();
 
   edges.forEach(edge => {
@@ -196,7 +196,7 @@ const partitionTrianglesWithConstraints = (point, triangles) => {
   const { goodTriangles, badTriangles } = partitionTriangles(point, unconstrainedTriangles);
 
   // Get the exterior edges of the polygonal hole(s) for efficiency
-  const occluders = outerEdges(badTriangles.flatMap(triangle => triangle.edges()));
+  const occluders = boundaryEdges(badTriangles.flatMap(triangle => triangle.edges()));
 
   // Ensure that the polygonal hole will be star shaped by removing occluded triangles from the set of bad triangles
   const occludedTriangles = [];
@@ -214,7 +214,7 @@ const partitionTrianglesWithConstraints = (point, triangles) => {
 
 const addDelaunayPoint = (point, triangles) => {
   const { goodTriangles, badTriangles } = partitionTrianglesWithConstraints(point, triangles);
-  const hole = outerEdges(badTriangles.flatMap(triangle => triangle.edges()));
+  const hole = boundaryEdges(badTriangles.flatMap(triangle => triangle.edges()));
   const newTriangles = fillHole(hole, point);
 
   return goodTriangles.concat(newTriangles);
@@ -281,7 +281,7 @@ const sortPoints = (points, clockwise) => {
 };
 
 const connectedLoops = (triangles) => {
-  const edges = outerEdges(triangles.flatMap(triangle => triangle.edges()));
+  const edges = boundaryEdges(triangles.flatMap(triangle => triangle.edges()));
   return connectedEdges(edges);
 };
 
