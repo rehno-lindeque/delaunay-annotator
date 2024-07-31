@@ -436,6 +436,32 @@ class DelaunayEditor extends HTMLElement {
     this.updateSvg();
   }
 
+  renderPolygon(edgeLoops) {
+    const absArea = (loop) => Math.abs(signedArea(loop));
+
+    let { outerLoop, } = edgeLoops.reduce(
+      callbackFn = ({ outerLoop, outerArea }, loop) => {
+        const area = absArea(loop);
+        if (area > outerArea)
+          return { outerLoop: loop, outerArea: area };
+        else 
+          return { outerLoop, outerArea };
+      }, 
+      initialValue = { outerLoop: loops[0], outerArea: absArea(loops[0]) }
+    );
+    let holes = loops.filter(loop => loop !== outerLoop);
+
+    outerLoop = orientEdgeLoop(outerLoop, clockwise = true);
+    holes = holes.map(loop => orientEdgeLoop(loop, clockwise = false));
+
+    const pathData = [
+      `M ${outerLoop.map(p => `${p.x},${p.y}`).join(' L ')} Z`,
+      ...holes.map(hole => `M ${hole.map(p => `${p.x},${p.y}`).join(' L ')} Z`)
+    ].join(' ');
+
+    return `<path d="${pathData}" />`;
+  }
+
   updateSvg() {
     const svg = this.shadowRoot.querySelector('#svg');
     svg.innerHTML = this.triangles.map(triangle => 
