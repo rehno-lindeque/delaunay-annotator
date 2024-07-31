@@ -245,6 +245,14 @@ const connectedComponents = (nodes, adjacent) => {
   return [connected, ...connectedComponents(disconnected, adjacent)];
 };
 
+const connectedTriangles = (triangles) => {
+  return connectedComponents(
+    nodes = triangles,
+    adjacent = (t1, t2) =>
+      !new Set(t1.edges().map(e => e.key())).isDisjointFrom(new Set(t2.edges.map(e => e.key)))
+  );
+}
+
 const sortPoints = (points, clockwise) => {
   const center = points.reduce((acc, point) => { x: acc.x + point.x, y: acc.y + point.y }, { x: 0, y: 0 });
 
