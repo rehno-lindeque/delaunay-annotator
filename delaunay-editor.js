@@ -251,7 +251,7 @@ const connectedComponents = (nodes, adjacent) => {
   if (disconnected.length > 0)
     return [connected, ...connectedComponents(disconnected, adjacent)];
   else
-    return connected;
+    return [connected];
 };
 
 const connectedTriangles = (triangles) => {
