@@ -258,9 +258,12 @@ const connectedTriangles = (triangles) => {
   return connectedComponents(
     triangles,
     (t1, t2) =>
-      !new Set(t1.edges().map(e => e.key())).isDisjointFrom(new Set(t2.edges().map(e => e.key)))
+      t1.label === t2.label &&
+      !new Set(t1.edges().map((e) => e.key())).isDisjointFrom(
+        new Set(t2.edges().map((e) => e.key)),
+      ),
   );
-}
+};
 
 const connectedEdges = (edges) => {
   return connectedComponents(
