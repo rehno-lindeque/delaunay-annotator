@@ -271,16 +271,9 @@ const connectedLoops = (triangles) => {
   const adjacent = (e1, e2) => 
     !new Set(e1.points).isDisjointFrom(new Set(e2.points))
 
-  const order = ([prev, next, ...remaining]) => {
-    if (next == null)
-      return [prev];
-    if (adjacent(prev, next)) {
-      return [prev, ...order([next, ...remaining])];
-    }
-    return order([prev, ...remaining, next]);
-  };
-    
-  const edgeLoops = connectedEdges(edges).map(order);
+  const boundaries = connectedEdges(edges);
+
+  // TODO: flatMap over boundaries to return connected edge loops that don't share a vertex
 
   return edgeLoops.map(loop =>
     loop.slice(1).reduce(
