@@ -467,7 +467,7 @@ class DelaunayEditor extends HTMLElement {
       ...holes.map(hole => `M ${hole.map(p => `${p.x},${p.y}`).join(' L ')} Z`)
     ].join(' ');
 
-    return `<path d="${pathData}" class="${label}" />`;
+    return `<path d="${pathData}" class="${label}" stroke="black" />`;
   }
 
   updateSvg() {
@@ -477,15 +477,17 @@ class DelaunayEditor extends HTMLElement {
       .map(region => this.renderRegion(region))
       .join('');
 
-    const triangleOutlines = this.triangles.map(triangle => 
-      `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" class="${triangle.label}" fill="none" stroke="black"/>`
-    ).join('');
+    // const triangleOutlines = this.triangles.map(triangle => 
+    //   `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" class="${triangle.label}" fill="none" stroke="black"/>`
+    // ).join('');
 
     const points = this.points.map(point => 
       `<circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>`
     ).join('');
 
-    svg.innerHTML = polygons + triangleOutlines + points;
+    svg.innerHTML = polygons + 
+      // triangleOutlines +
+      points;
   }
 
   renderToImageBlob() {
