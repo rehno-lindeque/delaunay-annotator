@@ -285,11 +285,13 @@ const connectedBoundaries = (triangles) => {
 
 const connectedLoops = (boundaries) => {
   return boundaries.flatMap(boundary => [
-    boundary.slice(1).reduce(
+    const loopPoints = boundary.slice(1).reduce(
       (points, edge) =>
         [...points, (points[points.length - 1] === edge.p1) ? edge.p2 : edge.p1],
       [new Set(boundary[1].points).has(boundary[0].p1) ? boundary[0].p1 : boundary[0].p2]
-    )
+    );
+
+    // TODO: Split points into multiple loops
   ]);
 };
 
