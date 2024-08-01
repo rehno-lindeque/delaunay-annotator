@@ -456,22 +456,21 @@ class DelaunayEditor extends HTMLElement {
   }
 
   renderRegion(region) {
-    let { outerLoop, } = region.loops.reduce(
-      ({ outerLoop, outerArea }, loop) => {
-        if (Math.abs(loop.signedArea) > outerArea)
-          return { outerLoop: loop, outerArea: Math.abs(loop.signedArea) };
-        else 
-          return { outerLoop, outerArea };
-      }, 
-      { outerLoop: region.loops[0].points, outerArea: Math.abs(region.loops[0].signedArea) }
+    // The outer hull (outer boundary) is loop with the largest absolute area
+    let hull = region.loops.reduce(
+      (hull, loop) =>
+        Math.abs(loop.signedArea) > Math.abs(hull.signedArea) ? loop : hull, 
+      region.loops[0]
     );
-    let holes = region.loops.filter(loop => loop.points !== outerLoop).map(loop => loop.points);
 
-    outerLoop = orientEdgeLoop(outerLoop, true);
-    holes = holes.map(loop => orientEdgeLoop(loop, false));
+    // All other loops are holes (inner boundaries)
+    let holes = region.loops.filter(loop => loop !== hull);
+
+    hull = orientEdgeLoop(hull.points, true);
+    holes = holes.map(loop => orientEdgeLoop(loop.points, false));
 
     const pathData = [
-      `M ${outerLoop.map(p => `${p.x},${p.y}`).join(' L ')} Z`,
+      `M ${hull.map(p => `${p.x},${p.y}`).join(' L ')} Z`,
       ...holes.map(hole => `M ${hole.map(p => `${p.x},${p.y}`).join(' L ')} Z`)
     ].join(' ');
 
