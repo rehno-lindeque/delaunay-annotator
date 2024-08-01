@@ -283,10 +283,10 @@ const connectedLoops = (triangles) => {
   const edgeLoops = connectedEdges(edges).map(order);
 
   return edgeLoops.map(loop =>
-    loop.reduce(
+    loop.slice(1).reduce(
       (points, edge) =>
         [...points, (points[points.length - 1] === edge.p1) ? edge.p2 : edge.p1],
-      [loop[0].p1]
+      [new Set(loop[1].points).has(loop[0].p1) ? loop[0].p1 : loop[0].p2]
     )
   );
 };
