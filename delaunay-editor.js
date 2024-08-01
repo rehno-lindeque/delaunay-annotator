@@ -266,15 +266,45 @@ const connectedEdges = (edges) => {
 };
 
 const connectedLoops = (triangles) => {
-  const edges = boundaryEdges(triangles.flatMap(triangle => triangle.edges()));
+  const boundaries = connectedEdges(
+    boundaryEdges(
+      triangles.flatMap(triangle => triangle.edges())
+    )
+  );
 
-  const adjacent = (e1, e2) => 
-    !new Set(e1.points).isDisjointFrom(new Set(e2.points))
+  // Put edges in sequential order such that they form loops
+  // Split apart any cycles in the boundary edges into multiple loops
+  const edgeLoops = boundaries.flatMap(boundary => {
+    const loops = [];
+    let currentLoop = [];
+    let visitedEdges = new Set();
 
-  const boundaries = connectedEdges(edges);
+    const findNextEdge = (currentEdge) => 
+      boundary.find(edge => 
+        !visitedEdges.has(edge.key()) && 
+        (edge.p1 === currentEdge.p2 || edge.p2 === currentEdge.p2)
+      );
 
-  // TODO: flatMap over boundaries to return connected edge loops that don't share a vertex
+    boundary.forEach(edge => {
+      if (!visitedEdges.has(edge.key())) {
+        currentLoop = [edge];
+        visitedEdges.add(edge.key());
+        let nextEdge = findNextEdge(edge);
 
+        while (nextEdge) {
+          currentLoop.push(nextEdge);
+          visitedEdges.add(nextEdge.key());
+          nextEdge = findNextEdge(nextEdge);
+        }
+
+        loops.push(currentLoop);
+      }
+    });
+
+    return loops;
+  });
+
+  // Turn loops into sequential points
   return edgeLoops.map(loop =>
     loop.slice(1).reduce(
       (points, edge) =>
