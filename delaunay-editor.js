@@ -265,11 +265,11 @@ const connectedEdges = (edges) => {
   )
 };
 
-const connectedLoops = (triangles) => {
+const connectedBoundaries = (triangles) => {
   const edges = boundaryEdges(triangles.flatMap(triangle => triangle.edges()));
 
   const adjacent = (e1, e2) => 
-    !new Set(e1.points).isDisjointFrom(new Set(e2.points))
+    !new Set(e1.points).isDisjointFrom(new Set(e2.points));
 
   const order = ([prev, next, ...remaining]) => {
     if (next == null)
@@ -279,16 +279,18 @@ const connectedLoops = (triangles) => {
     }
     return order([prev, ...remaining, next]);
   };
-    
-  const edgeLoops = connectedEdges(edges).map(order);
 
-  return edgeLoops.map(loop =>
-    loop.slice(1).reduce(
+  return connectedEdges(edges).map(order);
+};
+
+const connectedLoops = (boundaries) => {
+  return boundaries.flatMap(boundary => [
+    boundary.slice(1).reduce(
       (points, edge) =>
         [...points, (points[points.length - 1] === edge.p1) ? edge.p2 : edge.p1],
-      [new Set(loop[1].points).has(loop[0].p1) ? loop[0].p1 : loop[0].p2]
+      [new Set(boundary[1].points).has(boundary[0].p1) ? boundary[0].p1 : boundary[0].p2]
     )
-  );
+  ]);
 };
 
 const signedArea = (points) => {
@@ -307,8 +309,9 @@ const orientEdgeLoop = (points, clockwise = true) => {
 
 const connectedRegions = (triangles) => {
   return connectedTriangles(triangles)
-    .map(triangles => {
-      const loops = connectedLoops(triangles);
+    .map(connectedBoundaries)
+    .map(connectedLoops)
+    .map(loops => {
       const hull = loops.reduce(
         (hull, loop) =>
           Math.abs(signedArea(loop)) > Math.abs(signedArea(hull)) ? loop : hull, 
