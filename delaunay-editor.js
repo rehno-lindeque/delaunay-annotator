@@ -316,12 +316,18 @@ const orientEdgeLoop = (points, clockwise = true) => {
 const connectedRegions = (triangles) => {
   return connectedTriangles(triangles)
     .map(triangles => {
+      const loops = connectedLoops(triangles);
+      const hull = loops.reduce(
+        (hull, loop) =>
+          Math.abs(signedArea(loop)) > Math.abs(signedArea(hull)) ? loop : hull, 
+        loops[0]
+      );
+      const holes = loops.filter(loop => loop !== hull);
+
       return {
         label: triangles[0].label,
-        loops: connectedLoops(triangles).map(loop => ({
-          points: loop,
-          signedArea: signedArea(loop)
-        }))
+        hull: orientEdgeLoop(hull, true),
+        holes: holes.map(loop => orientEdgeLoop(loop, false))
       };
     });
 };
@@ -455,20 +461,7 @@ class DelaunayEditor extends HTMLElement {
     this.updateSvg();
   }
 
-  renderRegion(region) {
-    // The outer hull (outer boundary) is loop with the largest absolute area
-    let hull = region.loops.reduce(
-      (hull, loop) =>
-        Math.abs(loop.signedArea) > Math.abs(hull.signedArea) ? loop : hull, 
-      region.loops[0]
-    );
-
-    // All other loops are holes (inner boundaries)
-    let holes = region.loops.filter(loop => loop !== hull);
-
-    hull = orientEdgeLoop(hull.points, true);
-    holes = holes.map(loop => orientEdgeLoop(loop.points, false));
-
+  renderRegion({ hull, holes }) {
     const pathData = [
       `M ${hull.map(p => `${p.x},${p.y}`).join(' L ')} Z`,
       ...holes.map(hole => `M ${hole.map(p => `${p.x},${p.y}`).join(' L ')} Z`)
