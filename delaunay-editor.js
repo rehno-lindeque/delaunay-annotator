@@ -230,7 +230,7 @@ const connectedComponents = (nodes, adjacent) => {
       };
 
     // Test if the next triangle is disconnected from the previous triangle
-    if (next.label !== prev.label || !adjacent(prev, next))
+    if (!adjacent(prev, next))
       return dfs(
         [prev, ...remaining],
         [...disconnected, next],
