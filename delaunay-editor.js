@@ -291,7 +291,7 @@ const connectedLoops = (triangles) => {
     loop.reduce(
       (points, edge) =>
         [...points, (points[points.length - 1] === edge.p1) ? edge.p2 : edge.p1],
-      loop[0].p1
+      [loop[0].p1]
     )
   );
 };
