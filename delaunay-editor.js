@@ -461,20 +461,20 @@ class DelaunayEditor extends HTMLElement {
     this.updateSvg();
   }
 
-  renderRegion({ hull, holes }) {
+  renderRegion({ hull, holes, label }) {
     const pathData = [
       `M ${hull.map(p => `${p.x},${p.y}`).join(' L ')} Z`,
       ...holes.map(hole => `M ${hole.map(p => `${p.x},${p.y}`).join(' L ')} Z`)
     ].join(' ');
 
-    return `<path d="${pathData}" />`;
+    return `<path d="${pathData}" class="${label}" />`;
   }
 
   updateSvg() {
     const svg = this.shadowRoot.querySelector('#svg');
 
     const polygons = connectedRegions(this.triangles)
-      .map(this.renderRegion)
+      .map(region => this.renderRegion(region))
       .join('');
 
     const triangleOutlines = this.triangles.map(triangle => 
