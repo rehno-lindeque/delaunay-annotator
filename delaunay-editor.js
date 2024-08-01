@@ -284,15 +284,38 @@ const connectedBoundaries = (triangles) => {
 };
 
 const connectedLoops = (boundaries) => {
-  return boundaries.flatMap(boundary => [
+  return boundaries.flatMap(boundary => {
     const loopPoints = boundary.slice(1).reduce(
       (points, edge) =>
         [...points, (points[points.length - 1] === edge.p1) ? edge.p2 : edge.p1],
       [new Set(boundary[1].points).has(boundary[0].p1) ? boundary[0].p1 : boundary[0].p2]
     );
 
-    // TODO: Split points into multiple loops
-  ]);
+    const pointCount = new Map();
+    loopPoints.forEach(point => {
+      const key = `${point.x},${point.y}`;
+      if (!pointCount.has(key)) {
+        pointCount.set(key, 0);
+      }
+      pointCount.set(key, pointCount.get(key) + 1);
+    });
+
+    const splitLoops = [];
+    let currentLoop = [];
+    loopPoints.forEach(point => {
+      const key = `${point.x},${point.y}`;
+      currentLoop.push(point);
+      if (pointCount.get(key) > 1) {
+        splitLoops.push(currentLoop);
+        currentLoop = [point];
+      }
+    });
+    if (currentLoop.length > 0) {
+      splitLoops.push(currentLoop);
+    }
+
+    return splitLoops;
+  });
 };
 
 const signedArea = (points) => {
