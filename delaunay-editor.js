@@ -402,6 +402,9 @@ class DelaunayEditor extends HTMLElement {
           svg .pick-surface { fill: green; }
           svg .lead { fill: blue; }
           svg polygon {
+            stroke: rgba(0,0,0,0.2);
+          }
+          svg path {
             stroke: black;
           }
         </style>
@@ -459,7 +462,7 @@ class DelaunayEditor extends HTMLElement {
       ...holes.map(hole => `M ${hole.map(p => `${p.x},${p.y}`).join(' L ')} Z`)
     ].join(' ');
 
-    return `<path d="${pathData}" class="${label}" stroke="black" />`;
+    return `<path d="${pathData}" class="${label}" />`;
   }
 
   updateSvg() {
@@ -469,16 +472,16 @@ class DelaunayEditor extends HTMLElement {
       .map(region => this.renderRegion(region))
       .join('');
 
-    // const triangleOutlines = this.triangles.map(triangle => 
-    //   `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" class="${triangle.label}" fill="none" stroke="black"/>`
-    // ).join('');
+    const triangleOutlines = this.triangles.map(triangle => 
+      `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" fill="none"/>`
+    ).join('');
 
     const points = this.points.map(point => 
       `<circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>`
     ).join('');
 
-    svg.innerHTML = polygons + 
-      // triangleOutlines +
+    svg.innerHTML = triangleOutlines +
+      polygons + 
       points;
   }
 
