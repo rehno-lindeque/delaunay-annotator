@@ -274,6 +274,8 @@ const connectedLoops = (triangles) => {
 
   // Put edges in sequential order such that they form loops
   // Split apart any cycles in the boundary edges into multiple loops
+  //
+  // TODO: Note that it's not technically necessary to split apart any cycles if edges are visited in a careful order (sort of the opposite of a convex hull algorthm)
   const edgeLoops = boundaries.flatMap(boundary => {
     const loops = [];
     let currentLoop = [];
