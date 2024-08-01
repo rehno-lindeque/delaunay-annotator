@@ -313,6 +313,19 @@ const orientEdgeLoop = (points, clockwise = true) => {
   return ((signedArea(points) > 0) === clockwise) ? points : points.reverse();
 };
 
+const connectedRegions = (triangles) => {
+  return connectedTriangles(triangles)
+    .map(triangles => {
+      return {
+        label: triangles[0].label,
+        loops: connectedLoops(triangles).map(loop => ({
+          points: loop,
+          signedArea: signedArea(loop)
+        }))
+      };
+    });
+};
+
 class DelaunayEditor extends HTMLElement {
   constructor() {
     super();
@@ -442,20 +455,17 @@ class DelaunayEditor extends HTMLElement {
     this.updateSvg();
   }
 
-  renderPolygon(edgeLoops) {
-    const absArea = (loop) => Math.abs(signedArea(loop));
-
-    let { outerLoop, } = edgeLoops.reduce(
+  renderRegion(region) {
+    let { outerLoop, } = region.loops.reduce(
       ({ outerLoop, outerArea }, loop) => {
-        const area = absArea(loop);
-        if (area > outerArea)
-          return { outerLoop: loop, outerArea: area };
+        if (Math.abs(loop.signedArea) > outerArea)
+          return { outerLoop: loop, outerArea: Math.abs(loop.signedArea) };
         else 
           return { outerLoop, outerArea };
       }, 
-      { outerLoop: edgeLoops[0], outerArea: absArea(edgeLoops[0]) }
+      { outerLoop: region.loops[0].points, outerArea: Math.abs(region.loops[0].signedArea) }
     );
-    let holes = edgeLoops.filter(loop => loop !== outerLoop);
+    let holes = region.loops.filter(loop => loop.points !== outerLoop).map(loop => loop.points);
 
     outerLoop = orientEdgeLoop(outerLoop, true);
     holes = holes.map(loop => orientEdgeLoop(loop, false));
@@ -470,23 +480,10 @@ class DelaunayEditor extends HTMLElement {
 
   updateSvg() {
     const svg = this.shadowRoot.querySelector('#svg');
-    const components = connectedTriangles(this.triangles);
 
-    // Store loops with their labels and signed areas
-    this.polygonData = components.map(triangles => {
-      return {
-        label: triangles[0].label;
-        loops: connectedLoops(triangles).map(loop => ({
-          points: loop,
-          signedArea: signedArea(loop)
-        }))
-      };
-    });
-
-    const polygons = this.polygonData.map(({ loops }) => {
-      const edgeLoops = loops.map(loop => loop.points);
-      return this.renderPolygon(edgeLoops);
-    }).join('');
+    const polygons = connectedRegions(this.triangles)
+      .map(this.renderRegion)
+      .join('');
 
     const triangleOutlines = this.triangles.map(triangle => 
       `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" class="${triangle.label}" fill="none" stroke="black"/>`
