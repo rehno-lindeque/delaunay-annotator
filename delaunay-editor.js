@@ -221,37 +221,29 @@ const addDelaunayPoint = (point, triangles) => {
 }
 
 const connectedComponents = (nodes, adjacent) => {
-  // Depth first graph traversal
-  const dfs = ([prev, next, ...remaining], disconnected = []) => {
-    if (next == null)
-      return {
-        connected: [prev],
-        disconnected
-      };
+  const visited = new Set();
+  const components = [];
 
-    // Test if the next triangle is disconnected from the previous triangle
-    if (!adjacent(prev, next))
-      return dfs(
-        [prev, ...remaining],
-        [...disconnected, next],
-      );
+  const explore = (node, component) => {
+    visited.add(node);
+    component.push(node);
 
-    // The next triangle is connected to the previous triangle
-    const result = dfs(
-      [next, ...remaining],
-      disconnected
-    );
-    return {
-      connected: [ prev, ...result.connected ],
-      disconnected: result.disconnected
-    };
+    nodes.forEach(neighbor => {
+      if (!visited.has(neighbor) && adjacent(node, neighbor)) {
+        explore(neighbor, component);
+      }
+    });
   };
 
-  const { connected, disconnected } = dfs(nodes);
-  if (disconnected.length > 0)
-    return [connected, ...connectedComponents(disconnected, adjacent)];
-  else
-    return [connected];
+  nodes.forEach(node => {
+    if (!visited.has(node)) {
+      const component = [];
+      explore(node, component);
+      components.push(component);
+    }
+  });
+
+  return components;
 };
 
 const connectedTriangles = (triangles) => {
