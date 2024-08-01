@@ -450,12 +450,12 @@ class DelaunayEditor extends HTMLElement {
         else 
           return { outerLoop, outerArea };
       }, 
-      { outerLoop: loops[0], outerArea: absArea(loops[0]) }
+      { outerLoop: edgeLoops[0], outerArea: absArea(edgeLoops[0]) }
     );
-    let holes = loops.filter(loop => loop !== outerLoop);
+    let holes = edgeLoops.filter(loop => loop !== outerLoop);
 
-    outerLoop = orientEdgeLoop(outerLoop, clockwise = true);
-    holes = holes.map(loop => orientEdgeLoop(loop, clockwise = false));
+    outerLoop = orientEdgeLoop(outerLoop, true);
+    holes = holes.map(loop => orientEdgeLoop(loop, false));
 
     const pathData = [
       `M ${outerLoop.map(p => `${p.x},${p.y}`).join(' L ')} Z`,
@@ -467,11 +467,9 @@ class DelaunayEditor extends HTMLElement {
 
   updateSvg() {
     const svg = this.shadowRoot.querySelector('#svg');
-    const connectedTriangles = connectedComponents(this.triangles, (t1, t2) =>
-      !new Set(t1.edges().map(e => e.key())).isDisjointFrom(new Set(t2.edges().map(e => e.key())))
-    );
+    const components = connectedTriangles(this.triangles);
 
-    const polygons = connectedTriangles.map(triangleGroup => {
+    const polygons = components.map(triangleGroup => {
       const edgeLoops = connectedLoops(triangleGroup);
       return this.renderPolygon(edgeLoops);
     }).join('');
