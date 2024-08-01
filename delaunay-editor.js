@@ -472,8 +472,19 @@ class DelaunayEditor extends HTMLElement {
     const svg = this.shadowRoot.querySelector('#svg');
     const components = connectedTriangles(this.triangles);
 
-    const polygons = components.map(triangleGroup => {
-      const edgeLoops = connectedLoops(triangleGroup);
+    // Store loops with their labels and signed areas
+    this.polygonData = components.map(triangles => {
+      return {
+        label: triangles[0].label;
+        loops: connectedLoops(triangles).map(loop => ({
+          points: loop,
+          signedArea: signedArea(loop)
+        }))
+      };
+    });
+
+    const polygons = this.polygonData.map(({ loops }) => {
+      const edgeLoops = loops.map(loop => loop.points);
       return this.renderPolygon(edgeLoops);
     }).join('');
 
