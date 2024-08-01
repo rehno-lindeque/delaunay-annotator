@@ -443,14 +443,14 @@ class DelaunayEditor extends HTMLElement {
     const absArea = (loop) => Math.abs(signedArea(loop));
 
     let { outerLoop, } = edgeLoops.reduce(
-      callbackFn = ({ outerLoop, outerArea }, loop) => {
+      ({ outerLoop, outerArea }, loop) => {
         const area = absArea(loop);
         if (area > outerArea)
           return { outerLoop: loop, outerArea: area };
         else 
           return { outerLoop, outerArea };
       }, 
-      initialValue = { outerLoop: loops[0], outerArea: absArea(loops[0]) }
+      { outerLoop: loops[0], outerArea: absArea(loops[0]) }
     );
     let holes = loops.filter(loop => loop !== outerLoop);
 
