@@ -220,49 +220,70 @@ const addDelaunayPoint = (point, triangles) => {
   return goodTriangles.concat(newTriangles);
 }
 
-const connectedComponents = (nodes, adjacent) => {
+const connectedComponents = (nodes, neighbors) => {
   const visited = new Set();
-  const components = [];
 
-  const explore = (node, component) => {
+  const dfs = (node) => {
     visited.add(node);
-    component.push(node);
-
-    nodes.forEach(neighbor => {
-      if (!visited.has(neighbor) && adjacent(node, neighbor)) {
-        explore(neighbor, component);
-      }
+    const connected = [node];
+    neighbors(node).forEach(neighbor => {
+      if(!visited.has(neighbor))
+        connected.push(dfs(neighbor))
     });
-  };
+    return connected;
+  }
 
+  const components = [];
   nodes.forEach(node => {
-    if (!visited.has(node)) {
-      const component = [];
-      explore(node, component);
-      components.push(component);
-    }
+    if (!visited.has(node))
+      components.push(dfs(node).flat(Infinity));
   });
 
   return components;
 };
 
 const connectedTriangles = (triangles) => {
-  return connectedComponents(
-    triangles,
-    (t1, t2) =>
-      t1.label === t2.label &&
-      !new Set(t1.edges().map((e) => e.key())).isDisjointFrom(
-        new Set(t2.edges().map((e) => e.key())),
-      ),
-  );
+  // Build an adjacency lookup for linear time complexity
+  const edgeToTriangles = new Map(
+    triangles
+      .flatMap(triangle => triangle.edges())
+      .map(edge => [edge.key(), []])
+  )
+  triangles.forEach(triangle =>
+    triangle.edges().forEach(edge =>
+      edgeToTriangles
+        .get(edge.key())
+        .push(triangle)
+    )
+  )
+
+  const neighbors = (triangle) =>
+    triangle.edges()
+      .flatMap(edge => edgeToTriangles.get(edge.key()))
+      .filter(neighbor => neighbor !== triangle && neighbor.label === triangle.label)
+
+  return connectedComponents(triangles, neighbors);
 };
 
 const connectedEdges = (edges) => {
-  return connectedComponents(
-    edges,
-    (e1, e2) => 
-      !new Set(e1.points).isDisjointFrom(new Set(e2.points))
+  // Build an adjacency lookup for linear time complexity
+  // This assumes there are no duplicate edges that join the same two points
+  const pointToEdges = new Map(
+    edges
+      .flatMap(edge => edge.points)
+      .map(point => [point, []])
   )
+  edges.forEach(edge => {
+    pointToEdges.get(edge.p1).push(edge)
+    pointToEdges.get(edge.p2).push(edge)
+  })
+
+  const neighbors = (edge) =>
+    edge.points
+      .flatMap(point => pointToEdges.get(point))
+      .filter(neighbor => neighbor.key() != edge.key())
+
+  return connectedComponents(edges, neighbors);
 };
 
 const connectedLoops = (triangles) => {
