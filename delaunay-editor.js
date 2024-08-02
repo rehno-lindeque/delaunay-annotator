@@ -281,7 +281,7 @@ const connectedEdges = (edges) => {
   const neighbors = (edge) =>
     edge.points
       .flatMap(point => pointToEdges.get(point))
-      .filter(neighbor => neighbor.key() != edge.key())
+      .filter(neighbor => neighbor.key() !== edge.key())
 
   return connectedComponents(edges, neighbors);
 };
