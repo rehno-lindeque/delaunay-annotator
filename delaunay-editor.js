@@ -390,7 +390,7 @@ class DelaunayEditor extends HTMLElement {
     this.selectedTool = 'point'; // Default tool
     this.isDrawing = false;
     this.render();
-    this.addEventListener('mousedown', () => this.isDrawing = this.selectedTool == "brush");
+    this.addEventListener('mousedown', () => this.isDrawing = this.selectedTool === "brush");
     this.addEventListener('mouseup', (e) => {
       if (this.isDrawing)
         this.handleSvgMouseMove(e)
