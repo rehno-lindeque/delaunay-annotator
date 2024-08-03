@@ -286,56 +286,64 @@ const connectedEdges = (edges) => {
   return connectedComponents(edges, neighbors);
 };
 
-const connectedLoops = (triangles) => {
-  const boundaries = connectedEdges(
-    boundaryEdges(
-      triangles.flatMap(triangle => triangle.edges())
-    )
-  );
+const eulerianCircuit = (node, nodeEdges, edgeNodes) => {
+  // Find a eulerian circuit using Hierholzer's algorithm
+  // This implementation assumes that the graph has a valid eulerian circuit
+  const visited = new Set();
 
-  // Put edges in sequential order such that they form loops
-  // Split apart any cycles in the boundary edges into multiple loops
-  //
-  // TODO: Note that it's not technically necessary to split apart any cycles if edges are visited in a careful order (sort of the opposite of a convex hull algorthm)
-  // However, this has not yet been explored
-  const edgeLoops = boundaries.flatMap(boundary => {
-    const loops = [];
-    let currentLoop = [];
-    let visitedEdges = new Set();
-
-    const findNextEdge = (currentEdge) => 
-      boundary.find(edge => 
-        !visitedEdges.has(edge.key()) && 
-        (edge.p1 === currentEdge.p2 || edge.p2 === currentEdge.p2)
-      );
-
-    boundary.forEach(edge => {
-      if (!visitedEdges.has(edge.key())) {
-        currentLoop = [edge];
-        visitedEdges.add(edge.key());
-        let nextEdge = findNextEdge(edge);
-
-        while (nextEdge) {
-          currentLoop.push(nextEdge);
-          visitedEdges.add(nextEdge.key());
-          nextEdge = findNextEdge(nextEdge);
-        }
-
-        loops.push(currentLoop);
+  const dfs = (node) => {
+    const connected = [];
+    nodeEdges(node).forEach(edge => {
+      if (!visited.has(edge)) {
+        visited.add(edge);
+        const neighborNode = edgeNodes(edge).find(n => n !== node);
+        connected.push(dfs(neighborNode));
+        connected.push(node);
       }
     });
+    return connected;
+  }
 
-    return loops;
-  });
+  // Marking the first node as visited temporarily removes the starting node
+  // to form a semi-eulerian graph
+  return [dfs(node), node].flat(Infinity);
+}
 
-  // Turn loops into sequential points
-  return edgeLoops.map(loop =>
-    loop.slice(1).reduce(
-      (points, edge) =>
-        [...points, (points[points.length - 1] === edge.p1) ? edge.p2 : edge.p1],
-      [new Set(loop[1].points).has(loop[0].p1) ? loop[0].p1 : loop[0].p2]
+const connectedLoops = (triangles) => {
+  const edges = boundaryEdges(
+    triangles.flatMap(triangle => triangle.edges())
+  );
+
+  // Build an adjacency lookup for linear time complexity
+  // This assumes there are no duplicate edges that join the same two points
+  const pointToEdges = new Map(
+    edges
+      .flatMap(edge => edge.points)
+      .map(point => [point, []])
+  )
+  edges.forEach(edge => {
+    pointToEdges.get(edge.p1).push(edge)
+    pointToEdges.get(edge.p2).push(edge)
+  })
+
+  const boundaries = connectedComponents(
+    edges,
+   (edge) =>
+      edge.points
+        .flatMap(point => pointToEdges.get(point))
+        .filter(neighbor => neighbor.key() != edge.key())
+  );
+
+  // Search for a eulerian circuit to arrange points in the correct
+  // sequence to form a loop (a.k.a. a circuit or cycle).
+  const circuits = boundaries.map(edges =>
+    eulerianCircuit(
+      edges[0].p1,
+      point => pointToEdges.get(point),
+      edge => edge.points
     )
   );
+  return circuits;
 };
 
 const signedArea = (points) => {
