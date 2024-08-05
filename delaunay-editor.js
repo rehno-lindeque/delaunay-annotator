@@ -551,10 +551,12 @@ class DelaunayEditor extends HTMLElement {
   updateSvg() {
     const svg = this.shadowRoot.querySelector('#svg');
 
-    const filters =
-      `<filter id="erode">
-        <feMorphology operator="erode" radius="1"></feMorphology>
-      </filter>`;
+    const defs = 
+      `<defs>
+        <filter id="erode">
+          <feMorphology operator="erode" radius="1"></feMorphology>
+        </filter>
+      </defs>`;
 
     const polygons = connectedRegions(this.triangles)
       .map(region => this.renderRegion(region))
@@ -569,7 +571,7 @@ class DelaunayEditor extends HTMLElement {
     ).join('');
 
     svg.innerHTML =
-      filters +
+      defs +
       triangleOutlines +
       polygons + 
       points;
