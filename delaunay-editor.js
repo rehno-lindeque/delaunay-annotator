@@ -383,6 +383,7 @@ class DelaunayEditor extends HTMLElement {
     ];
     this.selectedTool = 'point'; // Default tool
     this.isDrawing = false;
+    this.colorMode = 'label'; // Default color mode
     this.render();
     this.addEventListener('mousedown', () => this.isDrawing = this.selectedTool === "brush");
     this.addEventListener('mouseup', (e) => {
@@ -432,38 +433,42 @@ class DelaunayEditor extends HTMLElement {
     const height = this.getAttribute('height') || 600;
     if (width && height) {
       const idColors = `
-        svg path[data-id=0] { fill: #e6194b; }
-        svg path[data-id=1] { fill: #3cb44b; }
-        svg path[data-id=2] { fill: #ffe119; }
-        svg path[data-id=3] { fill: #4363d8; }
-        svg path[data-id=4] { fill: #f58231; }
-        svg path[data-id=5] { fill: #911eb4; }
-        svg path[data-id=6] { fill: #46f0f0; }
-        svg path[data-id=7] { fill: #f032e6; }
-        svg path[data-id=8] { fill: #bcf60c; }
-        svg path[data-id=9] { fill: #fabebe; }
-        svg path[data-id=10] { fill: #008080; }
-        svg path[data-id=11] { fill: #e6beff; }
-        svg path[data-id=12] { fill: #9a6324; }
-        svg path[data-id=13] { fill: #fffac8; }
-        svg path[data-id=14] { fill: #800000; }
-        svg path[data-id=15] { fill: #aaffc3; }
-        svg path[data-id=16] { fill: #808000; }
-        svg path[data-id=17] { fill: #ffd8b1; }
-        svg path[data-id=18] { fill: #000075; }
-        svg path[data-id=19] { fill: #808080; }
+        svg path[data-id='0']  { fill: none; }
+        svg path[data-id='1']  { fill: none; }
+        svg path[data-id='2']  { fill: #e6194b; }
+        svg path[data-id='3']  { fill: #3cb44b; }
+        svg path[data-id='4']  { fill: #ffe119; }
+        svg path[data-id='5']  { fill: #4363d8; }
+        svg path[data-id='6']  { fill: #f58231; }
+        svg path[data-id='7']  { fill: #911eb4; }
+        svg path[data-id='8']  { fill: #46f0f0; }
+        svg path[data-id='9']  { fill: #f032e6; }
+        svg path[data-id='10'] { fill: #bcf60c; }
+        svg path[data-id='11'] { fill: #fabebe; }
+        svg path[data-id='12'] { fill: #008080; }
+        svg path[data-id='13'] { fill: #e6beff; }
+        svg path[data-id='14'] { fill: #9a6324; }
+        svg path[data-id='15'] { fill: #fffac8; }
+        svg path[data-id='16'] { fill: #800000; }
+        svg path[data-id='17'] { fill: #aaffc3; }
+        svg path[data-id='18'] { fill: #808000; }
+        svg path[data-id='19'] { fill: #ffd8b1; }
+        svg path[data-id='20'] { fill: #000075; }
+        svg path[data-id='21'] { fill: #808080; }
       `;
       this.shadowRoot.innerHTML = `
         <style>
           svg {
             border: 1px solid black;
           }
-          svg .unknown { fill: transparent; }
-          svg .ignore { fill: gray; }
-          svg .background { fill: white; }
-          svg .body { fill: red; }
-          svg .pick-surface { fill: green; }
-          svg .lead { fill: blue; }
+          ${this.colorMode === 'label' ? `
+            svg .unknown { fill: transparent; }
+            svg .ignore { fill: gray; }
+            svg .background { fill: white; }
+            svg .body { fill: red; }
+            svg .pick-surface { fill: green; }
+            svg .lead { fill: blue; }
+          ` : idColors}
           svg polygon {
             stroke: rgba(0,0,0,0.2);
           }
@@ -592,6 +597,10 @@ class DelaunayEditor extends HTMLElement {
     });
   }
 
+  toggleColorMode() {
+    this.colorMode = this.colorMode === 'label' ? 'id' : 'label';
+    this.render();
+  }
 }
 
 customElements.define('delaunay-editor', DelaunayEditor);
