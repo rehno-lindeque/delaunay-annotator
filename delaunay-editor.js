@@ -443,6 +443,7 @@ class DelaunayEditor extends HTMLElement {
     const height = this.getAttribute('height') || 600;
     if (width && height) {
       const idColors = `
+        svg path[data-id] { fill: #cccccc; }
         svg path[data-id='0']  { fill: none; }
         svg path[data-id='1']  { fill: none; }
         svg path[data-id='2']  { fill: #e6194b; }
@@ -484,6 +485,10 @@ class DelaunayEditor extends HTMLElement {
           }
           svg path {
             filter: url(#erode);
+          }
+          svg circle { 
+            stroke: rgba(0,0,0,0.2);
+            fill: none;
           }
         </style>
         <svg id="svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"></svg>
