@@ -524,13 +524,13 @@ class DelaunayEditor extends HTMLElement {
     this.updateSvg();
   }
 
-  renderRegion({ hull, holes, label, id }) {
+  renderRegion({ hull, holes, label }) {
     const pathData = [
       `M ${hull.map(p => `${p.x},${p.y}`).join(' L ')} Z`,
       ...holes.map(hole => `M ${hole.map(p => `${p.x},${p.y}`).join(' L ')} Z`)
     ].join(' ');
 
-    return `<path d="${pathData}" class="${label}" data-id="${id}" />`;
+    return `<path d="${pathData}" class="${label}" />`;
   }
 
   updateSvg() {
@@ -558,7 +558,12 @@ class DelaunayEditor extends HTMLElement {
       const svg = this.shadowRoot.querySelector('#svg');
       const style = document.createElement('style');
       style.textContent = `
-        path { fill: none; }
+        .unknown { fill: transparent; }
+        .ignore { fill: gray; }
+        .background { fill: white; }
+        .body { fill: red; }
+        .pick-surface { fill: green; }
+        .lead { fill: blue; }
         polygon { stroke: none; shape-rendering: crispEdges; }
         circle { fill: none; }
       `;
@@ -574,26 +579,30 @@ class DelaunayEditor extends HTMLElement {
       const ctx = canvas.getContext('2d');
       ctx.imageSmoothingEnabled = false;
 
-      // Draw each region with its ID packed into the R channel
-      const regions = connectedRegions(this.triangles);
-      regions.forEach(region => {
-        const pathData = [
-          `M ${region.hull.map(p => `${p.x},${p.y}`).join(' L ')} Z`,
-          ...region.holes.map(hole => `M ${hole.map(p => `${p.x},${p.y}`).join(' L ')} Z`)
-        ].join(' ');
+      const img = new Image();
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
 
-        ctx.fillStyle = `rgb(${region.id}, 0, 0)`;
-        const path = new Path2D(pathData);
-        ctx.fill(path);
-      });
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
 
-      canvas.toBlob((blob) => {
-        if (blob) {
-          resolve(blob);
-        } else {
-          reject(new Error('Canvas toBlob conversion failed.'));
-        }
-      });
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Canvas toBlob conversion failed.'));
+          }
+        });
+      };
+
+      img.onerror = (err) => {
+        URL.revokeObjectURL(url);
+        reject(err);
+      };
+
+      img.src = url;
     });
   }
 
