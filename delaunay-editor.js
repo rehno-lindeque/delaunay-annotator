@@ -530,7 +530,7 @@ class DelaunayEditor extends HTMLElement {
       ...holes.map(hole => `M ${hole.map(p => `${p.x},${p.y}`).join(' L ')} Z`)
     ].join(' ');
 
-    return `<path d="${pathData}" class="${label}" data-id="${id}" />`;
+    return `<path d="${pathData}" class="${label}" data-id="${id}" style="--id: ${id}" />`;
   }
 
   updateSvg() {
@@ -558,16 +558,10 @@ class DelaunayEditor extends HTMLElement {
       const svg = this.shadowRoot.querySelector('#svg');
       const style = document.createElement('style');
       style.textContent = `
-        .unknown { fill: transparent; }
-        .ignore { fill: gray; }
-        .background { fill: white; }
-        .body { fill: red; }
-        .pick-surface { fill: green; }
-        .lead { fill: blue; }
         polygon { stroke: none; shape-rendering: crispEdges; }
         circle { fill: none; }
-        path[data-id] {
-          fill: rgb(attr(data-id) 0 0);
+        path {
+          fill: rgb(var(--id) 0 0);
         }
       `;
 
