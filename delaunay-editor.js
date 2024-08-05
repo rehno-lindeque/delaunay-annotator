@@ -481,13 +481,15 @@ class DelaunayEditor extends HTMLElement {
             svg .lead { fill: blue; }
           ` : idColors}
           svg polygon {
-            stroke: rgba(0,0,0,0.2);
+            stroke: rgba(128,128,128,0.5);
+            stroke-width: 2px;
           }
           svg path {
             filter: url(#erode);
           }
           svg circle { 
-            stroke: rgba(0,0,0,0.2);
+            stroke: rgba(255,160,0,0.9);
+            stroke-width: 2px;
             fill: none;
           }
         </style>
@@ -567,7 +569,7 @@ class DelaunayEditor extends HTMLElement {
     ).join('');
 
     const points = this.points.map(point => 
-      `<circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>`
+      `<circle cx="${point.x}" cy="${point.y}" r="5"></circle>`
     ).join('');
 
     svg.innerHTML =
