@@ -438,6 +438,63 @@ class DelaunayEditor extends HTMLElement {
     this.shadowRoot.querySelector('#svg').addEventListener('click', (e) => this.handleSvgClick(e));
   }
 
+  updateStyles() {
+    const idColors = `
+      svg path[data-id] { fill: #cccccc; }
+      svg path[data-id='0']  { fill: none; }
+      svg path[data-id='1']  { fill: none; }
+      svg path[data-id='2']  { fill: #e6194b; }
+      svg path[data-id='3']  { fill: #3cb44b; }
+      svg path[data-id='4']  { fill: #ffe119; }
+      svg path[data-id='5']  { fill: #4363d8; }
+      svg path[data-id='6']  { fill: #f58231; }
+      svg path[data-id='7']  { fill: #911eb4; }
+      svg path[data-id='8']  { fill: #46f0f0; }
+      svg path[data-id='9']  { fill: #f032e6; }
+      svg path[data-id='10'] { fill: #bcf60c; }
+      svg path[data-id='11'] { fill: #fabebe; }
+      svg path[data-id='12'] { fill: #008080; }
+      svg path[data-id='13'] { fill: #e6beff; }
+      svg path[data-id='14'] { fill: #9a6324; }
+      svg path[data-id='15'] { fill: #fffac8; }
+      svg path[data-id='16'] { fill: #800000; }
+      svg path[data-id='17'] { fill: #aaffc3; }
+      svg path[data-id='18'] { fill: #808000; }
+      svg path[data-id='19'] { fill: #ffd8b1; }
+      svg path[data-id='20'] { fill: #000075; }
+      svg path[data-id='21'] { fill: #808080; }
+    `;
+    const styleContent = `
+      svg {
+        border: 1px solid black;
+      }
+      ${this.colorMode === 'label' ? `
+        svg .unknown { fill: transparent; }
+        svg .ignore { fill: gray; }
+        svg .background { fill: white; }
+        svg .body { fill: red; }
+        svg .pick-surface { fill: green; }
+        svg .lead { fill: blue; }
+      ` : idColors}
+      svg polygon {
+        stroke: rgba(128,128,128,0.5);
+        stroke-width: 2px;
+      }
+      svg path {
+        filter: url(#erode);
+      }
+      svg circle { 
+        stroke: rgba(255,160,0,0.9);
+        stroke-width: 2px;
+        fill: none;
+      }
+    `;
+    const styleElement = this.shadowRoot.querySelector('style');
+    if (styleElement) {
+      styleElement.textContent = styleContent;
+    }
+  }
+
   render() {
     const width = this.getAttribute('width') || 800;
     const height = this.getAttribute('height') || 600;
@@ -472,29 +529,10 @@ class DelaunayEditor extends HTMLElement {
           svg {
             border: 1px solid black;
           }
-          ${this.colorMode === 'label' ? `
-            svg .unknown { fill: transparent; }
-            svg .ignore { fill: gray; }
-            svg .background { fill: white; }
-            svg .body { fill: red; }
-            svg .pick-surface { fill: green; }
-            svg .lead { fill: blue; }
-          ` : idColors}
-          svg polygon {
-            stroke: rgba(128,128,128,0.5);
-            stroke-width: 2px;
-          }
-          svg path {
-            filter: url(#erode);
-          }
-          svg circle { 
-            stroke: rgba(255,160,0,0.9);
-            stroke-width: 2px;
-            fill: none;
-          }
         </style>
         <svg id="svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"></svg>
       `;
+      this.updateStyles();
       this.updateSvg();
     } else {
       this.shadowRoot.innerHTML = '';
@@ -635,7 +673,7 @@ class DelaunayEditor extends HTMLElement {
 
   toggleColorMode() {
     this.colorMode = this.colorMode === 'label' ? 'id' : 'label';
-    this.render();
+    this.updateStyles();
   }
 }
 
