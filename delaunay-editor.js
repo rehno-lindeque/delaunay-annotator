@@ -441,8 +441,6 @@ class DelaunayEditor extends HTMLElement {
   updateStyles() {
     const idColors = `
       svg path[data-id] { fill: #cccccc; }
-      svg path[data-id='0']  { fill: none; }
-      svg path[data-id='1']  { fill: none; }
       svg path[data-id='2']  { fill: #e6194b; }
       svg path[data-id='3']  { fill: #3cb44b; }
       svg path[data-id='4']  { fill: #ffe119; }
@@ -469,19 +467,20 @@ class DelaunayEditor extends HTMLElement {
         border: 1px solid black;
       }
       ${this.colorMode === 'label' ? `
-        svg .unknown { fill: transparent; }
-        svg .ignore { fill: gray; }
-        svg .background { fill: white; }
-        svg .body { fill: red; }
-        svg .pick-surface { fill: green; }
-        svg .lead { fill: blue; }
+        svg path.body { fill: red; }
+        svg path.pick-surface { fill: green; }
+        svg path.lead { fill: blue; }
       ` : idColors}
-      svg polygon {
+      svg path.unknown { display: none; }
+      svg path.background { fill: white; }
+      svg path.ignore { fill: gray; }
+      svg polygon.unknown {
         stroke: rgba(128,128,128,0.5);
         stroke-width: 2px;
       }
       svg path {
         filter: url(#erode);
+        fill-opacity: 0.8;
       }
       svg circle { 
         stroke: rgba(255,160,0,0.9);
@@ -603,7 +602,7 @@ class DelaunayEditor extends HTMLElement {
       .join('');
 
     const triangleOutlines = this.triangles.map(triangle => 
-      `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" fill="none"/>`
+      `<polygon points="${triangle.triangle.p1.x},${triangle.triangle.p1.y} ${triangle.triangle.p2.x},${triangle.triangle.p2.y} ${triangle.triangle.p3.x},${triangle.triangle.p3.y}" class="${triangle.label}" fill="none"/>`
     ).join('');
 
     const points = this.points.map(point => 
