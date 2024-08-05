@@ -343,11 +343,15 @@ const connectedRegions = (triangles) => {
   return connectedTriangles(triangles)
     .map(triangles => {
       const loops = connectedLoops(triangles);
+
+      // Find the outer most loop (hull) of the polygonal region
       const hull = loops.reduce(
         (hull, loop) =>
           Math.abs(signedArea(loop)) > Math.abs(signedArea(hull)) ? loop : hull, 
         loops[0]
       );
+
+      // The remaining loops are holes in the polygon
       const holes = loops.filter(loop => loop !== hull);
 
       return {
