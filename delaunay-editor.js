@@ -156,6 +156,42 @@ const partitionDegenerateTriangles = (triangles, threshold) => {
   return { degenerate, nonDegenerate };
 };
 
+const collapseDegenerate = (triangle) => {
+  const square = (x) => x * x
+  const square_norm = (v) => square(v.x) + square(v.y);
+  const det = (v1, v2) => v1.x * v2.y - v1.y * v2.x;
+  const dot = (v1, v2) => v1.x * v2.x + v1.y * v2.y;
+
+  const { p1, p2, p3 } = triangle.triangle;
+
+  const v12 = new Vector(p2.x - p1.x, p2.y - p1.y);
+  const v13 = new Vector(p3.x - p1.x, p3.y - p1.y);
+  const v23 = new Vector(p3.x - p2.x, p3.y - p2.y);
+
+  const det1 = det(v12, v13);
+  const det2 = det(v12, v23);
+  const det3 = det(v13, v23);
+
+  const dist1 = square(det1) / square_norm(v23);
+  const dist2 = square(det2) / square_norm(v13);
+  const dist3 = square(det3) / square_norm(v12);
+
+  // In-place projection of vertex onto the opposing edge
+  if (dist1 < dist2 && dist1 < dist3) {
+    const t = dot(v13, v12) / square_norm(v12);
+    p3.x = p1.x + t * (p2.x - p1.x);
+    p3.y = p1.y + t * (p2.y - p1.y);
+  } else if (dist2 < dist1 && dist2 < dist3) {
+    const t = dot(v12, v13) / square_norm(v13);
+    p2.x = p1.x + t * (p3.x - p1.x);
+    p2.y = p1.y + t * (p3.y - p1.y);
+  } else {
+    const t = dot(v23, v13) / square_norm(v13);
+    p1.x = p2.x + t * (p3.x - p2.x);
+    p1.y = p2.y + t * (p3.y - p2.y);
+  }
+};
+
 const boundaryEdges = (edges) => {
   const edgeCount = new Map();
 
