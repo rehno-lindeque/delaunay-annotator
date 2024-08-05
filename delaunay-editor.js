@@ -524,13 +524,13 @@ class DelaunayEditor extends HTMLElement {
     this.updateSvg();
   }
 
-  renderRegion({ hull, holes, label }) {
+  renderRegion({ hull, holes, label, id }) {
     const pathData = [
       `M ${hull.map(p => `${p.x},${p.y}`).join(' L ')} Z`,
       ...holes.map(hole => `M ${hole.map(p => `${p.x},${p.y}`).join(' L ')} Z`)
     ].join(' ');
 
-    return `<path d="${pathData}" class="${label}" />`;
+    return `<path d="${pathData}" class="${label}" data-id="${id}" />`;
   }
 
   updateSvg() {
@@ -566,6 +566,9 @@ class DelaunayEditor extends HTMLElement {
         .lead { fill: blue; }
         polygon { stroke: none; shape-rendering: crispEdges; }
         circle { fill: none; }
+        path[data-id] {
+          fill: rgb(attr(data-id) 0 0);
+        }
       `;
 
       const clonedSvg = svg.cloneNode(true);
