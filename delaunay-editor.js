@@ -340,10 +340,20 @@ const orientEdgeLoop = (points, clockwise = true) => {
 };
 
 const connectedRegions = (triangles) => {
-  let regionId = 0;
+  let regionId = 2; // Start from 2 since 0 and 1 are reserved
   return connectedTriangles(triangles)
     .map(triangles => {
-      const id = regionId++;
+      const label = triangles[0].label;
+      let id;
+      if (label === 'unknown') {
+        id = 0;
+      } else if (label === 'background') {
+        id = 1;
+      } else {
+        id = regionId++;
+      }
+
+      // Find all connected boundaries for the region
       const loops = connectedLoops(triangles);
 
       // Find the outer most loop (hull) of the polygonal region
@@ -358,7 +368,7 @@ const connectedRegions = (triangles) => {
 
       return {
         id,
-        label: triangles[0].label,
+        label,
         hull: orientEdgeLoop(hull, true),
         holes: holes.map(loop => orientEdgeLoop(loop, false))
       };
