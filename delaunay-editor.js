@@ -265,27 +265,6 @@ const connectedTriangles = (triangles) => {
   return connectedComponents(triangles, neighbors);
 };
 
-const connectedEdges = (edges) => {
-  // Build an adjacency lookup for linear time complexity
-  // This assumes there are no duplicate edges that join the same two points
-  const pointToEdges = new Map(
-    edges
-      .flatMap(edge => edge.points)
-      .map(point => [point, []])
-  )
-  edges.forEach(edge => {
-    pointToEdges.get(edge.p1).push(edge)
-    pointToEdges.get(edge.p2).push(edge)
-  })
-
-  const neighbors = (edge) =>
-    edge.points
-      .flatMap(point => pointToEdges.get(point))
-      .filter(neighbor => neighbor.key() !== edge.key())
-
-  return connectedComponents(edges, neighbors);
-};
-
 const eulerianCircuit = (node, nodeEdges, edgeNodes) => {
   // Find a eulerian circuit using Hierholzer's algorithm
   // This implementation assumes that the graph has a valid eulerian circuit
