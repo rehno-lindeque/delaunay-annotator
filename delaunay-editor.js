@@ -139,6 +139,23 @@ class DelaunayTriangle {
   }
 }
 
+const partitionDegenerateTriangles = (triangles, threshold) => {
+  const degenerate = [];
+  const nonDegenerate = [];
+
+  triangles.forEach(triangle => {
+    const { p1, p2, p3 } = triangle.triangle;
+    const area = Math.abs((p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)) / 2.0);
+    if (area < threshold) {
+      degenerate.push(triangle);
+    } else {
+      nonDegenerate.push(triangle);
+    }
+  });
+
+  return { degenerate, nonDegenerate };
+};
+
 const boundaryEdges = (edges) => {
   const edgeCount = new Map();
 
