@@ -483,7 +483,7 @@ class DelaunayEditor extends HTMLElement {
             stroke: rgba(0,0,0,0.2);
           }
           svg path {
-            stroke: black;
+            filter: url(#erode);
           }
         </style>
         <svg id="svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"></svg>
@@ -546,6 +546,11 @@ class DelaunayEditor extends HTMLElement {
   updateSvg() {
     const svg = this.shadowRoot.querySelector('#svg');
 
+    const filters =
+      `<filter id="erode">
+        <feMorphology operator="erode" radius="1"></feMorphology>
+      </filter>`;
+
     const polygons = connectedRegions(this.triangles)
       .map(region => this.renderRegion(region))
       .join('');
@@ -558,7 +563,9 @@ class DelaunayEditor extends HTMLElement {
       `<circle cx="${point.x}" cy="${point.y}" r="5" fill="red"></circle>`
     ).join('');
 
-    svg.innerHTML = triangleOutlines +
+    svg.innerHTML =
+      filters +
+      triangleOutlines +
       polygons + 
       points;
   }
@@ -572,9 +579,11 @@ class DelaunayEditor extends HTMLElement {
         circle { fill: none; }
         path {
           fill: rgb(var(--id) 0 0);
-          stroke: rgb(0 0 0);
-          stroke-width: 2px;
+          filter: url(#erode);
         }
+        path.unknown {
+          fill: none;
+        };
       `;
 
       const clonedSvg = svg.cloneNode(true);
