@@ -684,8 +684,8 @@ class DelaunayEditor extends HTMLElement {
   }
 
   addPoint(point, force = false) {
-    const distance = (p1, p2) => (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
-    const distanceThreshold = 2;
+    const squareDistance = (p1, p2) => (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
+    const distanceThreshold = 5;
 
     let intersectingTriangle = null;
     for (const i in this.triangles) {
@@ -710,7 +710,7 @@ class DelaunayEditor extends HTMLElement {
     // If the point is too close to another point on the triangle, don't add it
     {
       const { p1, p2, p3 } = intersectingTriangle.triangle;
-      if (Math.min(distance(point, p1), distance(point, p2), distance(point, p3)) < distanceThreshold)
+      if (Math.min(squareDistance(point, p1), squareDistance(point, p2), squareDistance(point, p3)) < distanceThreshold ** 2)
         return;
     }
 
