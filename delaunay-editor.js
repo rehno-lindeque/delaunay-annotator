@@ -38,11 +38,8 @@ class Edge {
   }
 
   key() {
-    const [p1, p2] = [this.p1, this.p2].sort((a, b) => {
-      if (a.x < b.x || (a.x === b.x && a.y < b.y)) return -1;
-      if (a.x > b.x || (a.x === b.x && a.y > b.y)) return 1;
-      return 0;
-    });
+    let {p1, p2} = this;
+    [p1, p2] = (p1.x < p2.x || (p1.x === p2.x && p1.y < p2.y)) ? [p1, p2] : [p2, p1];
     return `${p1.x},${p1.y},${p2.x},${p2.y}`;
   }
 }
@@ -397,7 +394,7 @@ const connectedLoops = (triangles) => {
    (edge) =>
       edge.points
         .flatMap(point => pointToEdges.get(point))
-        .filter(neighbor => neighbor.key() != edge.key())
+        .filter(neighbor => neighbor.key() !== edge.key())
   );
 
   // Search for a eulerian circuit to arrange points in the correct
