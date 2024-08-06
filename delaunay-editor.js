@@ -631,15 +631,18 @@ class DelaunayEditor extends HTMLElement {
 
     const isShiftPressed = event.shiftKey;
 
+    let modified = false;
     this.triangles.forEach(triangle => {
       if (triangle.intersectsPoint(point)) {
         if (triangle.label === "unknown" || isShiftPressed) {
           triangle.label = this.brushLabel;
+          modified = true;
         }
       }
     });
 
-    this.updateSvg();
+    if (modified)
+      this.updateSvg();
   }
 
   handleSvgClick(event) {
