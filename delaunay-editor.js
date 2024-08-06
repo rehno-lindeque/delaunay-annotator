@@ -656,8 +656,6 @@ class DelaunayEditor extends HTMLElement {
   }
 
   addPoint(point, force = false) {
-    this.points.push(point);
-
     // If the point directly intersects a labeled triangle, reset its label so that it may be split apart
     let intersectingTriangle = null;
     for (const i in this.triangles) {
@@ -682,6 +680,7 @@ class DelaunayEditor extends HTMLElement {
     }
 
     // Re-triangulate the mesh using a constrained delaunay triangulation method
+    this.points.push(point);
     this.triangles = addDelaunayPoint(point, this.triangles);
 
     // Collapse degenerate triangles
