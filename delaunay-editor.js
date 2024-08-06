@@ -137,40 +137,49 @@ class DelaunayTriangle {
   }
 }
 
-const partitionDegenerateTriangles = (triangles, threshold) => {
+const isDegenerate = (triangle, threshold) => {
+  const square_norm = (v) => v.x ** 2 + v.y ** 2;
+  const dot = (v1, v2) => v1.x * v2.x + v1.y * v2.y;
+
+  const { p1, p2, p3 } = triangle.triangle;
+
+  // When considering signs, keep in mind that
+  // v12 = -v21
+  // v13 = -v31
+  // v23 = -v32
+  const v12 = new Vector(p2.x - p1.x, p2.y - p1.y);
+  const v13 = new Vector(p3.x - p1.x, p3.y - p1.y);
+  const v23 = new Vector(p3.x - p2.x, p3.y - p2.y);
+
+  const n12 = square_norm(v12);
+  const n13 = square_norm(v13);
+  const n23 = square_norm(v23);
+
+  const dot1 = dot(v12, v13);
+  const dot2 = -dot(v23, v12); // = -dot(v23, -v21) = dot(v23, v21)
+  const dot3 = dot(v13, v23);  // = dot(-v31, -v32)
+
+  // Calculate the cosine of the angles at each vertex
+  const cosAngle1 = dot1 / Math.sqrt(n12 * n13);
+  const cosAngle2 = dot2 / Math.sqrt(n12 * n23);
+  const cosAngle3 = dot3 / Math.sqrt(n13 * n23);
+
+  // Test if the angle wider than the threshold
+  const minCosAngle = Math.min(cosAngle1, cosAngle2, cosAngle3);
+  return minCosAngle < threshold;
+};
+
+const partitionDegenerateTriangles = (triangles, threshold=-0.9) => {
   const square = (x) => x * x
   const square_norm = (v) => square(v.x) + square(v.y);
   const det = (v1, v2) => v1.x * v2.y - v1.y * v2.x;
   const dot = (v1, v2) => v1.x * v2.x + v1.y * v2.y;
 
-  const degenerate = [];
+  let degenerate = [];
   const nonDegenerate = [];
 
   triangles.forEach(triangle => {
-    const { p1, p2, p3 } = triangle.triangle;
-
-    // When considering signs, keep in mind that
-    // v12 = -v21
-    // v13 = -v31
-    // v23 = -v32
-    const v12 = new Vector(p2.x - p1.x, p2.y - p1.y);
-    const v13 = new Vector(p3.x - p1.x, p3.y - p1.y);
-    const v23 = new Vector(p3.x - p2.x, p3.y - p2.y);
-
-    const det1 = det(v12, v13);
-    const det2 = -det(v12, v23);
-    const det3 = det(v13, v23);
-
-    const n23 = square_norm(v23);
-    const n13 = square_norm(v13);
-    const n12 = square_norm(v12);
-
-    const dist1 = square(det1) / n23;
-    const dist2 = square(det2) / n13;
-    const dist3 = square(det3) / n12;
-
-    if (Math.min(dist1, dist2, dist3) < square(threshold)) {
-      console.log(dist1, dist2, dist3, threshold);
+    if (isDegenerate(triangle, threshold)) {
       degenerate.push(triangle);
     } else {
       nonDegenerate.push(triangle);
@@ -179,6 +188,7 @@ const partitionDegenerateTriangles = (triangles, threshold) => {
 
   // Identify connected components of degenerate triangles
   const degenerateComponents = connectedTriangles(degenerate);
+  degenerate = [];
 
   // Move connected degenerate triangles back to the nonDegenerate set
   degenerateComponents.forEach(component => {
@@ -189,7 +199,7 @@ const partitionDegenerateTriangles = (triangles, threshold) => {
     }
   });
 
-  return { degenerate, nonDegenerate: nonDegenerate.filter(triangle => !degenerate.includes(triangle)) };
+  return { degenerate, nonDegenerate };
 };
 
 const collapseDegenerate = (triangle) => {
@@ -206,28 +216,38 @@ const collapseDegenerate = (triangle) => {
   const v13 = new Vector(p3.x - p1.x, p3.y - p1.y);
   const v23 = new Vector(p3.x - p2.x, p3.y - p2.y);
 
-  const n23 = square_norm(v23);
-  const n13 = square_norm(v13);
   const n12 = square_norm(v12);
+  const n13 = square_norm(v13);
+  const n23 = square_norm(v23);
+
+  const dot1 = dot(v12, v13);
+  const dot2 = -dot(v23, v12); // = -dot(v23, -v21) = dot(v23, v21)
+  const dot3 = dot(v13, v23);  // = dot(-v31, -v32)
 
   // Calculate the cosine of the angles at each vertex
-  const cosAngle1 = dot(v12, v13) / Math.sqrt(n12 * n13);
-  const cosAngle2 = -dot(v12, v23) / Math.sqrt(n12 * n23);
-  const cosAngle3 = dot(v13, v23) / Math.sqrt(n13 * n23);
+  const cosAngle1 = dot1 / Math.sqrt(n12 * n13);
+  const cosAngle2 = dot2 / Math.sqrt(n12 * n23);
+  const cosAngle3 = dot3 / Math.sqrt(n13 * n23);
 
   // Find the vertex with the widest angle (cosine closest to -1)
-  if (cosAngle1 < cosAngle2 && cosAngle1 < cosAngle3) {
-    const t = dot(v12, v23) / n23;
-    p1.x = p2.x + t * v23.x;
-    p1.y = p2.y + t * v23.y;
-  } else if (cosAngle2 < cosAngle1 && cosAngle2 < cosAngle3) {
-    const t = dot(v12, v13) / n13;
+  const minCosAngle = Math.min(cosAngle1, cosAngle2, cosAngle3);
+  if (cosAngle1 === minCosAngle) {
+    const t = dot3 / n23;
+    // p1 = p3 + t * v32
+    p1.x = p3.x - t * v23.x; 
+    p1.y = p3.y - t * v23.y;
+  } else if (cosAngle2 === minCosAngle) {
+    const t = dot1 / n13;
+    // p2 = p1 + t * v13
     p2.x = p1.x + t * v13.x;
     p2.y = p1.y + t * v13.y;
+  } else if (cosAngle3 == minCosAngle) {
+    const t = dot2 / n12;
+    // p3 = p2 + t * v21
+    p3.x = p2.x - t * v12.x;
+    p3.y = p2.y - t * v12.y;
   } else {
-    const t = dot(v23, v12) / n12;
-    p3.x = p2.x + t * v12.x;
-    p3.y = p2.y + t * v12.y;
+    console.error("Triangle does not appear to be degenerate");
   }
 };
 
@@ -707,9 +727,12 @@ class DelaunayEditor extends HTMLElement {
     this.triangles = addDelaunayPoint(point, this.triangles);
 
     // Collapse degenerate triangles
-    const { degenerate, nonDegenerate } = partitionDegenerateTriangles(this.triangles, 10);
+    const { degenerate, nonDegenerate } = partitionDegenerateTriangles(this.triangles);
     degenerate.forEach(triangle => collapseDegenerate(triangle));
+    this.triangles = nonDegenerate;
 
+    // Remove any points that are now orphaned due to delaunay robustness issues
+    this.points = Array.from(new Set(this.triangles.flatMap(triangle => triangle.triangle.points)));
     this.updateSvg();
   }
 
