@@ -636,6 +636,12 @@ class DelaunayEditor extends HTMLElement {
 
     // Re-triangulate the mesh using a constrained delaunay triangulation method
     this.triangles = addDelaunayPoint(point, this.triangles);
+
+    // Collapse degenerate triangles
+    const { degenerate, nonDegenerate } = partitionDegenerateTriangles(this.triangles, 1000);
+    degenerate.forEach(triangle => collapseDegenerate(triangle));
+    this.triangles = nonDegenerate;
+
     this.updateSvg();
   }
 
