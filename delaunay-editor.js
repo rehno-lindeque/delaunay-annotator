@@ -78,16 +78,17 @@ class DelaunayTriangle {
   }
 
   intersectsPoint(point) {
+    const epsilon = 1e-10;
     const { p1, p2, p3 } = this.triangle;
 
-    const area = (p1, p2, p3) => Math.abs((p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)) / 2.0);
+    const area = (p1, p2, p3) => Math.abs((p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y))); // * 0.5 (not needed)
 
     const A = area(p1, p2, p3);
     const A1 = area(point, p2, p3);
     const A2 = area(p1, point, p3);
     const A3 = area(p1, p2, point);
 
-    return (A === A1 + A2 + A3);
+    return (A >= A1 + A2 + A3 - epsilon);
   }
 
   edges() {
