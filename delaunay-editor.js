@@ -140,13 +140,39 @@ class DelaunayTriangle {
 }
 
 const partitionDegenerateTriangles = (triangles, threshold) => {
+  const square = (x) => x * x
+  const square_norm = (v) => square(v.x) + square(v.y);
+  const det = (v1, v2) => v1.x * v2.y - v1.y * v2.x;
+  const dot = (v1, v2) => v1.x * v2.x + v1.y * v2.y;
+
   const degenerate = [];
   const nonDegenerate = [];
 
   triangles.forEach(triangle => {
     const { p1, p2, p3 } = triangle.triangle;
-    const area = Math.abs((p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)) / 2.0);
-    if (area < threshold) {
+
+    // When considering signs, keep in mind that
+    // v12 = -v21
+    // v13 = -v31
+    // v23 = -v32
+    const v12 = new Vector(p2.x - p1.x, p2.y - p1.y);
+    const v13 = new Vector(p3.x - p1.x, p3.y - p1.y);
+    const v23 = new Vector(p3.x - p2.x, p3.y - p2.y);
+
+    const det1 = det(v12, v13);
+    const det2 = -det(v12, v23);
+    const det3 = det(v13, v23);
+
+    const n23 = square_norm(v23);
+    const n13 = square_norm(v13);
+    const n12 = square_norm(v12);
+
+    const dist1 = square(det1) / n23;
+    const dist2 = square(det2) / n13;
+    const dist3 = square(det3) / n12;
+
+    if (Math.min(dist1, dist2, dist3) < square(threshold)) {
+      console.log(dist1, dist2, dist3, threshold);
       degenerate.push(triangle);
     } else {
       nonDegenerate.push(triangle);
@@ -638,9 +664,8 @@ class DelaunayEditor extends HTMLElement {
     this.triangles = addDelaunayPoint(point, this.triangles);
 
     // Collapse degenerate triangles
-    const { degenerate, nonDegenerate } = partitionDegenerateTriangles(this.triangles, 1000);
+    const { degenerate, nonDegenerate } = partitionDegenerateTriangles(this.triangles, 10);
     degenerate.forEach(triangle => collapseDegenerate(triangle));
-    this.triangles = nonDegenerate;
 
     this.updateSvg();
   }
