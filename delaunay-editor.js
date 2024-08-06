@@ -678,6 +678,10 @@ class DelaunayEditor extends HTMLElement {
     } else if (intersectingTriangle) {
       intersectingTriangle.label = "unknown";
     }
+    else {
+      console.error("No intersecting triangle found (this is likely a bug)")
+      return
+    }
 
     // Re-triangulate the mesh using a constrained delaunay triangulation method
     this.points.push(point);
