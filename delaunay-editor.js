@@ -656,10 +656,14 @@ class DelaunayEditor extends HTMLElement {
   }
 
   addPoint(point, force = false) {
-    // If the point directly intersects a labeled triangle, reset its label so that it may be split apart
+    const distance = (p1, p2) => (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
+    const distanceThreshold = 2;
+
     let intersectingTriangle = null;
     for (const i in this.triangles) {
       const triangle = this.triangles[i];
+
+      // If the intersecting triangle is already labeled, don't add a point
       if (triangle.intersectsPoint(point)) {
         if (triangle.label !== "unknown" && !force) {
           return;
@@ -670,18 +674,25 @@ class DelaunayEditor extends HTMLElement {
       }
     }
 
-    if (intersectingTriangle && force) {
+    if (intersectingTriangle == null) {
+      console.error("No intersecting triangle found (this is likely a bug)")
+      return
+    }
+
+    // If the point is too close to another point on the triangle, don't add it
+    {
+      const { p1, p2, p3 } = intersectingTriangle.triangle;
+      if (Math.min(distance(point, p1), distance(point, p2), distance(point, p3)) < distanceThreshold)
+        return;
+    }
+
+    // Reset the intersecting region if forced
+    if (force) {
       const connected = connectedTriangles(this.triangles).find(component =>
         component.includes(intersectingTriangle)
       );
       connected.forEach(triangle => triangle.label = "unknown");
-    } else if (intersectingTriangle) {
-      intersectingTriangle.label = "unknown";
-    }
-    else {
-      console.error("No intersecting triangle found (this is likely a bug)")
-      return
-    }
+    } 
 
     // Re-triangulate the mesh using a constrained delaunay triangulation method
     this.points.push(point);
