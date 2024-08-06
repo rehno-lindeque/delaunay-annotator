@@ -632,12 +632,12 @@ class DelaunayEditor extends HTMLElement {
     const rect = svg.getBoundingClientRect();
     const point = new Point(event.clientX - rect.left, event.clientY - rect.top);
 
-    const isShiftPressed = event.shiftKey;
+    const force = event.shiftKey || this.brushLabel === "unknown";
 
     let modified = false;
     this.triangles.forEach(triangle => {
       if (triangle.intersectsPoint(point)) {
-        if (triangle.label === "unknown" || isShiftPressed) {
+        if (triangle.label === "unknown" || force) {
           triangle.label = this.brushLabel;
           modified = true;
         }
