@@ -714,8 +714,8 @@ class DelaunayEditor extends HTMLElement {
     this.triangles = addDelaunayPoint(point, this.triangles);
 
     // Collapse degenerate triangles
-    // const { degenerate, nonDegenerate } = partitionDegenerateTriangles(this.triangles, 10);
-    // degenerate.forEach(triangle => collapseDegenerate(triangle));
+    const { degenerate, nonDegenerate } = partitionDegenerateTriangles(this.triangles, 10);
+    degenerate.forEach(triangle => collapseDegenerate(triangle));
 
     this.updateSvg();
   }
