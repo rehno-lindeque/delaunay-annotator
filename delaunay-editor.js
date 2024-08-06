@@ -164,31 +164,39 @@ const collapseDegenerate = (triangle) => {
 
   const { p1, p2, p3 } = triangle.triangle;
 
+  // When considering signs, keep in mind that
+  // v12 = -v21
+  // v13 = -v31
+  // v23 = -v32
   const v12 = new Vector(p2.x - p1.x, p2.y - p1.y);
   const v13 = new Vector(p3.x - p1.x, p3.y - p1.y);
   const v23 = new Vector(p3.x - p2.x, p3.y - p2.y);
 
   const det1 = det(v12, v13);
-  const det2 = det(v12, v23);
+  const det2 = -det(v12, v23);
   const det3 = det(v13, v23);
 
-  const dist1 = square(det1) / square_norm(v23);
-  const dist2 = square(det2) / square_norm(v13);
-  const dist3 = square(det3) / square_norm(v12);
+  const n23 = square_norm(v23);
+  const n13 = square_norm(v13);
+  const n12 = square_norm(v12);
+
+  const dist1 = square(det1) / n23;
+  const dist2 = square(det2) / n13;
+  const dist3 = square(det3) / n12;
 
   // In-place projection of vertex onto the opposing edge
   if (dist1 < dist2 && dist1 < dist3) {
-    const t = dot(v13, v12) / square_norm(v12);
-    p3.x = p1.x + t * (p2.x - p1.x);
-    p3.y = p1.y + t * (p2.y - p1.y);
+    const t = dot(v12, v23) / n23;
+    p1.x = p2.x + t * v23.x;
+    p1.y = p2.y + t * v23.y;
   } else if (dist2 < dist1 && dist2 < dist3) {
-    const t = dot(v12, v13) / square_norm(v13);
-    p2.x = p1.x + t * (p3.x - p1.x);
-    p2.y = p1.y + t * (p3.y - p1.y);
+    const t = dot(v12, v13) / n13;
+    p2.x = p1.x + t * v13.x;
+    p2.y = p1.y + t * v13.y;
   } else {
-    const t = dot(v23, v13) / square_norm(v13);
-    p1.x = p2.x + t * (p3.x - p2.x);
-    p1.y = p2.y + t * (p3.y - p2.y);
+    const t = dot(v23, v12) / n12;
+    p3.x = p2.x + t * v12.x;
+    p3.y = p2.y + t * v12.y;
   }
 };
 
