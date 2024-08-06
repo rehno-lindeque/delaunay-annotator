@@ -659,15 +659,26 @@ class DelaunayEditor extends HTMLElement {
     this.points.push(point);
 
     // If the point directly intersects a labeled triangle, reset its label so that it may be split apart
+    let intersectingTriangle = null;
     for (const i in this.triangles) {
       const triangle = this.triangles[i];
       if (triangle.intersectsPoint(point)) {
         if (triangle.label !== "unknown" && !force) {
-          return
+          return;
         } else {
-          triangle.label = "unknown";
+          intersectingTriangle = triangle;
+          break;
         }
       }
+    }
+
+    if (intersectingTriangle && force) {
+      const connected = connectedTriangles(this.triangles).find(component =>
+        component.includes(intersectingTriangle)
+      );
+      connected.forEach(triangle => triangle.label = "unknown");
+    } else if (intersectingTriangle) {
+      intersectingTriangle.label = "unknown";
     }
 
     // Re-triangulate the mesh using a constrained delaunay triangulation method
