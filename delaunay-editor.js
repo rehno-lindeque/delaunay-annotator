@@ -179,7 +179,19 @@ const partitionDegenerateTriangles = (triangles, threshold, cosineThreshold = -0
     }
   });
 
-  return { degenerate, nonDegenerate };
+  // Identify connected components of degenerate triangles
+  const degenerateComponents = connectedTriangles(degenerate);
+
+  // Move connected degenerate triangles back to the nonDegenerate set
+  degenerateComponents.forEach(component => {
+    if (component.length > 1) {
+      nonDegenerate.push(...component);
+    } else {
+      degenerate.push(...component);
+    }
+  });
+
+  return { degenerate, nonDegenerate: nonDegenerate.filter(triangle => !degenerate.includes(triangle)) };
 };
 
 const collapseDegenerate = (triangle) => {
