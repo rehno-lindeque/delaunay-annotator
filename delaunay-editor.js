@@ -438,8 +438,8 @@ const connectedRegions = (triangles) => {
         id = 1;
       } else if (label === 'ignore') {
         id = 2;
-        id = regionId++;
       } else {
+        id = regionId++;
       }
 
       // Find all connected boundaries for the region
