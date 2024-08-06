@@ -136,7 +136,7 @@ class DelaunayTriangle {
   }
 }
 
-const partitionDegenerateTriangles = (triangles, threshold, cosineThreshold = -0.9) => {
+const partitionDegenerateTriangles = (triangles, threshold) => {
   const square = (x) => x * x
   const square_norm = (v) => square(v.x) + square(v.y);
   const det = (v1, v2) => v1.x * v2.y - v1.y * v2.x;
@@ -168,11 +168,8 @@ const partitionDegenerateTriangles = (triangles, threshold, cosineThreshold = -0
     const dist2 = square(det2) / n13;
     const dist3 = square(det3) / n12;
 
-    if (Math.min(dist1, dist2, dist3) < square(threshold) &&
-      (dot(v12, v13) < cosineThreshold * Math.sqrt(n12 * n13) ||
-        dot(v13, v23) < cosineThreshold * Math.sqrt(n13 * n23) ||
-        -dot(v12, v23) < cosineThreshold * Math.sqrt(n12 * n23))
-    ) {
+    if (Math.min(dist1, dist2, dist3) < square(threshold)) {
+      console.log(dist1, dist2, dist3, threshold);
       degenerate.push(triangle);
     } else {
       nonDegenerate.push(triangle);
