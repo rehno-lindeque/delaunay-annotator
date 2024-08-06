@@ -650,19 +650,25 @@ class DelaunayEditor extends HTMLElement {
     const rect = svg.getBoundingClientRect();
     if (this.selectedTool === 'point') {
       const point = new Point(event.clientX - rect.left, event.clientY - rect.top);
-      this.addPoint(point);
+      const isShiftPressed = event.shiftKey;
+      this.addPoint(point, isShiftPressed);
     }
   }
 
-  addPoint(point) {
+  addPoint(point, force = false) {
     this.points.push(point);
 
-    // If the point directly intersects a labeled triangle reset its label so that it may be split apart
-    this.triangles.forEach(triangle => {
+    // If the point directly intersects a labeled triangle, reset its label so that it may be split apart
+    for (const i in this.triangles) {
+      const triangle = this.triangles[i];
       if (triangle.intersectsPoint(point)) {
-        triangle.label = "unknown";
+        if (triangle.label !== "unknown" && !force) {
+          return
+        } else {
+          triangle.label = "unknown";
+        }
       }
-    });
+    }
 
     // Re-triangulate the mesh using a constrained delaunay triangulation method
     this.triangles = addDelaunayPoint(point, this.triangles);
