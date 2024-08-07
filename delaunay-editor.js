@@ -217,6 +217,7 @@ const collapseDegenerate = (triangle) => {
   const cosAngle3 = dot3 / Math.sqrt(n13 * n23);
 
   // Find the vertex with the widest angle (cosine closest to -1)
+  // and project it onto the opposite vertex
   const minCosAngle = Math.min(cosAngle1, cosAngle2, cosAngle3);
   if (cosAngle1 === minCosAngle) {
     const t = dot3 / n23;
@@ -228,13 +229,11 @@ const collapseDegenerate = (triangle) => {
     // p2 = p1 + t * v13
     p2.x = p1.x + t * v13.x;
     p2.y = p1.y + t * v13.y;
-  } else if (cosAngle3 == minCosAngle) {
+  } else if (cosAngle3 === minCosAngle) {
     const t = dot2 / n12;
     // p3 = p2 + t * v21
     p3.x = p2.x - t * v12.x;
     p3.y = p2.y - t * v12.y;
-  } else {
-    console.error("Triangle does not appear to be degenerate");
   }
 };
 
