@@ -153,7 +153,15 @@ class SegmentationEditor extends HTMLElement {
       <button id="toggle-color-mode">Toggle Color Mode</button>
     </div>
     <div style="display: flex; flex: 1;">
-      <annotation-toolbox></annotation-toolbox>
+      <annotation-toolbox>
+        <point-tool></point-tool>
+        <eraser></eraser>
+        <brush background></brush>
+        <brush ignore></brush>
+        <brush id="pick-surface" title="Pick Surface Brush" color="red"></brush>
+        <brush id="body" title="Body Brush" color="green"></brush>
+        <brush id="lead" title="Lead Brush" color="blue"></brush>
+      </annotation-toolbox>
       <div id="image-container" style="flex: 1; position: relative;">
         <img id="sample-image" style="user-select: none;">
       </div>

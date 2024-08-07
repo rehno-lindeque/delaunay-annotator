@@ -2,13 +2,42 @@ class AnnotationToolbox extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this.tools = this.parseTools();
     this.render();
-    this.customBrushes = [];
   }
 
-  setCustomBrushes(brushes) {
-    this.customBrushes = brushes;
+  connectedCallback() {
     this.render();
+  }
+
+  parseTools() {
+    const predefinedTools = {
+      'point-tool': { toolType: 'point', id: 'point-tool', title: 'Point Tool' },
+      'eraser': { toolType: 'brush', id: 'unknown', title: 'Eraser', color: 'transparent' },
+      'background-brush': { toolType: 'brush', id: 'background', title: 'Background Brush', color: 'white' },
+      'ignore-brush': { toolType: 'brush', id: 'ignore', title: 'Ignore Brush', color: 'gray' }
+    };
+
+    const predefinedBrushes = {
+      'background': { toolType: 'brush', id: 'background', title: 'Background Brush', color: 'white' },
+      'ignore': { toolType: 'brush', id: 'ignore', title: 'Ignore Brush', color: 'gray' }
+    };
+
+    const allTools = Array.from(this.querySelectorAll('brush, eraser, point-tool')).map(el => {
+      const toolType = el.tagName.toLowerCase();
+      const predefinedBrushNames = new Set(Object.keys(predefinedBrushes));
+      const brushType = new Set(el.getAttributeNames()).intersection(predefinedBrushNames).values().next().value;
+      const predefinedTool = toolType === 'brush' ? predefinedBrushes[brushType] : predefinedTools[toolType];
+
+      return predefinedTool ? predefinedTool : {
+        toolType,
+        id: el.getAttribute('id'),
+        title: el.getAttribute('title'),
+        color: el.getAttribute('color')
+      };
+    });
+
+    return allTools;
   }
 
   render() {
@@ -33,21 +62,17 @@ class AnnotationToolbox extends HTMLElement {
         .tool.selected {
           border-width: 2px;
         }
-        .tool.brush.selected:before {
-          content: "🖌️"
+        .tool.point:before {
+          content: "●";
         }
-        .tool#unknown { background-color: transparent; }
-        .tool#ignore { background-color: gray; }
-        .tool#background { background-color: white; }
+        .tool.brush.selected:before {
+          content: "🖌️";
+        }
       </style>
       <div class="toolbar">
-        <div class="tool point" title="Point Tool">●</div>
-        <div class="tool brush" id="unknown" title="Unknown Brush"></div>
-        <div class="tool brush" id="ignore" title="Ignore Brush"></div>
-        <div class="tool brush" id="background" title="Background Brush"></div>
-        ${this.customBrushes.map(brush => `
-          <div class="tool brush" id="${brush.id}" title="${brush.title}" style="background-color: ${brush.color};"></div>
-        `).join('')}
+        ${this.tools.map(({toolType, id, title, color}) => `
+          <div class="tool ${toolType}" id="${id}" title="${title}" style="background-color: ${color ?? 'transparent'};"></div>`
+        ).join('')}
       </div>
     `; 
 

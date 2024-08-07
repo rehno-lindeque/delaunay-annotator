@@ -137,7 +137,7 @@ class DelaunayTriangle {
   }
 }
 
-const isDegenerate = (triangle, threshold) => {
+const isDegenerate = (triangle, cosineThreshold) => {
   const square_norm = (v) => v.x ** 2 + v.y ** 2;
   const dot = (v1, v2) => v1.x * v2.x + v1.y * v2.y;
 
@@ -567,8 +567,8 @@ class DelaunayEditor extends HTMLElement {
         border: 1px solid black;
       }
       ${this.colorMode === 'label' ? `
-        svg path.body { fill: red; }
-        svg path.pick-surface { fill: green; }
+        svg path.pick-surface { fill: red; }
+        svg path.body { fill: green; }
         svg path.lead { fill: blue; }
       ` : idColors}
       svg path.unknown { display: none; }
