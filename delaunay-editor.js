@@ -186,19 +186,6 @@ const partitionDegenerateTriangles = (triangles, threshold=-0.9) => {
     }
   });
 
-  // Identify connected components of degenerate triangles
-  const degenerateComponents = connectedTriangles(degenerate);
-  degenerate = [];
-
-  // Move connected degenerate triangles back to the nonDegenerate set
-  degenerateComponents.forEach(component => {
-    if (component.length > 1) {
-      nonDegenerate.push(...component);
-    } else {
-      degenerate.push(...component);
-    }
-  });
-
   return { degenerate, nonDegenerate };
 };
 
