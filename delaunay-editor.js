@@ -731,7 +731,7 @@ class DelaunayEditor extends HTMLElement {
     degenerate.forEach(triangle => collapseDegenerate(triangle));
     this.triangles = nonDegenerate;
 
-    // Remove any points that are now orphaned due to delaunay robustness issues
+    // Remove any points that are now orphaned due to degenerate triangles being collapsed
     this.points = Array.from(new Set(this.triangles.flatMap(triangle => triangle.triangle.points)));
     this.updateSvg();
   }
