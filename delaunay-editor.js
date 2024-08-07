@@ -74,7 +74,7 @@ class DelaunayTriangle {
     const dx = point.x - this.circumcircle.center.x;
     const dy = point.y - this.circumcircle.center.y;
     const distanceSquared = dx * dx + dy * dy;
-    return distanceSquared <= this.circumcircle.radius * this.circumcircle.radius;
+    return distanceSquared <= this.circumcircle.radius ** 2;
   }
 
   intersectsPoint(point) {
