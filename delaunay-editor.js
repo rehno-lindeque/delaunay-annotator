@@ -166,10 +166,10 @@ const isDegenerate = (triangle, threshold) => {
 
   // Test if the angle wider than the threshold
   const minCosAngle = Math.min(cosAngle1, cosAngle2, cosAngle3);
-  return minCosAngle < threshold;
+  return minCosAngle < cosineThreshold;
 };
 
-const partitionDegenerateTriangles = (triangles, threshold=-0.9) => {
+const partitionDegenerateTriangles = (triangles, cosineThreshold=-0.9) => {
   const square = (x) => x * x
   const square_norm = (v) => square(v.x) + square(v.y);
   const det = (v1, v2) => v1.x * v2.y - v1.y * v2.x;
@@ -179,7 +179,7 @@ const partitionDegenerateTriangles = (triangles, threshold=-0.9) => {
   const nonDegenerate = [];
 
   triangles.forEach(triangle => {
-    if (isDegenerate(triangle, threshold)) {
+    if (isDegenerate(triangle, cosineThreshold)) {
       degenerate.push(triangle);
     } else {
       nonDegenerate.push(triangle);
