@@ -6,12 +6,13 @@ class AnnotationToolbox extends HTMLElement {
   connectedCallback() {
     this.attachShadow({ mode: 'open' });
     this.tools = this.parseTools();
+    this.tools = this.parseTools();
     this.render();
     this.registerKeyboardShortcuts();
     this.shadowRoot.querySelector(`.tool`).click();
   }
 
-  registerKeyboardShortcuts() {
+  parseTools() {
     const defaultShortcuts = {
       'p': 'point-tool',
       'e': 'unknown',
@@ -21,35 +22,14 @@ class AnnotationToolbox extends HTMLElement {
 
     // Assign default shortcuts to custom brushes
     let customBrushIndex = 1;
-    this.tools.forEach(tool => {
-      const defaultShortcutIds = new Set(Object.values(defaultShortcuts));
-      if (tool.toolType === 'brush' && !defaultShortcutIds.has(tool.id)) {
-        const shortcut = tool.shortcut || customBrushIndex.toString();
-        defaultShortcuts[shortcut] = tool.id;
-        customBrushIndex++;
-      }
-    });
-
-    document.addEventListener('keydown', (event) => {
-      const toolId = defaultShortcuts[event.key];
-      if (toolId) {
-        this.shadowRoot.querySelector(`#${toolId}`)?.click();
-      }
-    });
-  }
-
-
-  parseTools() {
     const predefinedTools = {
-      'point-tool': { toolType: 'point', id: 'point-tool', title: 'Point Tool' },
-      'eraser': { toolType: 'brush', id: 'unknown', title: 'Eraser', color: 'transparent' },
-      'background-brush': { toolType: 'brush', id: 'background', title: 'Background Brush', color: 'white' },
-      'ignore-brush': { toolType: 'brush', id: 'ignore', title: 'Ignore Brush', color: 'gray' }
+      'point-tool': { toolType: 'point', id: 'point-tool', title: 'Point Tool', shortcut: 'p' },
+      'eraser': { toolType: 'brush', id: 'unknown', title: 'Eraser', color: 'transparent', shortcut: 'e' },
     };
 
     const predefinedBrushes = {
-      'background': { toolType: 'brush', id: 'background', title: 'Background Brush', color: 'white' },
-      'ignore': { toolType: 'brush', id: 'ignore', title: 'Ignore Brush', color: 'gray' }
+      'background': { toolType: 'brush', id: 'background', title: 'Background Brush', color: 'white', shortcut: 'b' },
+      'ignore': { toolType: 'brush', id: 'ignore', title: 'Ignore Brush', color: 'gray', shortcut: 'i' }
     };
 
     const allTools = Array.from(this.querySelectorAll('brush, eraser, point-tool')).map(el => {
@@ -58,16 +38,27 @@ class AnnotationToolbox extends HTMLElement {
       const brushType = new Set(el.getAttributeNames()).intersection(predefinedBrushNames).values().next().value;
       const predefinedTool = toolType === 'brush' ? predefinedBrushes[brushType] : predefinedTools[toolType];
 
+      let keyIndex = 1;
       return predefinedTool ? predefinedTool : {
         toolType,
         id: el.getAttribute('id'),
         title: el.getAttribute('title'),
         color: el.getAttribute('color'),
-        shortcut: el.getAttribute('shortcut')
+        shortcut: el.getAttribute('shortcut') ?? String(keyIndex++)
       };
     });
 
     return allTools;
+  }
+
+  registerKeyboardShortcuts() {
+    const shortcutToId = new Map(this.tools.map(tool => [tool.shortcut, tool.id]));
+    document.addEventListener('keydown', (event) => {
+      const toolId = shortcutToId.get(event.key);
+      if (toolId) {
+        this.shadowRoot.querySelector(`#${toolId}`)?.click();
+      }
+    });
   }
 
   render() {
