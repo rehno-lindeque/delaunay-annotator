@@ -113,7 +113,7 @@ class SegmentationEditor extends HTMLElement {
   render() {
     this.shadowRoot.innerHTML = `
     <style>
-      annotation-toolbox {
+      ::slotted(annotation-toolbox) {
           background-color: #f0f0f0;
           border-right: 1px solid #ccc;
           height: 100%;
