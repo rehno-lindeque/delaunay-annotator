@@ -100,8 +100,8 @@ class AnnotationToolbox extends HTMLElement {
         }
       </style>
       <div class="toolbar">
-        ${this.tools.map(({toolType, id, title, color}) => `
-          <div class="tool ${toolType}" id="${id}" title="${title}" style="background-color: ${color ?? 'transparent'};"></div>`
+        ${this.tools.map(({toolType, id, title, color, shortcut}) => `
+          <div class="tool ${toolType}" id="${id}" title="${title} (${shortcut})" style="background-color: ${color ?? 'transparent'};"></div>`
         ).join('')}
       </div>
     `; 
