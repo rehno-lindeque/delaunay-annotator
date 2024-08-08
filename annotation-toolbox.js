@@ -8,6 +8,7 @@ class AnnotationToolbox extends HTMLElement {
 
   connectedCallback() {
     this.render();
+    this.shadowRoot.querySelector(`.tool`).click();
   }
 
   parseTools() {
