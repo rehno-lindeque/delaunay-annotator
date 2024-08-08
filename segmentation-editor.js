@@ -101,9 +101,6 @@ class SegmentationEditor extends HTMLElement {
       delaunayEditor.style.top = 0;
       delaunayEditor.style.left = 0;
 
-      imageContainer.appendChild(img);
-      delaunayEditor.setAttribute('width', width);
-      delaunayEditor.setAttribute('height', height);
       imageContainer.appendChild(delaunayEditor);
     };
     img.src = imageUrl;
