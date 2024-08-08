@@ -7,8 +7,37 @@ class AnnotationToolbox extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.tools = this.parseTools();
     this.render();
+    this.registerKeyboardShortcuts();
     this.shadowRoot.querySelector(`.tool`).click();
   }
+
+  registerKeyboardShortcuts() {
+    const defaultShortcuts = {
+      'p': 'point-tool',
+      'e': 'unknown',
+      'i': 'ignore',
+      'b': 'background'
+    };
+
+    // Assign default shortcuts to custom brushes
+    let customBrushIndex = 1;
+    this.tools.forEach(tool => {
+      const defaultShortcutIds = new Set(Object.values(defaultShortcuts));
+      if (tool.toolType === 'brush' && !defaultShortcutIds.has(tool.id)) {
+        const shortcut = tool.shortcut || customBrushIndex.toString();
+        defaultShortcuts[shortcut] = tool.id;
+        customBrushIndex++;
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const toolId = defaultShortcuts[event.key];
+      if (toolId) {
+        this.shadowRoot.querySelector(`#${toolId}`)?.click();
+      }
+    });
+  }
+
 
   parseTools() {
     const predefinedTools = {
@@ -33,7 +62,8 @@ class AnnotationToolbox extends HTMLElement {
         toolType,
         id: el.getAttribute('id'),
         title: el.getAttribute('title'),
-        color: el.getAttribute('color')
+        color: el.getAttribute('color'),
+        shortcut: el.getAttribute('shortcut')
       };
     });
 
