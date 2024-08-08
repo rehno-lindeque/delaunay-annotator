@@ -2,6 +2,9 @@
 class SegmentationEditor extends HTMLElement {
   constructor() {
     super();
+  }
+
+  connectedCallback() {
     this.attachShadow({ mode: 'open' });
     this.triangles = [];
     this.selectedTool = 'point'; // Default tool
@@ -10,7 +13,7 @@ class SegmentationEditor extends HTMLElement {
 
     // Register events
     // Toolbox selection
-    const toolbox = this.shadowRoot.querySelector('annotation-toolbox');
+    const toolbox = this.querySelector('annotation-toolbox');
     toolbox.addEventListener('tool-selected', (e) => {
       const { tool, brushLabel } = e.detail;
       console.log('Selected tool:', tool, 'Brush label:', brushLabel);
@@ -153,15 +156,7 @@ class SegmentationEditor extends HTMLElement {
       <button id="toggle-color-mode">Toggle Color Mode</button>
     </div>
     <div style="display: flex; flex: 1;">
-      <annotation-toolbox>
-        <point-tool></point-tool>
-        <eraser></eraser>
-        <brush background></brush>
-        <brush ignore></brush>
-        <brush id="pick-surface" title="Pick Surface Brush" color="red"></brush>
-        <brush id="body" title="Body Brush" color="green"></brush>
-        <brush id="lead" title="Lead Brush" color="blue"></brush>
-      </annotation-toolbox>
+      <slot name="toolbox"></slot>
       <div id="image-container" style="flex: 1; position: relative;">
         <img id="sample-image" style="user-select: none;">
       </div>
