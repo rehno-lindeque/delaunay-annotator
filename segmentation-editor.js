@@ -101,7 +101,11 @@ class SegmentationEditor extends HTMLElement {
       delaunayEditor.style.top = 0;
       delaunayEditor.style.left = 0;
 
-      imageContainer.appendChild(delaunayEditor);
+      const existingDelaunayEditor = imageContainer.querySelector('delaunay-editor');
+      if (existingDelaunayEditor)
+        existingDelaunayEditor.replaceWith(delaunayEditor);
+      else
+        imageContainer.appendChild(delaunayEditor);
     };
     img.src = imageUrl;
   }
