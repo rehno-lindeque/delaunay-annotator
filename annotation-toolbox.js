@@ -1,12 +1,11 @@
 class AnnotationToolbox extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
-    this.tools = this.parseTools();
-    this.render();
   }
 
   connectedCallback() {
+    this.attachShadow({ mode: 'open' });
+    this.tools = this.parseTools();
     this.render();
     this.shadowRoot.querySelector(`.tool`).click();
   }
