@@ -715,7 +715,7 @@ class DelaunayEditor extends HTMLElement {
     // Collapse degenerate triangles
     const { degenerate, nonDegenerate } = partitionDegenerateTriangles(this.triangles);
     degenerate.forEach(triangle => collapseDegenerate(triangle));
-    this.triangles = nonDegenerate;
+    // this.triangles = nonDegenerate;
 
     // Remove any points that are now orphaned due to degenerate triangles being collapsed
     this.points = Array.from(new Set(this.triangles.flatMap(triangle => triangle.triangle.points)));
