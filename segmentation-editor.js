@@ -48,8 +48,13 @@ class SegmentationEditor extends HTMLElement {
         }
       }
     });
+
     // Retrieve action
     this.shadowRoot.querySelector('#retrieve-action').addEventListener('click', () => {
+      if (this.baseUrl == null) {
+        console.warn("No baseUrl to use for downloading segmentation data");
+        return;
+      }
       this.shadowRoot.querySelector('#preview').src = this.baseUrl;
     });
     this.shadowRoot.querySelector('#render-upload').addEventListener('click', async () => {
@@ -180,7 +185,11 @@ class SegmentationEditor extends HTMLElement {
     `;
   }
 
-  async getPresignedUploadUrl(filename) {                                 
+  async getPresignedUploadUrl(filename) {
+    if (this.baseUrl == null) {
+      console.warn("No baseUrl to use for uploading segmentation data");
+      return;
+    }
     try {
       const response = await fetch(`${this.baseUrl}/upload`);
       if (!response.ok) {
