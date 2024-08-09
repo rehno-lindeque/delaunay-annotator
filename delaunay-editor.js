@@ -670,6 +670,10 @@ class DelaunayEditor extends HTMLElement {
     const squareDistance = (p1, p2) => (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
     const distanceThreshold = 5;
 
+    // Pre-compute connected components for various operations
+    const connected = connectedTriangles(this.triangles);
+
+    // Find the triangle that would intersect the newly added point
     let intersectingTriangle = null;
     for (const i in this.triangles) {
       const triangle = this.triangles[i];
@@ -697,12 +701,11 @@ class DelaunayEditor extends HTMLElement {
         return;
     }
 
-    // Reset the intersecting region if forced
+    // Reset the entire connected region if forced
     if (force) {
-      const connected = connectedTriangles(this.triangles).find(component =>
-        component.includes(intersectingTriangle)
-      );
-      connected.forEach(triangle => triangle.label = "unknown");
+      connected
+        .find(component => component.includes(intersectingTriangle))
+        .forEach(triangle => triangle.label = "unknown");
     } 
 
     // Re-triangulate the mesh using a constrained delaunay triangulation method
