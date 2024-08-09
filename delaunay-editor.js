@@ -742,11 +742,11 @@ class DelaunayEditor extends HTMLElement {
     const newMesh = addDelaunayPoint(point, this.triangles);
 
     // Test if any new triangles could be added
-    if (newMesh.length == this.triangles.length) {
+    if (newMesh.length === this.triangles.length) {
       // Due to region constraints, if the new point is right on the edge of a skinny triangle it can sometimes
       // fail to fall inside any triangle's circumcircle due to floating point imprecision.
       // This should be a fairly rare occurence, so this warning serves as a red flag.
-      console.warn("Could not add point to mesh due to floating point inaccuracy");
+      console.warn("Could not add point to mesh due to numerical inaccuracy");
       return;
     }
 
