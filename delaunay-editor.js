@@ -68,6 +68,7 @@ class DelaunayTriangle {
     this.triangle = triangle;
     this.circumcircle = this.computeCircumcircle();
     this.label = 'unknown'; // Default label
+    this.collapsed = false;
   }
 
   containsPoint(point) {
@@ -223,21 +224,30 @@ const collapseDegenerate = (triangle, constrained) => {
     const t = dot3 / n23;
     p1.x = p3.x - t * v23.x;
     p1.y = p3.y - t * v23.y;
+    triangle.collapsed = true;
   } else if (cosAngle2 === minCosAngle && !constrained(p2)) {
     const t = dot1 / n13;
     p2.x = p1.x + t * v13.x;
     p2.y = p1.y + t * v13.y;
+    triangle.collapsed = true;
   } else if (cosAngle3 === minCosAngle && !constrained(p3)) {
     const t = dot2 / n12;
     p3.x = p2.x - t * v12.x;
     p3.y = p2.y - t * v12.y;
+    triangle.collapsed = true;
   }
 };
 
 const collapseBoundaryTriangles = (triangles) => {
   // Filter out all triangles that are already collapsed
-  const epsilon = 1e-12;
-  const { nonDegenerate: uncollapsed, degenerate: collapsed } = partitionDegenerateTriangles(triangles, -1.0 + epsilon);
+  const collapsed = [];
+  const uncollapsed = [];
+  triangles.forEach(triangle => {
+    if (triangle.collapsed)
+      collapsed.push(triangle);
+    else
+      uncollapsed.push(triangle);
+  });
 
   // Determine which triangles share an edge with the connected region's boundaries
   const boundaries = boundaryEdges(uncollapsed.flatMap(triangle => triangle.edges()));
@@ -311,9 +321,8 @@ const partitionTrianglesWithConstraints = (point, triangles) => {
   // Constrained triangles may not be split.
   const unconstrainedTriangles = [];
   const constrainedTriangles = [];
-  const epsilon = 1e-12;
   triangles.forEach(triangle => {
-    if (triangle.label === "unknown" && !isDegenerate(triangle, -1.0 + epsilon))
+    if (triangle.label === "unknown" && !triangle.collapsed)
       unconstrainedTriangles.push(triangle);
     else
       constrainedTriangles.push(triangle);
