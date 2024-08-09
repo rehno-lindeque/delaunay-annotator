@@ -311,8 +311,9 @@ const partitionTrianglesWithConstraints = (point, triangles) => {
   // Constrained triangles may not be split.
   const unconstrainedTriangles = [];
   const constrainedTriangles = [];
+  const epsilon = 1e-12;
   triangles.forEach(triangle => {
-    if (triangle.label === "unknown")
+    if (triangle.label === "unknown" && !isDegenerate(triangle, -1.0 + epsilon))
       unconstrainedTriangles.push(triangle);
     else
       constrainedTriangles.push(triangle);
