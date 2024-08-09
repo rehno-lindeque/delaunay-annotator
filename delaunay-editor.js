@@ -234,6 +234,37 @@ const collapseDegenerate = (triangle, constrained) => {
   }
 };
 
+const collapseBoundaryTriangles = (triangles) => {
+  // Filter out all triangles that are already collapsed
+  const epsilon = 1e-12;
+  const { nonDegenerate: uncollapsed, degenerate: collapsed } = partitionDegenerateTriangles(triangles, -1.0 + epsilon);
+
+  // Determine which triangles share an edge with the connected region's boundaries
+  const boundaries = boundaryEdges(uncollapsed.flatMap(triangle => triangle.edges()));
+  const boundariesKeys = new Set(boundaries.map(edge => edge.key()));
+  const boundariesPoints = new Set(
+    [].concat(
+      boundaries.flatMap(edge => edge.points),
+      collapsed.flatMap(edge => edge.points)
+    )
+  );
+
+  const boundaryTriangles = uncollapsed.filter(triangle =>
+    triangle.edges().some(edge => boundariesKeys.has(edge.key()))
+  );
+
+  // Collapse degenerate triangles on the boundaries
+  const { degenerate } = partitionDegenerateTriangles(boundaryTriangles);
+
+  degenerate.forEach(triangle =>
+    collapseDegenerate(
+      triangle,
+      // Avoid collapsing vertices on the boundary edges (only collapse inner vertices)
+      (point) => boundariesPoints.has(point)
+    )
+  );
+}
+
 const boundaryEdges = (edges) => {
   const edgeCount = new Map();
 
@@ -670,9 +701,6 @@ class DelaunayEditor extends HTMLElement {
     const squareDistance = (p1, p2) => (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
     const distanceThreshold = 5;
 
-    // Pre-compute connected components for various operations
-    const connected = connectedTriangles(this.triangles);
-
     // Find the triangle that would intersect the newly added point
     let intersectingTriangle = null;
     for (const i in this.triangles) {
@@ -701,6 +729,12 @@ class DelaunayEditor extends HTMLElement {
         return;
     }
 
+    // Re-triangulate the mesh using a constrained delaunay triangulation method
+    const newMesh = addDelaunayPoint(point, this.triangles);
+
+    // Pre-compute connected components for various operations
+    const connected = connectedTriangles(newMesh);
+
     // Reset the entire connected region if forced
     if (force) {
       connected
@@ -708,37 +742,17 @@ class DelaunayEditor extends HTMLElement {
         .forEach(triangle => triangle.label = "unknown");
     } 
 
-    // Re-triangulate the mesh using a constrained delaunay triangulation method
+
+
+    // Collapse degenerate triangles on region boundaries
+    connected
+      .filter(component => component[0].label === "unknown")
+      .forEach(collapseBoundaryTriangles);
+
+    // Update the mesh
     this.points.push(point);
-    this.triangles = addDelaunayPoint(point, this.triangles);
+    this.triangles = newMesh;
 
-    // Partition degenerate triangles
-    const { degenerate, nonDegenerate } = partitionDegenerateTriangles(this.triangles);
-
-    // Collapse degenerate triangles
-    {
-      const firstOccurrence = new Set();
-      const secondOccurrence = new Set();
-      degenerate.forEach(triangle => {
-        triangle.triangle.points.forEach(point => {
-          if (firstOccurrence.has(point))
-            secondOccurrence.add(point);
-          else
-            firstOccurrence.add(point);
-        });
-      });
-
-      degenerate.forEach(triangle =>
-        collapseDegenerate(
-          triangle,
-          // Avoid collapsing points shared by multiple degenerate triangles
-          (point) => secondOccurrence.has(point)
-        )
-      );
-    }
-
-    // Remove any points that are now orphaned due to degenerate triangles being collapsed
-    this.points = Array.from(new Set(this.triangles.flatMap(triangle => triangle.triangle.points)));
     this.updateSvg();
   }
 
