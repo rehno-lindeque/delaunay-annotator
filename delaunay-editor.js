@@ -78,8 +78,7 @@ class DelaunayTriangle {
     return distanceSquared <= this.circumcircle.radiusSquared;
   }
 
-  intersectsPoint(point) {
-    const epsilon = 1e-10;
+  intersectsPoint(point, threshold=1e-10) {
     const { p1, p2, p3 } = this.triangle;
 
     const area = (p1, p2, p3) => Math.abs((p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y))); // * 0.5 (not needed)
@@ -89,7 +88,7 @@ class DelaunayTriangle {
     const A2 = area(p1, point, p3);
     const A3 = area(p1, p2, point);
 
-    return (A >= A1 + A2 + A3 - epsilon);
+    return (A >= A1 + A2 + A3 - threshold);
   }
 
   edges() {
@@ -685,7 +684,7 @@ class DelaunayEditor extends HTMLElement {
 
     let modified = false;
     this.triangles.forEach(triangle => {
-      if (triangle.intersectsPoint(point)) {
+      if (triangle.intersectsPoint(point, 1e-1)) {
         if (triangle.label === "unknown" || force) {
           triangle.label = this.brushLabel;
           modified = true;
