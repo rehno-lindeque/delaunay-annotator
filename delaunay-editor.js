@@ -189,7 +189,7 @@ const partitionDegenerateTriangles = (triangles, cosineThreshold=-0.9) => {
   return { degenerate, nonDegenerate };
 };
 
-const collapseDegenerate = (triangle) => {
+const collapseDegenerate = (triangle, shared) => {
   const square_norm = (v) => v.x ** 2 + v.y ** 2;
   const dot = (v1, v2) => v1.x * v2.x + v1.y * v2.y;
 
@@ -219,19 +219,16 @@ const collapseDegenerate = (triangle) => {
   // Find the vertex with the widest angle (cosine closest to -1)
   // and project it onto the opposite vertex
   const minCosAngle = Math.min(cosAngle1, cosAngle2, cosAngle3);
-  if (cosAngle1 === minCosAngle) {
+  if (cosAngle1 === minCosAngle && !shared(p1)) {
     const t = dot3 / n23;
-    // p1 = p3 + t * v32
-    p1.x = p3.x - t * v23.x; 
+    p1.x = p3.x - t * v23.x;
     p1.y = p3.y - t * v23.y;
-  } else if (cosAngle2 === minCosAngle) {
+  } else if (cosAngle2 === minCosAngle && !shared(p2)) {
     const t = dot1 / n13;
-    // p2 = p1 + t * v13
     p2.x = p1.x + t * v13.x;
     p2.y = p1.y + t * v13.y;
-  } else if (cosAngle3 === minCosAngle) {
+  } else if (cosAngle3 === minCosAngle && !shared(p3)) {
     const t = dot2 / n12;
-    // p3 = p2 + t * v21
     p3.x = p2.x - t * v12.x;
     p3.y = p2.y - t * v12.y;
   }
@@ -712,10 +709,28 @@ class DelaunayEditor extends HTMLElement {
     this.points.push(point);
     this.triangles = addDelaunayPoint(point, this.triangles);
 
-    // Collapse degenerate triangles
+    // Partition degenerate triangles
     const { degenerate, nonDegenerate } = partitionDegenerateTriangles(this.triangles);
-    degenerate.forEach(triangle => collapseDegenerate(triangle));
-    // this.triangles = nonDegenerate;
+
+    // Use two sets to track first and second occurrences of points in degenerate triangles
+    const firstOccurrence = new Set();
+    const secondOccurrence = new Set();
+    degenerate.forEach(triangle => {
+      triangle.triangle.points.forEach(point => {
+        if (firstOccurrence.has(point))
+          secondOccurrence.add(point);
+        else
+          firstOccurrence.add(point);
+      });
+    });
+
+    // Collapse degenerate triangles
+    degenerate.forEach(triangle =>
+      collapseDegenerate(
+        triangle,
+        (point) => secondOccurrence.has(point)
+      )
+    );
 
     // Remove any points that are now orphaned due to degenerate triangles being collapsed
     this.points = Array.from(new Set(this.triangles.flatMap(triangle => triangle.triangle.points)));
