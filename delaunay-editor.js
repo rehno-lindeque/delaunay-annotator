@@ -189,7 +189,7 @@ const partitionDegenerateTriangles = (triangles, cosineThreshold=-0.9) => {
   return { degenerate, nonDegenerate };
 };
 
-const collapseDegenerate = (triangle, shared) => {
+const collapseDegenerate = (triangle, constrained) => {
   const square_norm = (v) => v.x ** 2 + v.y ** 2;
   const dot = (v1, v2) => v1.x * v2.x + v1.y * v2.y;
 
@@ -219,15 +219,15 @@ const collapseDegenerate = (triangle, shared) => {
   // Find the vertex with the widest angle (cosine closest to -1)
   // and project it onto the opposite vertex
   const minCosAngle = Math.min(cosAngle1, cosAngle2, cosAngle3);
-  if (cosAngle1 === minCosAngle && !shared(p1)) {
+  if (cosAngle1 === minCosAngle && !constrained(p1)) {
     const t = dot3 / n23;
     p1.x = p3.x - t * v23.x;
     p1.y = p3.y - t * v23.y;
-  } else if (cosAngle2 === minCosAngle && !shared(p2)) {
+  } else if (cosAngle2 === minCosAngle && !constrained(p2)) {
     const t = dot1 / n13;
     p2.x = p1.x + t * v13.x;
     p2.y = p1.y + t * v13.y;
-  } else if (cosAngle3 === minCosAngle && !shared(p3)) {
+  } else if (cosAngle3 === minCosAngle && !constrained(p3)) {
     const t = dot2 / n12;
     p3.x = p2.x - t * v12.x;
     p3.y = p2.y - t * v12.y;
