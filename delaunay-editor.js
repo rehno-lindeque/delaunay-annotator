@@ -821,6 +821,7 @@ class DelaunayEditor extends HTMLElement {
         circle { fill: none; }
         path {
           fill: rgb(var(--id) 0 0);
+          fill-rule: evenodd;
           filter: url(#erode);
         }
         path.unknown {
