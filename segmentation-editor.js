@@ -10,6 +10,7 @@ class SegmentationEditor extends HTMLElement {
     this.selectedTool = 'point'; // Default tool
     this.render();
     this.populateImageUrlFromParams();
+    this.baseUrl = 'https://gpu-server.tiger-jazz.ts.net:4443/samples/372768ef-fe67-4a59-a6aa-6e32b363789d/segmentation';
 
     // Register events
     // Toolbox selection
@@ -49,8 +50,7 @@ class SegmentationEditor extends HTMLElement {
     });
     // Retrieve action
     this.shadowRoot.querySelector('#retrieve-action').addEventListener('click', () => {
-      const url = 'https://gpu-server.tiger-jazz.ts.net:4443/samples/372768ef-fe67-4a59-a6aa-6e32b363789d/segmentation';
-      this.shadowRoot.querySelector('#preview').src = url;
+      this.shadowRoot.querySelector('#preview').src = this.baseUrl;
     });
     this.shadowRoot.querySelector('#render-upload').addEventListener('click', async () => {
       const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
@@ -172,7 +172,7 @@ class SegmentationEditor extends HTMLElement {
 
   async getPresignedUploadUrl(filename) {                                 
     try {
-      const response = await fetch('https://gpu-server.tiger-jazz.ts.net:4443/samples/372768ef-fe67-4a59-a6aa-6e32b363789d/segmentation/upload');
+      const response = await fetch(`${this.baseUrl}/upload`);
       if (!response.ok) {
           throw new Error('Failed to fetch presigned URL');
       }
