@@ -10,7 +10,7 @@ class SegmentationEditor extends HTMLElement {
     this.selectedTool = 'point'; // Default tool
     this.render();
     this.populateImageUrlFromParams();
-    this.baseUrl = 'https://gpu-server.tiger-jazz.ts.net:4443/samples/372768ef-fe67-4a59-a6aa-6e32b363789d/segmentation';
+    this.populateBaseUrlFromParams();
 
     // Register events
     // Toolbox selection
@@ -81,6 +81,16 @@ class SegmentationEditor extends HTMLElement {
       const imageUrlInput = this.shadowRoot.querySelector('#image-url-input');
       imageUrlInput.value = imageUrl;
       this.loadImage();
+    }
+  }
+
+  populateBaseUrlFromParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const baseUrl = urlParams.get('baseUrl');
+    if (baseUrl) {
+      this.baseUrl = baseUrl;
+    } else {
+      console.error('Base URL not provided in URL parameters');
     }
   }
 
