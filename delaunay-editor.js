@@ -712,25 +712,27 @@ class DelaunayEditor extends HTMLElement {
     // Partition degenerate triangles
     const { degenerate, nonDegenerate } = partitionDegenerateTriangles(this.triangles);
 
-    // Use two sets to track first and second occurrences of points in degenerate triangles
-    const firstOccurrence = new Set();
-    const secondOccurrence = new Set();
-    degenerate.forEach(triangle => {
-      triangle.triangle.points.forEach(point => {
-        if (firstOccurrence.has(point))
-          secondOccurrence.add(point);
-        else
-          firstOccurrence.add(point);
-      });
-    });
-
     // Collapse degenerate triangles
-    degenerate.forEach(triangle =>
-      collapseDegenerate(
-        triangle,
-        (point) => secondOccurrence.has(point)
-      )
-    );
+    {
+      const firstOccurrence = new Set();
+      const secondOccurrence = new Set();
+      degenerate.forEach(triangle => {
+        triangle.triangle.points.forEach(point => {
+          if (firstOccurrence.has(point))
+            secondOccurrence.add(point);
+          else
+            firstOccurrence.add(point);
+        });
+      });
+
+      degenerate.forEach(triangle =>
+        collapseDegenerate(
+          triangle,
+          // Avoid collapsing points shared by multiple degenerate triangles
+          (point) => secondOccurrence.has(point)
+        )
+      );
+    }
 
     // Remove any points that are now orphaned due to degenerate triangles being collapsed
     this.points = Array.from(new Set(this.triangles.flatMap(triangle => triangle.triangle.points)));
