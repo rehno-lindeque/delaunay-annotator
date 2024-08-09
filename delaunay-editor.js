@@ -738,6 +738,13 @@ class DelaunayEditor extends HTMLElement {
         return;
     }
 
+    // Reset the entire connected region if forced
+    if (force) {
+      connectedTriangles(this.triangles)
+        .find(component => component.includes(intersectingTriangle))
+        .forEach(triangle => triangle.label = "unknown");
+    }
+
     // Re-triangulate the mesh using a constrained delaunay triangulation method
     const newMesh = addDelaunayPoint(point, this.triangles);
 
@@ -753,17 +760,8 @@ class DelaunayEditor extends HTMLElement {
     // Pre-compute connected components for various operations
     const connected = connectedTriangles(newMesh);
 
-    // Reset the entire connected region if forced
-    if (force) {
-      connected
-        .find(component => component.includes(intersectingTriangle))
-        .forEach(triangle => triangle.label = "unknown");
-    } 
-
-
-
     // Collapse degenerate triangles on region boundaries
-    connected
+    connectedTriangles(newMesh)
       .filter(component => component[0].label === "unknown")
       .forEach(collapseBoundaryTriangles);
 
