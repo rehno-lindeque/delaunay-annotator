@@ -57,9 +57,9 @@ class Triangle {
 }
 
 class Circle {
-  constructor(center, radius) {
+  constructor(center, radiusSquared) {
     this.center = center;
-    this.radius = radius;
+    this.radiusSquared = radiusSquared;
   }
 }
 
@@ -75,7 +75,7 @@ class DelaunayTriangle {
     const dx = point.x - this.circumcircle.center.x;
     const dy = point.y - this.circumcircle.center.y;
     const distanceSquared = dx * dx + dy * dy;
-    return distanceSquared <= this.circumcircle.radius ** 2;
+    return distanceSquared <= this.circumcircle.radiusSquared;
   }
 
   intersectsPoint(point) {
@@ -112,9 +112,9 @@ class DelaunayTriangle {
     const div = 2 * (p1.x * (p3.y - p2.y) + p2.x * (p1.y - p3.y) + p3.x * (p2.y - p1.y));
 
     const center = new Point(aux1 / div, aux2 / div);
-    const radius = Math.sqrt((center.x - p1.x) ** 2 + (center.y - p1.y) ** 2);
+    const radiusSquared = (center.x - p1.x) ** 2 + (center.y - p1.y) ** 2;
 
-    return new Circle(center, radius);
+    return new Circle(center, radiusSquared);
   }
 
   occluded(pov, occluders) {
@@ -747,7 +747,7 @@ class DelaunayEditor extends HTMLElement {
       // Due to region constraints, if the new point is right on the edge of a skinny triangle it can sometimes
       // fail to fall inside any triangle's circumcircle due to floating point imprecision.
       // This should be a fairly rare occurence, so this warning serves as a red flag.
-      console.warn("Could not add point to mesh due to floating point");
+      console.warn("Could not add point to mesh due to floating point inaccuracy");
       return;
     }
 
