@@ -869,6 +869,15 @@ class DelaunayEditor extends HTMLElement {
     this.colorMode = this.colorMode === 'label' ? 'id' : 'label';
     this.updateStyles();
   }
+
+  getManifest() {
+    return {
+      instances: connectedRegions(this.triangles).map(region => {
+        id: region.id;
+        label: region.label;
+      });
+    };
+  }
 }
 
 customElements.define('delaunay-editor', DelaunayEditor);
