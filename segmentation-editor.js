@@ -65,6 +65,7 @@ class SegmentationEditor extends HTMLElement {
           const presignedUrl = await this.getPresignedUploadUrl('rendered-image.png');
           if (presignedUrl) {
             await this.uploadImageToS3(presignedUrl, blob);
+            await this.uploadManifest();
           }
         } catch (error) {
           console.error('Error rendering and uploading image:', error);
@@ -203,7 +204,7 @@ class SegmentationEditor extends HTMLElement {
     }
   }
 
-  async uploadImageToS3(url, file) {                                
+  async uploadImageToS3(url, file) {
     try {
       const response = await fetch(url, {
         method: 'PUT',
@@ -218,6 +219,29 @@ class SegmentationEditor extends HTMLElement {
       }
     } catch (error) {
       console.error('Error uploading image:', error);
+    }
+  }
+
+  async uploadManifest() {
+    if (this.baseUrl == null) {
+      console.warn("No baseUrl to use for uploading manifest");
+      return;
+    }
+    try {
+      const manifest = this.shadowRoot.querySelector('delaunay-editor').getManifest();
+      const response = await fetch(`${this.baseUrl}/manifest`, {
+        method: 'PUT',
+        body: JSON.stringify(manifest),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.ok) {
+        console.log('Manifest upload successful');
+      } else {
+        console.error('Manifest upload failed', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error uploading manifest:', error);
     }
   }
 }
