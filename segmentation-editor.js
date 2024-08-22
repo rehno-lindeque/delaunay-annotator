@@ -62,7 +62,7 @@ class SegmentationEditor extends HTMLElement {
       if (delaunayEditor) {
         try {
           const blob = await delaunayEditor.renderToImageBlob();
-          const presignedUrl = await this.getPresignedUploadUrl();
+          const presignedUrl = await this.getPresignedUploadUrl('png');
           if (presignedUrl) {
             await this.uploadImageToS3(presignedUrl, blob);
             await this.uploadManifest();
@@ -186,13 +186,13 @@ class SegmentationEditor extends HTMLElement {
     `;
   }
 
-  async getPresignedUploadUrl() {
+  async getPresignedUploadUrl(format) {
     if (this.baseUrl == null) {
       console.warn("No baseUrl to use for uploading segmentation data");
       return;
     }
     try {
-      const response = await fetch(`${this.baseUrl}/upload`);
+      const response = await fetch(`${this.baseUrl}/upload?format=${format}`);
       if (!response.ok) {
           throw new Error('Failed to fetch presigned URL');
       }
