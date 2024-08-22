@@ -810,7 +810,7 @@ class DelaunayEditor extends HTMLElement {
       points;
   }
 
-  renderToImageBlob() {
+  renderToSvgBlob() {
     return new Promise((resolve, reject) => {
       const svg = this.shadowRoot.querySelector('#svg');
       const style = document.createElement('style');
@@ -831,37 +831,45 @@ class DelaunayEditor extends HTMLElement {
       clonedSvg.appendChild(style);
 
       const svgData = new XMLSerializer().serializeToString(clonedSvg);
-
-      const canvas = document.createElement('canvas');
-      canvas.width = svg.width.baseVal.value;
-      canvas.height = svg.height.baseVal.value;
-      const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingEnabled = false;
-
-      const img = new Image();
       const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-      const url = URL.createObjectURL(svgBlob);
+      resolve(svgBlob);
+    });
+  }
 
-      img.onload = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
-        URL.revokeObjectURL(url);
+  renderToImageBlob() {
+    return new Promise((resolve, reject) => {
+      const svg = this.shadowRoot.querySelector('#svg');
+      this.renderToSvgBlob().then(svgBlob => {
+        const canvas = document.createElement('canvas');
+        canvas.width = svg.width.baseVal.value;
+        canvas.height = svg.height.baseVal.value;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
 
-        canvas.toBlob((blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            reject(new Error('Canvas toBlob conversion failed.'));
-          }
-        });
-      };
+        const img = new Image();
+        const url = URL.createObjectURL(svgBlob);
 
-      img.onerror = (err) => {
-        URL.revokeObjectURL(url);
-        reject(err);
-      };
+        img.onload = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+          URL.revokeObjectURL(url);
 
-      img.src = url;
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('Canvas toBlob conversion failed.'));
+            }
+          });
+        };
+
+        img.onerror = (err) => {
+          URL.revokeObjectURL(url);
+          reject(err);
+        };
+
+        img.src = url;
+      }).catch(reject);
     });
   }
 
