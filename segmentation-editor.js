@@ -61,10 +61,15 @@ class SegmentationEditor extends HTMLElement {
       const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
       if (delaunayEditor) {
         try {
-          const blob = await delaunayEditor.renderToImageBlob();
-          const presignedUrl = await this.getPresignedUploadUrl('png');
-          if (presignedUrl) {
-            await this.uploadImageToS3(presignedUrl, blob);
+          const pngBlob = await delaunayEditor.renderToImageBlob();
+          const presignedPngUrl = await this.getPresignedUploadUrl('png');
+          if (presignedPngUrl) {
+            await this.uploadImageToS3(presignedPngUrl, pngBlob, 'image/png');
+            const svgBlob = delaunayEditor.renderToSvgBlob();
+            const presignedSvgUrl = await this.getPresignedUploadUrl('svg');
+            if (presignedSvgUrl) {
+              await this.uploadImageToS3(presignedSvgUrl, svgBlob, 'image/svg+xml');
+            }
             await this.uploadManifest();
           }
         } catch (error) {
@@ -204,12 +209,12 @@ class SegmentationEditor extends HTMLElement {
     }
   }
 
-  async uploadImageToS3(url, file) {
+  async uploadImageToS3(url, file, contentType) {
     try {
       const response = await fetch(url, {
         method: 'PUT',
         body: file,
-        headers: { 'Content-Type': 'image/png' },
+        headers: { 'Content-Type': contentType },
       });
 
       if (response.ok) {
