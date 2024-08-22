@@ -513,9 +513,13 @@ const connectedRegions = (triangles) => {
 };
 
 class DelaunayEditor extends HTMLElement {
-  constructor() {
+  constructor(stylesheet = null) {
     super();
     this.attachShadow({ mode: 'open' });
+    if (stylesheet) {
+      this.shadowRoot.adoptedStyleSheets = [stylesheet];
+    }
+    
     const width = this.getAttribute('width') || 800;
     const height = this.getAttribute('height') || 600;
     this.points = [
