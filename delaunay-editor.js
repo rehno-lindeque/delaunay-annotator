@@ -880,10 +880,10 @@ class DelaunayEditor extends HTMLElement {
 
   getManifest() {
     return {
-      instances: connectedRegions(this.triangles).map(region => {
-        id: region.id;
-        label: region.label;
-      });
+      instances: connectedRegions(this.triangles).map(region => ({
+        id: region.id,
+        label: region.label,
+      }))
     };
   }
 }
