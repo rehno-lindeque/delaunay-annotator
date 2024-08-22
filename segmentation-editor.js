@@ -9,8 +9,8 @@ class SegmentationEditor extends HTMLElement {
     this.triangles = [];
     this.selectedTool = 'point'; // Default tool
     this.render();
-    this.populateImageUrlFromParams();
     this.populateBaseUrlFromParams();
+    this.populateImageUrlFromParams();
 
     // Register events
     // Toolbox selection
@@ -88,9 +88,12 @@ class SegmentationEditor extends HTMLElement {
   populateImageUrlFromParams() {
     const urlParams = new URLSearchParams(window.location.search);
     const imageUrl = urlParams.get('image');
+    const imageUrlInput = this.shadowRoot.querySelector('#image-url-input');
     if (imageUrl) {
-      const imageUrlInput = this.shadowRoot.querySelector('#image-url-input');
       imageUrlInput.value = imageUrl;
+      this.loadImage();
+    } else if (this.baseUrl) {
+      imageUrlInput.value = `${this.baseUrl}/image`;
       this.loadImage();
     }
   }
