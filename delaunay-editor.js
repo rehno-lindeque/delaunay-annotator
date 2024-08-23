@@ -593,9 +593,6 @@ class DelaunayEditor extends HTMLElement {
     const styleElement = this.shadowRoot.querySelector('style');
     if (styleElement) {
       styleElement.textContent = `
-        svg {
-          border: 1px solid black;
-        }
         svg path.unknown { display: none; }
         svg path.background { fill: white; }
         svg path.ignore { fill: gray; }
