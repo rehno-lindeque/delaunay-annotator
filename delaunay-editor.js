@@ -642,29 +642,6 @@ class DelaunayEditor extends HTMLElement {
     const width = this.getAttribute('width') || 800;
     const height = this.getAttribute('height') || 600;
     if (width && height) {
-      const idColors = `
-        svg path[data-id] { fill: #cccccc; }
-        svg path[data-id='3']  { fill: #e6194b; }
-        svg path[data-id='4']  { fill: #3cb44b; }
-        svg path[data-id='5']  { fill: #ffe119; }
-        svg path[data-id='6']  { fill: #4363d8; }
-        svg path[data-id='7']  { fill: #f58231; }
-        svg path[data-id='8']  { fill: #911eb4; }
-        svg path[data-id='9']  { fill: #46f0f0; }
-        svg path[data-id='10'] { fill: #f032e6; }
-        svg path[data-id='11'] { fill: #bcf60c; }
-        svg path[data-id='12'] { fill: #fabebe; }
-        svg path[data-id='13'] { fill: #008080; }
-        svg path[data-id='14'] { fill: #e6beff; }
-        svg path[data-id='15'] { fill: #9a6324; }
-        svg path[data-id='16'] { fill: #fffac8; }
-        svg path[data-id='17'] { fill: #800000; }
-        svg path[data-id='18'] { fill: #aaffc3; }
-        svg path[data-id='19'] { fill: #808000; }
-        svg path[data-id='20'] { fill: #ffd8b1; }
-        svg path[data-id='21'] { fill: #000075; }
-        svg path[data-id='22'] { fill: #808080; }
-      `;
       this.shadowRoot.innerHTML = `
         <style>
           svg {
