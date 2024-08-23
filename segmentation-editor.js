@@ -12,19 +12,18 @@ class SegmentationEditor extends HTMLElement {
     this.populateBaseUrlFromParams();
     this.populateImageUrlFromParams();
 
+    const toolbox = this.querySelector('annotation-toolbox');
+    const delaunayEditor = this.querySelector('delaunay-editor') ?? this.appendChild(document.createElement('delaunay-editor'));
+
     // Register events
     // Toolbox selection
-    const toolbox = this.querySelector('annotation-toolbox');
-    toolbox.addEventListener('tool-selected', (e) => {
+    toolbox?.addEventListener('tool-selected', (e) => {
       const { tool, brushLabel } = e.detail;
-      const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
       console.log('Selected tool:', tool, 'Brush label:', brushLabel);
       this.selectedTool = tool;
-      if (delaunayEditor) {
-        delaunayEditor.setAttribute('selected-tool', tool);
-        if (brushLabel) {
-          delaunayEditor.setAttribute('brush-label', brushLabel);
-        }
+      delaunayEditor.setAttribute('selected-tool', tool);
+      if (brushLabel) {
+        delaunayEditor.setAttribute('brush-label', brushLabel);
       }
     });
 
@@ -37,15 +36,12 @@ class SegmentationEditor extends HTMLElement {
 
     // Preview action
     this.shadowRoot.querySelector('#preview-action').addEventListener('click', async () => {
-      const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
-      if (delaunayEditor) {
-        try {
-          const blob = await delaunayEditor.renderToImageBlob();
-          const url = URL.createObjectURL(blob);
-          this.shadowRoot.querySelector('#preview').src = url;
-        } catch (error) {
-          console.error('Error rendering image:', error);
-        }
+      try {
+        const blob = await delaunayEditor.renderToImageBlob();
+        const url = URL.createObjectURL(blob);
+        this.shadowRoot.querySelector('#preview').src = url;
+      } catch (error) {
+        console.error('Error rendering image:', error);
       }
     });
 
@@ -58,30 +54,24 @@ class SegmentationEditor extends HTMLElement {
       this.shadowRoot.querySelector('#preview').src = this.baseUrl;
     });
     this.shadowRoot.querySelector('#render-upload').addEventListener('click', async () => {
-      const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
-      if (delaunayEditor) {
-        try {
-          const pngBlob = await delaunayEditor.renderToImageBlob();
-          const presignedPngUrl = await this.getPresignedUploadUrl('png');
-          if (presignedPngUrl) {
-            await this.uploadImageToS3(presignedPngUrl, pngBlob, 'image/png');
-            const svgBlob = delaunayEditor.renderToSvgBlob();
-            const presignedSvgUrl = await this.getPresignedUploadUrl('svg');
-            if (presignedSvgUrl) {
-              await this.uploadImageToS3(presignedSvgUrl, svgBlob, 'image/svg+xml');
-            }
-            await this.uploadManifest();
+      try {
+        const pngBlob = await delaunayEditor.renderToImageBlob();
+        const presignedPngUrl = await this.getPresignedUploadUrl('png');
+        if (presignedPngUrl) {
+          await this.uploadImageToS3(presignedPngUrl, pngBlob, 'image/png');
+          const svgBlob = delaunayEditor.renderToSvgBlob();
+          const presignedSvgUrl = await this.getPresignedUploadUrl('svg');
+          if (presignedSvgUrl) {
+            await this.uploadImageToS3(presignedSvgUrl, svgBlob, 'image/svg+xml');
           }
-        } catch (error) {
-          console.error('Error rendering and uploading image:', error);
+          await this.uploadManifest();
         }
+      } catch (error) {
+        console.error('Error rendering and uploading image:', error);
       }
     });
     this.shadowRoot.querySelector('#toggle-preview-mode').addEventListener('click', () => {
-      const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
-      if (delaunayEditor) {
-        delaunayEditor.setAttribute('preview-mode', delaunayEditor.getAttribute('preview-mode') == 'instances' ? 'labels' : 'instances');
-      }
+      delaunayEditor.setAttribute('preview-mode', delaunayEditor.getAttribute('preview-mode') == 'instances' ? 'labels' : 'instances');
     });
   }
 
@@ -114,15 +104,13 @@ class SegmentationEditor extends HTMLElement {
     img.onload = () => {
       const width = img.width;
       const height = img.height;
-      const imageContainer = this.shadowRoot.querySelector('#image-container');
       img.width = width;
       img.height = height;
 
-      const delaunayEditor = imageContainer.querySelector('delaunay-editor') ?? imageContainer.appendChild(document.createElement('delaunay-editor'));
+      const delaunayEditor = this.querySelector('delaunay-editor');
       delaunayEditor.setAttribute('width', width);
       delaunayEditor.setAttribute('height', height);
-      if (delaunayEditor)
-        delaunayEditor.reset();
+      delaunayEditor.reset();
 
       // Update editor stylesheets
       const toolbox = this.querySelector('annotation-toolbox');
@@ -144,6 +132,11 @@ class SegmentationEditor extends HTMLElement {
           background-color: #f0f0f0;
           border-right: 1px solid #ccc;
           height: 100%;
+      }
+      ::slotted(delaunay-editor) {
+        position: absolute;
+        top: 0;
+        left: 0;
       }
       .control-bar {
           display: flex;
@@ -177,11 +170,6 @@ class SegmentationEditor extends HTMLElement {
         /* checkerboard background */
         background: repeating-conic-gradient(#808080 0% 25%, transparent 0% 50%)       50% / 20px 20px;
       }
-      delaunay-editor {
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
     </style>
     <div class="control-bar">
       <input id="image-url-input" type="url" placeholder="Enter image URL" pattern="https://.*">
@@ -192,6 +180,7 @@ class SegmentationEditor extends HTMLElement {
       <slot name="toolbox"></slot>
       <div id="image-container" style="flex: 1; position: relative;">
         <img id="sample-image" style="user-select: none;">
+        <slot name="editor"></slot>
       </div>
       <div class="preview-container">
         <button id="preview-action">Preview png</button>
