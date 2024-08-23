@@ -17,9 +17,9 @@ class SegmentationEditor extends HTMLElement {
     const toolbox = this.querySelector('annotation-toolbox');
     toolbox.addEventListener('tool-selected', (e) => {
       const { tool, brushLabel } = e.detail;
+      const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
       console.log('Selected tool:', tool, 'Brush label:', brushLabel);
       this.selectedTool = tool;
-      const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
       if (delaunayEditor) {
         delaunayEditor.setAttribute('selected-tool', tool);
         if (brushLabel) {
@@ -130,6 +130,16 @@ class SegmentationEditor extends HTMLElement {
         existingDelaunayEditor.replaceWith(delaunayEditor);
       else
         imageContainer.appendChild(delaunayEditor);
+
+      // Update editor stylesheets
+      const toolbox = this.querySelector('annotation-toolbox');
+      if (toolbox) {
+        delaunayEditor.stylesheet = ''.concat(
+          ...[...toolbox.querySelectorAll('brush[color]')].map((brush, index) =>
+            `svg path.${brush.getAttribute('id')} { fill: ${brush.getAttribute('color')}; }\n`
+          )
+        );
+      }
     };
     img.src = imageUrl;
   }

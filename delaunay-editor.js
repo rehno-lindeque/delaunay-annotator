@@ -614,11 +614,7 @@ class DelaunayEditor extends HTMLElement {
       svg {
         border: 1px solid black;
       }
-      ${this.colorMode === 'label' ? `
-        svg path.pick-surface { fill: red; }
-        svg path.body { fill: green; }
-        svg path.lead { fill: blue; }
-      ` : idColors}
+      ${this.colorMode === 'label' ? `` : idColors}
       svg path.unknown { display: none; }
       svg path.background { fill: white; }
       svg path.ignore { fill: gray; }
