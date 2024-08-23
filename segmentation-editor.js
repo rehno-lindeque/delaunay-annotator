@@ -118,18 +118,11 @@ class SegmentationEditor extends HTMLElement {
       img.width = width;
       img.height = height;
 
-      const delaunayEditor = document.createElement('delaunay-editor');
+      const delaunayEditor = imageContainer.querySelector('delaunay-editor') ?? imageContainer.appendChild(document.createElement('delaunay-editor'));
       delaunayEditor.setAttribute('width', width);
       delaunayEditor.setAttribute('height', height);
-      delaunayEditor.style.position = 'absolute';
-      delaunayEditor.style.top = 0;
-      delaunayEditor.style.left = 0;
-
-      const existingDelaunayEditor = imageContainer.querySelector('delaunay-editor');
-      if (existingDelaunayEditor)
-        existingDelaunayEditor.replaceWith(delaunayEditor);
-      else
-        imageContainer.appendChild(delaunayEditor);
+      if (delaunayEditor)
+        delaunayEditor.reset();
 
       // Update editor stylesheets
       const toolbox = this.querySelector('annotation-toolbox');
@@ -183,6 +176,11 @@ class SegmentationEditor extends HTMLElement {
       img#preview {
         /* checkerboard background */
         background: repeating-conic-gradient(#808080 0% 25%, transparent 0% 50%)       50% / 20px 20px;
+      }
+      delaunay-editor {
+        position: absolute;
+        top: 0;
+        left: 0;
       }
     </style>
     <div class="control-bar">
