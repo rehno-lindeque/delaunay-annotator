@@ -518,25 +518,16 @@ class DelaunayEditor extends HTMLElement {
   constructor() {
     super();
 
+    // DOM setup
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.adoptedStyleSheets = [this.#stylesheet];
 
-    const width = this.getAttribute('width') || 800;
-    const height = this.getAttribute('height') || 600;
-    this.points = [
-      new Point(0, 0),
-      new Point(width, 0),
-      new Point(width, height),
-      new Point(0, height)
-    ];
-    this.triangles = [
-      new DelaunayTriangle(new Triangle(this.points[0], this.points[1], this.points[2])),
-      new DelaunayTriangle(new Triangle(this.points[0], this.points[2], this.points[3]))
-    ];
+    // Reset state
     this.selectedTool = 'point'; // Default tool
     this.isDrawing = false;
-    this.render();
+    this.reset();
 
+    // Add event handlers
     this.addEventListener('mousedown', () => this.isDrawing = this.selectedTool === "brush");
     this.addEventListener('mouseup', (e) => {
       if (this.isDrawing)
@@ -550,6 +541,22 @@ class DelaunayEditor extends HTMLElement {
     return ['width', 'height', 'selected-tool', 'brush-label'];
   }
 
+  reset() {
+    const width = this.getAttribute('width') || 800;
+    const height = this.getAttribute('height') || 800;
+    this.points = [
+      new Point(0, 0),
+      new Point(width, 0),
+      new Point(width, height),
+      new Point(0, height)
+    ];
+    this.triangles = [
+      new DelaunayTriangle(new Triangle(this.points[0], this.points[1], this.points[2])),
+      new DelaunayTriangle(new Triangle(this.points[0], this.points[2], this.points[3]))
+    ];
+    this.render();
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'selected-tool') {
       this.selectedTool = newValue;
@@ -559,7 +566,7 @@ class DelaunayEditor extends HTMLElement {
       // Clear and regenrate the triangle mesh
       if (oldValue !== newValue) {
         const width = this.getAttribute('width') || 800;
-        const height = this.getAttribute('height') || 600;
+        const height = this.getAttribute('height') || 800;
         this.points = [
           new Point(0, 0),
           new Point(parseInt(width), 0),
