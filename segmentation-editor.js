@@ -77,10 +77,10 @@ class SegmentationEditor extends HTMLElement {
         }
       }
     });
-    this.shadowRoot.querySelector('#toggle-color-mode').addEventListener('click', () => {
+    this.shadowRoot.querySelector('#toggle-preview-mode').addEventListener('click', () => {
       const delaunayEditor = this.shadowRoot.querySelector('delaunay-editor');
       if (delaunayEditor) {
-        delaunayEditor.toggleColorMode();
+        delaunayEditor.setAttribute('preview-mode', delaunayEditor.getAttribute('preview-mode') == 'instances' ? 'labels' : 'instances');
       }
     });
   }
@@ -188,7 +188,7 @@ class SegmentationEditor extends HTMLElement {
     <div class="control-bar">
       <input id="image-url-input" type="url" placeholder="Enter image URL" pattern="https://.*">
       <button id="render-upload">Render and Upload</button>
-      <button id="toggle-color-mode">Toggle Color Mode</button>
+      <button id="toggle-preview-mode">Toggle Preview Mode</button>
     </div>
     <div style="display: flex; flex: 1;">
       <slot name="toolbox"></slot>
