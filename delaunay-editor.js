@@ -513,9 +513,14 @@ const connectedRegions = (triangles) => {
 };
 
 class DelaunayEditor extends HTMLElement {
+  #stylesheet = new CSSStyleSheet();
+
   constructor() {
     super();
+
     this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [this.#stylesheet];
+
     const width = this.getAttribute('width') || 800;
     const height = this.getAttribute('height') || 600;
     this.points = [
@@ -531,7 +536,9 @@ class DelaunayEditor extends HTMLElement {
     this.selectedTool = 'point'; // Default tool
     this.isDrawing = false;
     this.colorMode = 'label'; // Default color mode
+
     this.render();
+
     this.addEventListener('mousedown', () => this.isDrawing = this.selectedTool === "brush");
     this.addEventListener('mouseup', (e) => {
       if (this.isDrawing)
@@ -575,10 +582,8 @@ class DelaunayEditor extends HTMLElement {
     this.shadowRoot.querySelector('#svg').addEventListener('click', (e) => this.handleSvgClick(e));
   }
 
-  set stylesheet(stylesheet) {
-    if (stylesheet) {
-      this.shadowRoot.adoptedStyleSheets = [stylesheet];
-    }
+  set stylesheet(css) {
+    this.#stylesheet.replaceSync(css);
   }
 
   updateStyles() {
