@@ -525,6 +525,7 @@ class DelaunayEditor extends HTMLElement {
     // Reset state
     this.selectedTool = 'point'; // Default tool
     this.isDrawing = false;
+    this.shiftInversion = false;
     this.reset();
   }
 
@@ -567,12 +568,16 @@ class DelaunayEditor extends HTMLElement {
     });
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Shift') {
-        this.classList.add('examine');
+        this.updateExamineMode(event);
+      }
+      else if (event.key === '`') {
+        this.shiftInversion = !this.shiftInversion;
+        this.updateExamineMode(event);
       }
     });
     document.addEventListener('keyup', (event) => {
       if (event.key === 'Shift') {
-        this.classList.remove('examine');
+        this.updateExamineMode(event);
       }
     });
     this.addEventListener('mouseup', (e) => {
@@ -587,6 +592,16 @@ class DelaunayEditor extends HTMLElement {
 
   set stylesheet(css) {
     this.#stylesheet.replaceSync(css);
+  }
+
+  updateExamineMode(event) {
+    const shiftActive = event.shiftKey;
+    const examineMode = this.shiftInversion ? !shiftActive : shiftActive;
+    if (examineMode) {
+      this.classList.add('examine');
+    } else {
+      this.classList.remove('examine');
+    }
   }
 
   updateStyles() {
@@ -675,7 +690,8 @@ class DelaunayEditor extends HTMLElement {
     const rect = svg.getBoundingClientRect();
     const point = new Point(event.clientX - rect.left, event.clientY - rect.top);
 
-    const force = event.shiftKey || this.brushLabel === "unknown";
+    const shiftActive = event.shiftKey;
+    const force = (this.shiftInversion ? !shiftActive : shiftActive) || this.brushLabel === "unknown";
 
     let modified = false;
     this.triangles.forEach(triangle => {
@@ -696,8 +712,9 @@ class DelaunayEditor extends HTMLElement {
     const rect = svg.getBoundingClientRect();
     if (this.selectedTool === 'point') {
       const point = new Point(event.clientX - rect.left, event.clientY - rect.top);
-      const isShiftPressed = event.shiftKey;
-      this.addPoint(point, isShiftPressed);
+      const shiftActive = event.shiftKey;
+      const force = (this.shiftInversion ? !shiftActive : shiftActive) || this.brushLabel === "unknown";
+      this.addPoint(point, force);
     }
   }
 
