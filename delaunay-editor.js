@@ -526,15 +526,6 @@ class DelaunayEditor extends HTMLElement {
     this.selectedTool = 'point'; // Default tool
     this.isDrawing = false;
     this.reset();
-
-    // Add event handlers
-    this.addEventListener('mousedown', () => this.isDrawing = this.selectedTool === "brush");
-    this.addEventListener('mouseup', (e) => {
-      if (this.isDrawing)
-        this.handleSvgMouseMove(e)
-      this.isDrawing = false
-    });
-    this.addEventListener('mousemove', (e) => this.handleSvgMouseMove(e));
   }
 
   static get observedAttributes() {
@@ -571,7 +562,14 @@ class DelaunayEditor extends HTMLElement {
   }
 
   connectedCallback() {
-    this.shadowRoot.querySelector('#svg').addEventListener('click', (e) => this.handleSvgClick(e));
+    this.addEventListener('mousedown', () => this.isDrawing = this.selectedTool === "brush");
+    this.addEventListener('mouseup', (e) => {
+      if (this.isDrawing)
+        this.handleSvgMouseMove(e)
+      this.isDrawing = false
+    });
+    this.addEventListener('mousemove', (e) => this.handleSvgMouseMove(e));
+    this.addEventListener('click', (e) => this.handleSvgClick(e));
   }
 
   set stylesheet(css) {
