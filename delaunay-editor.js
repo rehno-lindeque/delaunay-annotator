@@ -4,13 +4,13 @@ class Point {
     this.y = y;
   }
 
-  *[Symbol.iterator]() {
-    yield this.x;
-    yield this.y;
+  get state() {
+    return { x: this.x, y: this.y };
   }
 
-  clone() {
-    return new Point(...this);
+  set state({ x, y }) {
+    this.x = x;
+    this.y = y;
   }
 }
 
@@ -63,16 +63,6 @@ class Triangle {
   get points() {
     return [this.p1, this.p2, this.p3];
   }
-
-  *[Symbol.iterator]() {
-    yield this.p1;
-    yield this.p2;
-    yield this.p3;
-  }
-
-  clone() {
-    return new Triangle(...this.points.map(p => p.clone()));
-  }
 }
 
 class Circle {
@@ -90,8 +80,14 @@ class DelaunayTriangle {
     this.collapsed = collapsed;
   }
 
-  clone() {
-    return new DelaunayTriangle(this.triangle.clone(), this.label, this.collapsed);
+  get state() {
+    // Return only mutable the state directly managed by the triangle (excludes points)
+    return { label: this.label, collapsed: this.collapsed };
+  }
+
+  set state({ label, collapsed }) {
+    this.label = label;
+    this.collapsed = collapsed;
   }
 
   containsPoint(point) {
@@ -711,10 +707,9 @@ class DelaunayEditor extends HTMLElement {
   }
 
   recordUndoState() {
-    this.undoStack.push({
-      points: this.points.map(p => p.clone()),
-      triangles: this.triangles.map(t => t.clone())
-    });
+    const triangles = new Map(this.triangles.map(t => [t, t.state]));
+    const points = new Map(this.points.map(p => [p, p.state]));
+    this.undoStack.push({ triangles, points });
   }
 
   handleSvgMouseMove(event) {
@@ -940,8 +935,15 @@ class DelaunayEditor extends HTMLElement {
       return;
 
     const lastState = this.undoStack.pop();
-    this.points = lastState.points;
-    this.triangles = lastState.triangles;
+
+    // Restore the point and triangle references from this snapshot
+    this.points = [...lastState.points.keys()];
+    this.triangles = [...lastState.triangles.keys()];
+
+    // Restore the point and triangle mutable states
+    lastState.points.entries().forEach(([p, state]) => { p.state = state; });
+    lastState.triangles.entries().forEach(([t, state]) => { t.state = state; });
+
     this.updateSvg();
   }
 }
