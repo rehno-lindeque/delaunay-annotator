@@ -549,6 +549,7 @@ class DelaunayEditor extends HTMLElement {
       new DelaunayTriangle(new Triangle(this.points[0], this.points[2], this.points[3]))
     ];
     this.render();
+    this.undoStack = [];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -563,7 +564,7 @@ class DelaunayEditor extends HTMLElement {
   }
 
   connectedCallback() {
-    this.addEventListener('mousedown', () => {
+    this.addEventListener('mousedown', (e) => {
       this.isDrawing = this.selectedTool === "brush";
     });
     document.addEventListener('keydown', (event) => {
@@ -683,6 +684,13 @@ class DelaunayEditor extends HTMLElement {
     }
   }
 
+  pushUndoState() {
+    this.undoStack.push({
+      points: this.points.map(p => new Point(p.x, p.y)),
+      triangles: this.triangles.map(t => new DelaunayTriangle(new Triangle(t.triangle.p1, t.triangle.p2, t.triangle.p3)))
+    });
+  }
+
   handleSvgMouseMove(event) {
     if (!this.isDrawing) return;
 
@@ -697,14 +705,18 @@ class DelaunayEditor extends HTMLElement {
     this.triangles.forEach(triangle => {
       if (triangle.intersectsPoint(point, 1e-1)) {
         if (triangle.label === "unknown" || force) {
+          if (!modified)
+            this.pushUndoState();
+
           triangle.label = this.brushLabel;
           modified = true;
         }
       }
     });
 
-    if (modified)
+    if (modified) {
       this.updateSvg();
+    }
   }
 
   handleSvgClick(event) {
@@ -719,6 +731,8 @@ class DelaunayEditor extends HTMLElement {
   }
 
   addPoint(point, force = false) {
+    this.pushUndoState();
+
     const squareDistance = (p1, p2) => (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
     const distanceThreshold = 5;
 
