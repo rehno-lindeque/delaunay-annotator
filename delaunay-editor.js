@@ -709,8 +709,8 @@ class DelaunayEditor extends HTMLElement {
 
   pushUndoState() {
     this.undoStack.push({
-      points: this.points.map(p => new Point(p.x, p.y)),
-      triangles: this.triangles.map(t => new DelaunayTriangle(new Triangle(t.triangle.p1, t.triangle.p2, t.triangle.p3)))
+      points: this.points.map(p => p.clone()),
+      triangles: this.triangles.map(t => t.clone())
     });
   }
 
