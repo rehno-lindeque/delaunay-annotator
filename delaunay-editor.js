@@ -710,7 +710,7 @@ class DelaunayEditor extends HTMLElement {
     }
   }
 
-  pushUndoState() {
+  recordUndoState() {
     this.undoStack.push({
       points: this.points.map(p => p.clone()),
       triangles: this.triangles.map(t => t.clone())
@@ -732,7 +732,7 @@ class DelaunayEditor extends HTMLElement {
       if (triangle.intersectsPoint(point, 1e-1)) {
         if (triangle.label === "unknown" || force) {
           if (!modified)
-            this.pushUndoState();
+            this.recordUndoState();
 
           triangle.label = this.brushLabel;
           modified = true;
@@ -757,8 +757,6 @@ class DelaunayEditor extends HTMLElement {
   }
 
   addPoint(point, force = false) {
-    this.pushUndoState();
-
     const squareDistance = (p1, p2) => (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
     const distanceThreshold = 5;
 
@@ -808,6 +806,9 @@ class DelaunayEditor extends HTMLElement {
       console.warn("Could not add point to mesh due to numerical inaccuracy");
       return;
     }
+
+    // Record the undo history
+    this.recordUndoState();
 
     // Pre-compute connected components for various operations
     const connected = connectedTriangles(newMesh);
