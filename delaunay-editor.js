@@ -75,7 +75,7 @@ class Circle {
 class DelaunayTriangle {
   constructor(triangle, label = 'unknown', collapsed = false) {
     this.triangle = triangle;
-    this.circumcircle = this.computeCircumcircle();
+    this.updateCircumcircle();
     this.label = label;
     this.collapsed = collapsed;
   }
@@ -119,7 +119,7 @@ class DelaunayTriangle {
     ];
   }
 
-  computeCircumcircle() {
+  updateCircumcircle() {
     const { p1, p2, p3 } = this.triangle;
     const dA = p1.x * p1.x + p1.y * p1.y;
     const dB = p2.x * p2.x + p2.y * p2.y;
@@ -132,7 +132,7 @@ class DelaunayTriangle {
     const center = new Point(aux1 / div, aux2 / div);
     const radiusSquared = (center.x - p1.x) ** 2 + (center.y - p1.y) ** 2;
 
-    return new Circle(center, radiusSquared);
+    this.circumcircle = new Circle(center, radiusSquared);
   }
 
   occluded(pov, occluders) {
@@ -942,7 +942,10 @@ class DelaunayEditor extends HTMLElement {
 
     // Restore the point and triangle mutable states
     lastState.points.entries().forEach(([p, state]) => { p.state = state; });
-    lastState.triangles.entries().forEach(([t, state]) => { t.state = state; });
+    lastState.triangles.entries().forEach(([t, state]) => {
+      t.state = state;
+      t.updateCircumcircle();
+    });
 
     this.updateSvg();
   }
