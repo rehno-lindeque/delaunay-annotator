@@ -598,6 +598,9 @@ class DelaunayEditor extends HTMLElement {
         this.shiftInversion = !this.shiftInversion;
         this.updateExamineMode(event);
       }
+      else if (event.ctrlKey && event.key === 'z') {
+        this.undo();
+      }
     });
     document.addEventListener('keyup', (event) => {
       if (event.key === 'Shift') {
@@ -929,6 +932,16 @@ class DelaunayEditor extends HTMLElement {
         label: region.label,
       }))
     };
+  }
+
+  undo() {
+    if (this.undoStack.length === 0)
+      return;
+
+    const lastState = this.undoStack.pop();
+    this.points = lastState.points;
+    this.triangles = lastState.triangles;
+    this.updateSvg();
   }
 }
 
