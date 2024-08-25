@@ -3,6 +3,15 @@ class Point {
     this.x = x;
     this.y = y;
   }
+
+  *[Symbol.iterator]() {
+    yield this.x;
+    yield this.y;
+  }
+
+  clone() {
+    return new Point(...this);
+  }
 }
 
 class Vector {
@@ -54,6 +63,16 @@ class Triangle {
   get points() {
     return [this.p1, this.p2, this.p3];
   }
+
+  *[Symbol.iterator]() {
+    yield this.p1;
+    yield this.p2;
+    yield this.p3;
+  }
+
+  clone() {
+    return new Triangle(...this.points.map(p => p.clone()));
+  }
 }
 
 class Circle {
@@ -64,11 +83,15 @@ class Circle {
 }
 
 class DelaunayTriangle {
-  constructor(triangle) {
+  constructor(triangle, label = 'unknown', collapsed = false) {
     this.triangle = triangle;
     this.circumcircle = this.computeCircumcircle();
-    this.label = 'unknown'; // Default label
-    this.collapsed = false;
+    this.label = label;
+    this.collapsed = collapsed;
+  }
+
+  clone() {
+    return new DelaunayTriangle(this.triangle.clone(), this.label, this.collapsed);
   }
 
   containsPoint(point) {
