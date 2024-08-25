@@ -291,6 +291,8 @@ const collapseBoundaryTriangles = (triangles) => {
       (point) => boundariesPoints.has(point)
     )
   );
+
+  // TODO: (bugfix) recompute circumcircles for triangles affected by the modified points
 }
 
 const boundaryEdges = (edges) => {
