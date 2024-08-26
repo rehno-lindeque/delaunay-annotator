@@ -59,7 +59,7 @@ class SegmentationEditor extends HTMLElement {
         const presignedPngUrl = await this.getPresignedUploadUrl('png');
         if (presignedPngUrl) {
           await this.uploadImageToS3(presignedPngUrl, pngBlob, 'image/png');
-          const svgBlob = delaunayEditor.renderToSvgBlob();
+          const svgBlob = await delaunayEditor.renderToSvgBlob();
           const presignedSvgUrl = await this.getPresignedUploadUrl('svg');
           if (presignedSvgUrl) {
             await this.uploadImageToS3(presignedSvgUrl, svgBlob, 'image/svg+xml');
