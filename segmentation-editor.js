@@ -233,7 +233,8 @@ class SegmentationEditor extends HTMLElement {
       return;
     }
     try {
-      const manifest = this.shadowRoot.querySelector('delaunay-editor').getManifest();
+      const delaunayEditor = this.querySelector('delaunay-editor');
+      const manifest = delaunayEditor.getManifest();
       const response = await fetch(`${this.baseUrl}/manifest`, {
         method: 'PUT',
         body: JSON.stringify(manifest),
