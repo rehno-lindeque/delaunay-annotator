@@ -197,7 +197,7 @@ class SegmentationEditor extends HTMLElement {
       return;
     }
     try {
-      const response = await fetch(`${this.baseUrl}/upload?format=${format}`);
+      const response = await fetch(`${this.baseUrl}/segmentation/upload?format=${format}`);
       if (!response.ok) {
           throw new Error('Failed to fetch presigned URL');
       }
