@@ -924,12 +924,14 @@ class DelaunayEditor extends HTMLElement {
   }
 
   getManifest() {
-    return {
-      instances: connectedRegions(this.triangles).map(region => ({
+    const instances = new Map(
+      connectedRegions(this.triangles)
+      .map(region => [region.id, {
         instanceId: region.id,
         classLabel: region.label,
-      }))
-    };
+      }]));
+
+    return { instances: [...instances.values()] };
   }
 
   undo() {
