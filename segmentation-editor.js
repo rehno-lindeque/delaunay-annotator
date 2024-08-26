@@ -235,7 +235,7 @@ class SegmentationEditor extends HTMLElement {
     try {
       const delaunayEditor = this.querySelector('delaunay-editor');
       const manifest = delaunayEditor.getManifest();
-      const response = await fetch(`${this.baseUrl}/manifest`, {
+      const response = await fetch(`${this.baseUrl}/segmentation/info`, {
         method: 'PUT',
         body: JSON.stringify(manifest),
         headers: { 'Content-Type': 'application/json' },
