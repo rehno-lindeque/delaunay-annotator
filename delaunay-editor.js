@@ -75,9 +75,9 @@ class Circle {
 class DelaunayTriangle {
   constructor(triangle, label = 'unknown', collapsed = false) {
     this.triangle = triangle;
-    this.updateCircumcircle();
     this.label = label;
     this.collapsed = collapsed;
+    this.updateCircumcircle();
   }
 
   get state() {
@@ -829,6 +829,50 @@ class DelaunayEditor extends HTMLElement {
     ].join(' ');
 
     return `<path d="${pathData}" class="${label}" data-id="${id}" style="--id: ${id}" />`;
+  }
+
+  loadSvg(svg) {
+    // Parse the SVG string to extract points and triangles
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svg, 'image/svg+xml');
+    const svgElement = doc.querySelector('svg');
+
+    if (!svgElement) {
+      console.error('Invalid SVG data');
+      return;
+    }
+
+    const pointsMap = new Map();
+    const getOrCreatePoint = (x, y) => {
+    };
+
+    const polygonElements = svgElement.querySelectorAll('polygon');
+
+    this.triangles = [...polygonElements].map(polygon => {
+      const trianglePoints = polygon.getAttribute('points').trim().split(/\s+/).map(point => {
+        const [x, y] = point.split(',').map(parseFloat);
+        const key = `${x},${y}`;
+        if (!pointsMap.has(key)) {
+          const point = new Point(x, y);
+          pointsMap.set(key, point);
+          return point;
+        }
+        else {
+          return pointsMap.get(key);
+        }
+      });
+
+      console.assert(trianglePoints.length === 3, "svg polygons must be triangles");
+      return new DelaunayTriangle(
+        new Triangle(...trianglePoints),
+        polygon.getAttribute('class') || 'unknown'
+      );
+    });
+
+    this.points = [...pointsMap.values()];
+
+    // Update the SVG
+    this.updateSvg();
   }
 
   updateSvg() {
