@@ -865,12 +865,13 @@ class DelaunayEditor extends HTMLElement {
       const svg = this.shadowRoot.querySelector('#svg');
       const style = document.createElement('style');
       style.textContent = `
-        polygon { fill: none; stroke: none; shape-rendering: crispEdges; }
+        polygon { fill: none; stroke: none;  }
         circle { fill: none; }
         path {
           fill: rgb(var(--id) 0 0);
           fill-rule: evenodd;
           filter: url(#erode);
+          shape-rendering: crispedges;
         }
         path.unknown {
           fill: none;
