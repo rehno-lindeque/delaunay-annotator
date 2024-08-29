@@ -2,14 +2,12 @@
   description = "Some web components for segmentations";
 
   inputs = {
-    devenv.url = "github:cachix/devenv";
-    nixpkgs.follows = "devenv/nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
   };
 
   outputs = {
     self,
     nixpkgs,
-    devenv,
     ...
   } @ inputs: let
     inherit (nixpkgs) lib;
@@ -24,8 +22,7 @@
     formatter = lib.genAttrs developerSystems (system: legacyPackages.${system}.alejandra);
 
     packages =
-      lib.recursiveUpdate
-      (lib.genAttrs supportedSystems (
+      lib.genAttrs supportedSystems (
         system: {
           default = self.packages.${system}.dist;
 
@@ -50,16 +47,11 @@
             };
           };
         }
-      ))
-      (lib.genAttrs developerSystems (system: {
-        devenv-up = self.devShells.${system}.default.config.procfileScript;
-      }));
+      );
 
     devShells = lib.genAttrs developerSystems (system: {
-      default = devenv.lib.mkShell {
-        inherit inputs;
-        pkgs = legacyPackages.${system};
-        modules = [(import ./devenv.nix)];
+      default = legacyPackages.${system}.mkShell {
+        buildInputs = [ legacyPackages.${system}.devenv ];
       };
     });
   };
