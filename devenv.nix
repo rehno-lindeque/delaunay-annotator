@@ -24,8 +24,8 @@
     virtualHosts.":6006" = {
       # extraConfig = ''respond "Hello, world!"'';
       extraConfig = ''
-        # root * public
         import cors {header.origin}
+        root * src
         file_server
         handle_path /api/* {
           reverse_proxy https://gpu-server.tiger-jazz.ts.net:4443 {

@@ -29,10 +29,7 @@
           pname = "segmentation-components-dist";
           version = "1.0.0";
 
-          src = lib.fileset.toSource {
-            root = ./.;
-            fileset = lib.fileset.fileFilter (file: file.hasExt "html" || file.hasExt "js") ./.;
-          };
+          src = ./src;
 
           installPhase = ''
             mkdir -p $out
