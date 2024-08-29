@@ -45,6 +45,23 @@ class SegmentationEditor extends HTMLElement {
       }
     });
 
+    // Load SVG action
+    this.shadowRoot.querySelector('#load-svg').addEventListener('click', async () => {
+      if (this.baseUrl == null) {
+        console.warn("No baseUrl to use for loading SVG");
+        return;
+      }
+      try {
+        const response = await fetch(`${this.baseUrl}/segmentation?format=svg`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch SVG');
+        }
+        delaunayEditor.loadSvg(await response.text());
+      } catch (error) {
+        console.error('Error loading SVG:', error);
+      }
+    });
+
     // Retrieve action
     this.shadowRoot.querySelector('#retrieve-action').addEventListener('click', () => {
       if (this.baseUrl == null) {
@@ -175,6 +192,7 @@ class SegmentationEditor extends HTMLElement {
       <input id="image-url-input" type="url" placeholder="Enter image URL" pattern="https://.*">
       <button id="render-upload">Render and Upload</button>
       <button id="toggle-preview-mode">Toggle Preview Mode</button>
+      <button id="load-svg">Load SVG</button>
     </div>
     <div style="display: flex; flex: 1;">
       <slot name="toolbox"></slot>
