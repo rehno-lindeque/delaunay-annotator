@@ -1,0 +1,11 @@
+secret/
+
+# Code assistants
+.aider*
+
+# Devenv
+.devenv*
+devenv.local.nix
+
+# pre-commit
+/.pre-commit-config.yaml
