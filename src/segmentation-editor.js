@@ -186,6 +186,7 @@ class SegmentationEditor extends HTMLElement {
       img#preview {
         /* checkerboard background */
         background: repeating-conic-gradient(#808080 0% 25%, transparent 0% 50%)       50% / 20px 20px;
+        image-rendering: pixelated;
       }
     </style>
     <div class="control-bar">

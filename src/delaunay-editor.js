@@ -941,7 +941,8 @@ class DelaunayEditor extends HTMLElement {
         const ctx = canvas.getContext('2d');
         ctx.imageSmoothingEnabled = false;
 
-        const img = new Image();
+        const img = new Image(svg.width.baseVal.value, svg.height.baseVal.value);
+        img.setAttribute('style', 'image-rendering: pixelated');
         const url = URL.createObjectURL(svgBlob);
 
         img.onload = () => {
