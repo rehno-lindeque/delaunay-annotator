@@ -2,14 +2,16 @@
   description = "Some web components for segmentations";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    devenv.url = "github:cachix/devenv";
+    nixpkgs.follows = "devenv/nixpkgs";
   };
 
   outputs = {
     self,
     nixpkgs,
+    devenv,
     ...
-  }: let
+  } @ inputs: let
     inherit (nixpkgs) lib;
 
     supportedSystems = lib.platforms.all;
@@ -21,31 +23,44 @@
 
     formatter = lib.genAttrs developerSystems (system: legacyPackages.${system}.alejandra);
 
-    packages = lib.genAttrs supportedSystems (
-      system: {
-        default = self.packages.${system}.dist;
+    packages =
+      lib.recursiveUpdate
+      (lib.genAttrs supportedSystems (
+        system: {
+          default = self.packages.${system}.dist;
 
-        dist = legacyPackages.${system}.stdenvNoCC.mkDerivation {
-          pname = "segmentation-components-dist";
-          version = "1.0.0";
+          dist = legacyPackages.${system}.stdenvNoCC.mkDerivation {
+            pname = "segmentation-components-dist";
+            version = "1.0.0";
 
-          src = lib.fileset.toSource {
-            root = ./.;
-            fileset = lib.fileset.fileFilter (file: file.hasExt "html" || file.hasExt "js") ./.;
+            src = lib.fileset.toSource {
+              root = ./.;
+              fileset = lib.fileset.fileFilter (file: file.hasExt "html" || file.hasExt "js") ./.;
+            };
+
+            installPhase = ''
+              mkdir -p $out
+              cp -r * $out/
+            '';
+
+            meta = with lib; {
+              description = "Segmentation annotation tool as a web component";
+              license = licenses.mit;
+              platforms = platforms.all;
+            };
           };
+        }
+      ))
+      (lib.genAttrs developerSystems (system: {
+        devenv-up = self.devShells.${system}.default.config.procfileScript;
+      }));
 
-          installPhase = ''
-            mkdir -p $out
-            cp -r * $out/
-          '';
-
-          meta = with lib; {
-            description = "Segmentation annotation tool as a web component";
-            license = licenses.mit;
-            platforms = platforms.all;
-          };
-        };
-      }
-    );
+    devShells = lib.genAttrs developerSystems (system: {
+      default = devenv.lib.mkShell {
+        inherit inputs;
+        pkgs = legacyPackages.${system};
+        modules = [(import ./devenv.nix)];
+      };
+    });
   };
 }
