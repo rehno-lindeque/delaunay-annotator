@@ -21,37 +21,38 @@
 
     formatter = lib.genAttrs developerSystems (system: legacyPackages.${system}.alejandra);
 
-    packages =
-      lib.genAttrs supportedSystems (
-        system: {
-          default = self.packages.${system}.dist;
+    packages = lib.genAttrs supportedSystems (
+      system: {
+        default = self.packages.${system}.dist;
 
-          dist = legacyPackages.${system}.stdenvNoCC.mkDerivation {
-            pname = "segmentation-components-dist";
-            version = "1.0.0";
+        dist = legacyPackages.${system}.stdenvNoCC.mkDerivation {
+          pname = "segmentation-components-dist";
+          version = "1.0.0";
 
-            src = lib.fileset.toSource {
-              root = ./.;
-              fileset = lib.fileset.fileFilter (file: file.hasExt "html" || file.hasExt "js") ./.;
-            };
-
-            installPhase = ''
-              mkdir -p $out
-              cp -r * $out/
-            '';
-
-            meta = with lib; {
-              description = "Segmentation annotation tool as a web component";
-              license = licenses.mit;
-              platforms = platforms.all;
-            };
+          src = lib.fileset.toSource {
+            root = ./.;
+            fileset = lib.fileset.fileFilter (file: file.hasExt "html" || file.hasExt "js") ./.;
           };
-        }
-      );
+
+          installPhase = ''
+            mkdir -p $out
+            cp -r * $out/
+          '';
+
+          meta = with lib; {
+            description = "Segmentation annotation tool as a web component";
+            license = licenses.mit;
+            platforms = platforms.all;
+          };
+        };
+      }
+    );
 
     devShells = lib.genAttrs developerSystems (system: {
       default = legacyPackages.${system}.mkShell {
-        buildInputs = [ legacyPackages.${system}.devenv ];
+        buildInputs = [
+          legacyPackages.${system}.devenv
+        ];
       };
     });
   };
