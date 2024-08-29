@@ -52,6 +52,7 @@
       default = legacyPackages.${system}.mkShell {
         buildInputs = [
           legacyPackages.${system}.devenv
+          legacyPackages.${system}.nodePackages.prettier
         ];
       };
     });
