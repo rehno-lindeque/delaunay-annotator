@@ -950,13 +950,17 @@ class DelaunayEditor extends HTMLElement {
           ctx.drawImage(img, 0, 0);
           URL.revokeObjectURL(url);
 
-          canvas.toBlob((blob) => {
-            if (blob) {
-              resolve(blob);
-            } else {
-              reject(new Error('Canvas toBlob conversion failed.'));
-            }
-          });
+          canvas.toBlob(
+            (blob => {
+              if (blob) {
+                resolve(blob);
+              } else {
+                reject(new Error('Canvas toBlob conversion failed.'));
+              }
+            }),
+            "image/png",
+            1
+          );
         };
 
         img.onerror = (err) => {
