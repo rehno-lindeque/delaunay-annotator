@@ -925,6 +925,13 @@ class DelaunayEditor extends HTMLElement {
       const clonedSvg = svg.cloneNode(true);
       clonedSvg.appendChild(style);
 
+      clonedSvg.setAttribute(
+        "style",
+        // Stay in srgb to ensure that <filter> effects don't lose color accuracy via conversion into a linearized RGB color space.
+        // See https://www.w3.org/TR/SVG11/painting.html#RenderingProperties
+        "color-rendering: optimizeQuality; color-interpolation-filters: srgb"
+      )
+
       const svgData = new XMLSerializer().serializeToString(clonedSvg);
       const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
       resolve(svgBlob);
